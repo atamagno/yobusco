@@ -1,0 +1,9 @@
+# Dependency directories
+public/libs
+node_modules
+
+# Webstorm config
+.idea
+
+# Openshift config
+.openshift
