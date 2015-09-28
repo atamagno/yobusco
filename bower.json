@@ -1,0 +1,12 @@
+{
+  "name": "yobusco",
+  "version": "1.0.0",
+  "dependencies": {
+    "angular": "~1.2",
+    "angular-resource": "~1.2",
+    "angular-ui-utils": "~0.1.1",
+    "angular-ui-router": "~0.2.11",
+    "angular-bootstrap": "~0.11.2",
+    "bootstrap": "~3"
+  }
+}
