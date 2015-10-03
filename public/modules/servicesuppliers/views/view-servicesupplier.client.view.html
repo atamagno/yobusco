@@ -1,0 +1,26 @@
+<section data-ng-controller="ServiceSuppliersController" data-ng-init="findOne()">
+	<div class="page-header">
+		<h1 data-ng-bind="servicesupplier.name"></h1>
+	</div>
+	<div class="page-content">
+		<h1 data-ng-bind="servicesupplier.city"></h1>
+	</div>
+	<div class="page-content">
+		<h1 data-ng-bind="servicesupplier.phone"></h1>
+	</div>
+	<div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == servicesupplier.user._id))">
+		<a class="btn btn-primary" href="/#!/servicesuppliers/{{servicesupplier._id}}/edit">
+			<i class="glyphicon glyphicon-edit"></i>
+		</a>
+		<a class="btn btn-primary" data-ng-click="remove();">
+			<i class="glyphicon glyphicon-trash"></i>
+		</a>
+	</div>
+	<small>
+		<em class="text-muted">
+			Posted on
+			<span data-ng-bind="servicesuppliers.created | date:'mediumDate'"></span>
+		</em>
+	</small>
+	<p class="lead" data-ng-bind="servicesupplier.generalDescription"></p>
+</section>

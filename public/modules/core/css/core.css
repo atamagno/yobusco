@@ -1,15 +1,51 @@
-.content {
-	margin-top: 50px;
+body {
+	padding-top: 70px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
+
 .undecorated-link:hover {
 	text-decoration: none;
 }
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
 	display: none !important;
 }
+
 .ng-invalid.ng-dirty {
 	border-color: #FA787E;
 }
+
 .ng-valid.ng-dirty {
 	border-color: #78FA89;
+}
+
+.caption {
+	height: 130px;
+	overflow: hidden;
+}
+
+.caption h4 {
+	white-space: nowrap;
+}
+
+.thumbnail img {
+	width: 100%;
+}
+
+.ratings {
+	padding-right: 10px;
+	padding-left: 10px;
+	color: #d17581;
+}
+
+.thumbnail {
+	padding: 0;
+}
+
+.thumbnail .caption-full {
+	padding: 9px;
+	color: #333;
+}
+
+footer {
+	margin: 20px 0;
 }

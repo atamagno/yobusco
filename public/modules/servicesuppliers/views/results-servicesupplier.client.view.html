@@ -1,0 +1,47 @@
+<div class="row" data-ng-controller="ServiceSuppliersController" data-ng-init="getResults()">
+
+    <div class="col-md-3">
+        <p class="lead">Filters</p>
+        <div class="list-group">
+            <a href="#" class="list-group-item">Filter 1</a>
+            <a href="#" class="list-group-item">Filter 2</a>
+            <a href="#" class="list-group-item">Filter 3</a>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+
+        <p class="lead">Service Suppliers</p>
+
+        <div class="list-group">
+            <a data-ng-repeat="servicesupplier in servicesuppliers" data-ng-href="#!/servicesuppliers-detail/{{servicesupplier._id}}" class="list-group-item">
+                <div style="display: flex;">
+                    <img src="http://placehold.it/140x100" alt="">
+
+                    <div style="width: 100%;">
+                        <div style="padding: 0 10px;">
+                            <h4 class="pull-right">$24.99</h4>
+                            <h4 style="color: midnightblue;">{{servicesupplier.name}}</h4>
+                            <p>{{servicesupplier.generalDescription}}</p>
+                        </div>
+                        <div class="ratings">
+                            <p class="pull-right">15 reviews</p>
+                            <p>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="alert alert-warning text-center" data-ng-hide="servicesuppliers.length">
+            No results found.
+        </div>
+    </div>
+
+</div>

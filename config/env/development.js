@@ -3,7 +3,7 @@
 module.exports = {
 
 	app: {
-		title: 'Yo Busco - Development Environment',
+		title: 'Mano de Obra - Development Environment',
 		port: process.env.OPENSHIFT_NODEJS_PORT || 8002,
 		server: process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
 	},
@@ -13,7 +13,7 @@ module.exports = {
 		server: process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1',
 		user: process.env.OPENSHIFT_MONGODB_DB_USERNAME || 'admin',
 		password: process.env.OPENSHIFT_MONGODB_DB_PASSWORD || 'Ge1uvfKuM8cz',
-		database: 'yobusco',
+		database: 'meanapp',
 	},
 
 	mailer: {
@@ -30,7 +30,7 @@ module.exports = {
 	dbConnectionString : function()
 	{
 		// should return 'mongodb://user:password@server:port
-		return 'mongodb://localhost/yobusco';
+		return 'mongodb://localhost/meanapp';
 		//return 'mongodb://' + this.db.user + ':' + this.db.password + '@' + this.db.server + ':' + this.db.port + '/'  + this.db.database
 	}
 };

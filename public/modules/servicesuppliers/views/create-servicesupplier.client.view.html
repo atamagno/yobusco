@@ -1,0 +1,35 @@
+<section data-ng-controller="ServiceSuppliersController" >
+    <div class="page-header">
+        <h1>New Service Supplier</h1>
+    </div>
+    <div class="col-md-12">
+        <form class="form-horizontal" data-ng-submit="create()" novalidate>
+            <fieldset>
+                <div class="form-group">
+                    <label class="control-label" for="name">Name</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="name" id="name" class="form-control" placeholder="Name" required>
+                    </div>
+                    <label class="control-label" for="name">City</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="city" id="city" class="form-control" placeholder="City">
+                    </div>
+                    <label class="control-label" for="phone">Phone</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="phone" id="phone" class="form-control" placeholder="Phone">
+                    </div>
+                    <label class="control-label" for="generalDescription">General Description</label>
+                    <div class="controls">
+                        <textarea name="generalDescription" data-ng-model="generalDescription" id="generalDescription" class="form-control" cols="30" rows="10" placeholder="General Description"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default">
+                </div>
+                <div data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</section>

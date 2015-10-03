@@ -1,0 +1,20 @@
+<section data-ng-controller="ServiceSuppliersController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Service Suppliers</h1>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="servicesupplier in servicesuppliers" data-ng-href="#!/servicesuppliers/{{servicesupplier._id}}" class="list-group-item">
+            <small class="list-group-item-text">
+                Posted on
+                <span data-ng-bind="servicesupplier.created | date:'medium'"></span>
+            </small>
+            <h4 class="list-group-item-heading" data-ng-bind="servicesupplier.name"></h4>
+            <h3 class="list-group-item-heading" data-ng-bind="servicesupplier.city"></h3>
+            <h3 class="list-group-item-heading" data-ng-bind="servicesupplier.phone"></h3>
+            <p class="list-group-item-text" data-ng-bind="servicesupplier.generalDescription"></p>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center">
+        <a href="/#!/servicesuppliers/create">Create service supplier</a>
+    </div>
+</section>
