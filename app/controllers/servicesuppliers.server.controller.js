@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	ServiceSupplier = mongoose.model('ServiceSupplier'),
+	Review = mongoose.model('Review'),
 	_ = require('lodash');
 
 exports.create = function(req, res) {
@@ -32,19 +33,54 @@ exports.update = function(req, res) {
 
 	servicesupplier = _.extend(servicesupplier, req.body);
 
-	servicesupplier.save(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(servicesupplier);
-		}
-	});
+	var comment = req.query.comment;
+	if (comment) {
+
+		var review = new Review();
+		review.comment = comment;
+
+		review.save(function(err) {
+			if (err) {
+				return res.status(400).send({
+					message: errorHandler.getErrorMessage(err)
+				});
+			} else {
+				servicesupplier.reviews.push(review._id);
+				servicesupplier.save(function(err) {
+					if (err) {
+						return res.status(400).send({
+							message: errorHandler.getErrorMessage(err)
+						});
+					} else {
+
+						ServiceSupplier.findById(servicesupplier._id).populate('reviews').exec(function(err, servicesupplier) {
+							if (err) {
+								return res.status(400).send({
+									message: errorHandler.getErrorMessage(err)
+								});
+							} else {
+								res.jsonp(servicesupplier);
+							}
+						});
+					}
+				});
+			}
+		});
+	} else {
+		servicesupplier.save(function(err) {
+			if (err) {
+				return res.status(400).send({
+					message: errorHandler.getErrorMessage(err)
+				});
+			} else {
+				res.jsonp(servicesupplier);
+			}
+		});
+	}
 };
 
 exports.delete = function(req, res) {
-	var servicesupplier = req.servicesupplier ;
+	var servicesupplier = req.servicesupplier;
 
 	servicesupplier.remove(function(err) {
 		if (err) {
@@ -70,7 +106,7 @@ exports.list = function(req, res) {
 };
 
 exports.servicesupplierByID = function(req, res, next, id) {
-	ServiceSupplier.findById(id).populate('user', 'displayName').exec(function(err, servicesupplier) {
+	ServiceSupplier.findById(id).populate('user', 'displayName').populate('reviews').exec(function(err, servicesupplier) {
 		if (err) return next(err);
 		if (!servicesupplier) return next(new Error('Failed to load service supplier ' + id));
 		req.servicesupplier = servicesupplier ;

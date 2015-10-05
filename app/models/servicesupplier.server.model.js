@@ -25,6 +25,10 @@ var ServiceSupplierSchema = new Schema({
 		default: '',
 		trim: true
 	},
+	reviews: [{
+		type: Schema.ObjectId,
+		ref: 'Review'
+	}],
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'

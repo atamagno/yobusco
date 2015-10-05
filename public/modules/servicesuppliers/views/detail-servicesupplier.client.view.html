@@ -19,7 +19,7 @@
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
             </div>
             <div class="ratings">
-                <p class="pull-right">3 reviews</p>
+                <p class="pull-right">{{servicesupplier.reviews.length}} reviews</p>
                 <p>
                     <span class="glyphicon glyphicon-star"></span>
                     <span class="glyphicon glyphicon-star"></span>
@@ -33,13 +33,21 @@
 
         <div class="well">
 
-            <div class="text-right">
-                <a class="btn btn-success">Leave a Review</a>
+            <!--<form class="form-horizontal" data-ng-submit="create()" novalidate>
+                <div class="controls">
+                    <textarea id="review" name="review" data-ng-model="review" class="form-control" cols="30" rows="4" placeholder="Leave a review."></textarea>
+                </div>
+
+                <input type="submit" class="btn btn-default">
+            </form>-->
+
+            <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Leave a review."></textarea>
+
+            <div class="text-right" style="padding: 10px 0 20px 0;">
+                <a data-ng-click="addReview();" class="btn btn-success">Leave a Review</a>
             </div>
 
-            <hr>
-
-            <div class="row">
+            <div class="row" ng-repeat="review in servicesupplier.reviews">
                 <div class="col-md-12">
                     <span class="glyphicon glyphicon-star"></span>
                     <span class="glyphicon glyphicon-star"></span>
@@ -48,11 +56,11 @@
                     <span class="glyphicon glyphicon-star-empty"></span>
                     Anonymous
                     <span class="pull-right">10 days ago</span>
-                    <p>The job done was great in terms of quality. I would definitely call him again!</p>
+                    <p>{{review.comment}}</p>
                 </div>
             </div>
 
-            <hr>
+            <!--<hr>
 
             <div class="row">
                 <div class="col-md-12">
@@ -65,7 +73,7 @@
                     <span class="pull-right">15 days ago</span>
                     <p>I've seen some better than this, but not at this price. I definitely recommend this guy.</p>
                 </div>
-            </div>
+            </div>-->
 
         </div>
 

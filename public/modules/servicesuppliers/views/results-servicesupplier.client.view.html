@@ -18,14 +18,14 @@
                 <div style="display: flex;">
                     <img src="http://placehold.it/140x100" alt="">
 
-                    <div style="width: 100%;">
-                        <div style="padding: 0 10px;">
-                            <h4 class="pull-right">$24.99</h4>
+                    <div style="width: 100%; padding-left: 10px;">
+                        <div style="display: flex; position: relative;">
                             <h4 style="color: midnightblue;">{{servicesupplier.name}}</h4>
-                            <p>{{servicesupplier.generalDescription}}</p>
+                            <h4 style="position: absolute; right: 0;">$24.99</h4>
                         </div>
-                        <div class="ratings">
-                            <p class="pull-right">15 reviews</p>
+                        <p>{{servicesupplier.generalDescription}}</p>
+                        <div style="color: #d17581;">
+                            <p class="pull-right">{{servicesupplier.reviews.length}} reviews</p>
                             <p>
                                 <span class="glyphicon glyphicon-star"></span>
                                 <span class="glyphicon glyphicon-star"></span>
@@ -42,6 +42,7 @@
         <div class="alert alert-warning text-center" data-ng-hide="servicesuppliers.length">
             No results found.
         </div>
+        
     </div>
 
 </div>

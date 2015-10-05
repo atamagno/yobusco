@@ -51,6 +51,19 @@ angular.module('servicesuppliers').controller('ServiceSuppliersController',
             });
         };
 
+        $scope.addReview = function() {
+            if (this.comment) {
+
+                var servicesupplier = $scope.servicesupplier;
+
+                servicesupplier.$update({ comment: this.comment }, function() {
+                    $scope.comment = '';
+                }, function(errorResponse) {
+                    $scope.error = errorResponse.data.message;
+                });
+            }
+        };
+
         $scope.find = function() {
             $scope.servicesuppliers = ServiceSuppliers.query();
         };

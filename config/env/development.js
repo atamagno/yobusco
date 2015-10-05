@@ -30,7 +30,7 @@ module.exports = {
 	dbConnectionString : function()
 	{
 		// should return 'mongodb://user:password@server:port
-		return 'mongodb://localhost/meanapp';
-		//return 'mongodb://' + this.db.user + ':' + this.db.password + '@' + this.db.server + ':' + this.db.port + '/'  + this.db.database
+		//return 'mongodb://localhost/meanapp';
+		return 'mongodb://' + this.db.user + ':' + this.db.password + '@' + this.db.server + ':' + this.db.port + '/'  + this.db.database
 	}
 };
