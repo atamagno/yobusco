@@ -18,10 +18,7 @@ exports.serviceSubcategories = function(req, res)
 
         res.json(serviceSubcategories);
     });
-
 };
-
-
 
 exports.serviceSubcategoriesKeywords = function(req, res)
 {
@@ -39,12 +36,10 @@ exports.serviceSubcategoriesKeywords = function(req, res)
                     return {keyword:keyword, serviceSubcategoryId:serviceSubcategory.id.toString()}
 
                 }));
-
         });
 
         res.json(serviceSubcategoriesKeywords);
     });
-
 };
 
 

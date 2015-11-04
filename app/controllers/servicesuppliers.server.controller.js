@@ -13,7 +13,6 @@ var mongoose = require('mongoose'),
  */
 exports.serviceSuppliersBySubcategory = function(req, res)
 {
-
     ServiceSupplier.find({services: req.params.servicesubcategory}, function(err, serviceSuppliers)
     {
         if(err)  // TODO: how should we handle errors? Just send them back to the client along with a status code?
@@ -21,5 +20,4 @@ exports.serviceSuppliersBySubcategory = function(req, res)
 
         res.json(serviceSuppliers);
     });
-
 };
