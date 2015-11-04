@@ -31,6 +31,14 @@ angular.module('core').service('Menus', [
 			return false;
 		};
 
+		var renderIfAdmin = function(user) {
+			if (user && user.roles.indexOf('admin') !== -1) {
+				return true;
+			}
+
+			return false;
+		};
+
 		// Validate menu existance
 		this.validateMenuExistance = function(menuId) {
 			if (menuId && menuId.length) {
@@ -62,7 +70,8 @@ angular.module('core').service('Menus', [
 				isPublic: isPublic || false,
 				roles: roles || this.defaultRoles,
 				items: [],
-				shouldRender: shouldRender
+				shouldRender: shouldRender,
+				renderIfAdmin: renderIfAdmin,
 			};
 
 			// Return the menu object
