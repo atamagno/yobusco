@@ -15,7 +15,7 @@ module.exports = {
 		lib: {
 			css: [
 				'public/libs/bootstrap/dist/css/bootstrap.css',
-				'public/libs/bootstrap/dist/css/bootstrap-theme.css',
+				'public/libs/bootstrap/dist/css/bootstrap-theme.css'
 			],
 			js: [
 				'public/libs/angular/angular.js',
@@ -30,6 +30,8 @@ module.exports = {
 		js: [
 			'public/config.js',
 			'public/application.js',
+			//'public/modules/api/api.client.module.js', // test to verify if order of modules matters
+			//'public/modules/api/*/*.js',               // due to dependencies...
 			'public/modules/*/*.js',
 			'public/modules/*/*[!tests]*/*.js'
 		]

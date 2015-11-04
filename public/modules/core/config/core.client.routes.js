@@ -10,7 +10,9 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 		$stateProvider.
 		state('home', {
 			url: '/',
-			templateUrl: 'modules/core/views/home.client.view.html'
+			templateUrl: 'modules/servicesuppliers/views/search-servicesupplier.client.view.html',
+			resolve: { ServiceSubcategoriesKeywords: 'ServiceSubcategoriesKeywords' },
+			controller: 'ServiceSuppliersController'
 		});
 	}
 ]);
