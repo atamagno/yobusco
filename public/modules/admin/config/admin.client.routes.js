@@ -5,23 +5,23 @@ angular.module('admin').config(
 	function($stateProvider) {
 
 		$stateProvider.
-			state('adminHome', {
+			state('admin', {
 				url: '/admin',
 				templateUrl: 'modules/admin/views/home.client.view.html',
 			})
-			.state('adminHome.users', {
+			.state('admin.users', {
 				url: '/users',
 				templateUrl: 'modules/admin/views/users.client.view.html',
 			})
-			.state('adminHome.servicesuppliers', {
+			.state('admin.servicesuppliers', {
 				url: '/servicesuppliers',
 				templateUrl: 'modules/admin/views/servicesuppliers.client.view.html',
 			})
-			.state('adminHome.servicecategories', {
+			.state('admin.servicecategories', {
 				url: '/servicecategories',
-				templateUrl: 'modules/admin/views/servicecategories.client.view.html',
+				templateUrl: 'modules/servicecategories/views/list-servicecategories.client.view.html',
 			})
-			.state('adminHome.servicesubcategories', {
+			.state('admin.servicesubcategories', {
 				url: '/servicesubcategories',
 				templateUrl: 'modules/admin/views/servicesubcategories.client.view.html',
 			});
