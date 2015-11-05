@@ -1,9 +1,5 @@
 'use strict';
 
-/**
- * Module dependencies.
- */
-
 module.exports = function(app) {
     // Service Supplier Routes
     var servicesuppliers = require('../../app/controllers/servicesuppliers.server.controller');

@@ -1,0 +1,36 @@
+<section data-ng-controller="ServiceSubcategoriesController" data-ng-init="findOne()">
+    <div class="admin-page-header">
+        <h1>Edit Service Subcategory</h1>
+    </div>
+    <div class="col-md-12">
+        <form class="form-horizontal" data-ng-submit="update()" novalidate>
+            <fieldset>
+                <div class="form-group">
+                    <label class="control-label" for="name">Name</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="servicesubcategory.name" id="name" class="form-control" placeholder="Name" required>
+                    </div>
+                    <label class="control-label" for="abbr">Abbreviation</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="servicesubcategory.abbr" id="abbr" class="form-control" placeholder="Abbreviation" required>
+                    </div>
+                    <label class="control-label" for="keywords">Keywords</label>
+                    <span>(Comma separated values)</span>
+                    <div class="controls">
+                        <textarea name="keywords" data-ng-model="servicesubcategory.keywords" id="keywords" class="form-control" cols="30" rows="5" placeholder="Keywords" required></textarea>
+                    </div>
+                    <label class="control-label">Service Category</label>
+                    <div data-ng-repeat="servicecategory in servicecategories">
+                        <input type="radio" data-ng-model="$parent.servicesubcategory.service_category_id" data-ng-value="servicecategory._id">{{servicecategory.name}}<br>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Update" class="btn btn-default">
+                </div>
+				<div data-ng-show="error" class="text-danger">
+					<strong data-ng-bind="error"></strong>
+				</div>
+            </fieldset>
+        </form>
+    </div>
+</section>

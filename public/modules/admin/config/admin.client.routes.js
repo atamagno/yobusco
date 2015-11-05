@@ -23,6 +23,6 @@ angular.module('admin').config(
 			})
 			.state('admin.servicesubcategories', {
 				url: '/servicesubcategories',
-				templateUrl: 'modules/admin/views/servicesubcategories.client.view.html',
+				templateUrl: 'modules/servicesubcategories/views/list-servicesubcategories.client.view.html',
 			});
 	});

@@ -72,7 +72,7 @@ exports.delete = function(req, res) {
  * List of ServiceCategories
  */
 exports.list = function(req, res) { 
-	ServiceCategory.find().sort('-created').exec(function(err, servicecategories) {
+	ServiceCategory.find().exec(function(err, servicecategories) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

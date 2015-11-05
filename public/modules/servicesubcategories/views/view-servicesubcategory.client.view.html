@@ -1,0 +1,19 @@
+<section data-ng-controller="ServiceSubcategoriesController" data-ng-init="findOne()">
+	<div class="admin-page-header">
+		<h1 data-ng-bind="servicesubcategory.name"></h1>
+	</div>
+	<div class="page-content">
+		<h3 data-ng-bind="servicesubcategory.abbr"></h3>
+	</div>
+	<div class="page-content">
+		<h3 data-ng-bind="servicesubcategory.keywords"></h3>
+	</div>
+	<div class="pull-right">
+		<a class="btn btn-primary" ui-sref="admin.editServiceSubcategory({ servicesubcategoryId: servicesubcategory._id })">
+			<i class="glyphicon glyphicon-edit"></i>
+		</a>
+		<a class="btn btn-primary" data-ng-click="remove();">
+			<i class="glyphicon glyphicon-trash"></i>
+		</a>
+	</div>
+</section>
