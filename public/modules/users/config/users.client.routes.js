@@ -1,7 +1,7 @@
 'use strict';
 
 // Setting up route
-angular.module('users').config(['$stateProvider',
+angular.module('users').config(
 	function($stateProvider) {
 		// Users state routing
 		$stateProvider.
@@ -37,5 +37,4 @@ angular.module('users').config(['$stateProvider',
 			url: '/password/reset/:token',
 			templateUrl: 'modules/users/views/password/reset-password.client.view.html'
 		});
-	}
-]);
+	});

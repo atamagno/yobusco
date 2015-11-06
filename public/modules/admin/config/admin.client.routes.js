@@ -11,7 +11,7 @@ angular.module('admin').config(
 			})
 			.state('admin.users', {
 				url: '/users',
-				templateUrl: 'modules/admin/views/users.client.view.html',
+				templateUrl: 'modules/users/views/list-users.client.view.html',
 			})
 			.state('admin.servicesuppliers', {
 				url: '/servicesuppliers',

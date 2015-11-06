@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication',
+angular.module('users').controller('SettingsController',
 	function($scope, $http, $location, Users, Authentication) {
 		$scope.user = Authentication.user;
 
@@ -67,5 +67,4 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 				$scope.error = response.message;
 			});
 		};
-	}
-]);
+	});

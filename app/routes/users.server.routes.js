@@ -1,13 +1,20 @@
 'use strict';
 
-/**
- * Module dependencies.
- */
-var passport = require('passport');
-
 module.exports = function(app) {
 	// User Routes
 	var users = require('../../app/controllers/users.server.controller');
+
+	// Setting up the users admin api
+	app.route('/users-admin')
+		.get(users.list)
+		.post(users.create);
+
+	app.route('/users-admin/:userForAdminId')
+		.get(users.read)
+		.put(users.update)
+		.delete(users.delete);
+
+	app.param('userForAdminId', users.userForAdminByID);
 
 	// Setting up the users profile api
 	app.route('/users/me').get(users.me);

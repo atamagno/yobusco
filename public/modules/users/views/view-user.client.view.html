@@ -1,0 +1,19 @@
+<section data-ng-controller="UsersAdminController" data-ng-init="findOne()">
+	<div class="admin-page-header">
+		<h1 data-ng-bind="user.displayName"></h1>
+	</div>
+	<div class="page-content">
+		<h3 data-ng-bind="user.email"></h3>
+	</div>
+	<div class="page-content">
+		<h4 data-ng-bind="user.username"></h4>
+	</div>
+	<div class="pull-right">
+		<a class="btn btn-primary" ui-sref="admin.editUser({ userForAdminId: user._id })">
+			<i class="glyphicon glyphicon-edit"></i>
+		</a>
+		<a class="btn btn-primary" data-ng-click="remove();">
+			<i class="glyphicon glyphicon-trash"></i>
+		</a>
+	</div>
+</section>

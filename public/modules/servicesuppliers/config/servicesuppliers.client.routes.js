@@ -1,7 +1,7 @@
 'use strict';
 
 //Setting up route
-angular.module('servicesuppliers').config(['$stateProvider',
+angular.module('servicesuppliers').config(
 	function($stateProvider) {
 		// ServiceSuppliers state routing
 		$stateProvider.
@@ -21,5 +21,4 @@ angular.module('servicesuppliers').config(['$stateProvider',
 				url: '/servicesuppliers/:servicesupplierId/edit',
 				templateUrl: 'modules/servicesuppliers/views/edit-servicesupplier.client.view.html'
 			});
-	}
-]);
+	});

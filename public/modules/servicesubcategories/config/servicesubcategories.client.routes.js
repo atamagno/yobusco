@@ -1,7 +1,7 @@
 'use strict';
 
 //Setting up route
-angular.module('servicesubcategories').config(['$stateProvider',
+angular.module('servicesubcategories').config(
 	function($stateProvider) {
 		// ServiceSubcategories state routing
 		$stateProvider.
@@ -21,5 +21,4 @@ angular.module('servicesubcategories').config(['$stateProvider',
 			url: '/servicesubcategories/:servicesubcategoryId/edit',
 			templateUrl: 'modules/servicesubcategories/views/edit-servicesubcategory.client.view.html'
 		});
-	}
-]);
+	});

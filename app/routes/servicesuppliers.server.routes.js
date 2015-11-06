@@ -2,8 +2,6 @@
 
 module.exports = function(app) {
     // Service Supplier Routes
-    var servicesuppliers = require('../../app/controllers/servicesuppliers.server.controller');
-
     var users = require('../../app/controllers/users.server.controller');
     var servicesuppliers = require('../../app/controllers/servicesuppliers.server.controller');
 
