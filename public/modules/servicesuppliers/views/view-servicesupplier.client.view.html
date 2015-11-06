@@ -1,0 +1,28 @@
+<section data-ng-controller="ServiceSuppliersController" data-ng-init="findOne()">
+	<div class="admin-page-header">
+		<h1 data-ng-bind="servicesupplier.display_name"></h1>
+	</div>
+	<div class="page-content">
+		<h3 data-ng-bind="servicesupplier.phone_number"></h3>
+	</div>
+	<div class="page-content">
+		<h3 data-ng-bind="servicesupplier.email"></h3>
+	</div>
+	<div class="page-content">
+		<h4 data-ng-bind="servicesupplier.description"></h4>
+	</div>
+	<div class="pull-right">
+		<a class="btn btn-primary" ui-sref="admin.editServiceSupplier({ servicesupplierId: servicesupplier._id })">
+			<i class="glyphicon glyphicon-edit"></i>
+		</a>
+		<a class="btn btn-primary" data-ng-click="remove();">
+			<i class="glyphicon glyphicon-trash"></i>
+		</a>
+	</div>
+	<small>
+		<em class="text-muted">
+			Registered on
+			<span data-ng-bind="servicesupplier.registration_date | date:'mediumDate'"></span>
+		</em>
+	</small>
+</section>

@@ -1,7 +1,7 @@
 'use strict';
 
 // ServiceCategories controller
-angular.module('servicecategories').controller('ServiceCategoriesController', ['$scope', '$stateParams', '$state', 'Authentication', 'ServiceCategories',
+angular.module('servicecategories').controller('ServiceCategoriesController',
 	function($scope, $stateParams, $state, Authentication, ServiceCategories) {
 		$scope.authentication = Authentication;
 
@@ -62,5 +62,4 @@ angular.module('servicecategories').controller('ServiceCategoriesController', ['
 				servicecategoryId: $stateParams.servicecategoryId
 			});
 		};
-	}
-]);
+	});

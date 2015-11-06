@@ -1,7 +1,7 @@
 'use strict';
 
 // ServiceSubcategories controller
-angular.module('servicesubcategories').controller('ServiceSubcategoriesController', ['$scope', '$stateParams', '$state', 'Authentication', 'ServiceSubcategories', 'ServiceCategories',
+angular.module('servicesubcategories').controller('ServiceSubcategoriesController',
 	function($scope, $stateParams, $state, Authentication, ServiceSubcategories, ServiceCategories) {
 		$scope.authentication = Authentication;
         $scope.servicecategories = ServiceCategories.query();
@@ -69,5 +69,4 @@ angular.module('servicesubcategories').controller('ServiceSubcategoriesControlle
 				servicesubcategoryId: $stateParams.servicesubcategoryId
 			});
 		};
-	}
-]);
+	});

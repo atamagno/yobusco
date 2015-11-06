@@ -1,7 +1,6 @@
 'use strict';
 
-//Servicesubcategories service used to communicate Servicesubcategories REST endpoints
-angular.module('servicesubcategories').factory('ServiceSubcategories', ['$resource',
+angular.module('servicesubcategories').factory('ServiceSubcategories',
 	function($resource) {
 		return $resource('servicesubcategories/:servicesubcategoryId', { servicesubcategoryId: '@_id'
 		}, {
@@ -9,5 +8,4 @@ angular.module('servicesubcategories').factory('ServiceSubcategories', ['$resour
 				method: 'PUT'
 			}
 		});
-	}
-]);
+	});

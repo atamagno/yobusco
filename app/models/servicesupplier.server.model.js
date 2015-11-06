@@ -10,10 +10,9 @@ var mongoose = require('mongoose'),
  * Service Supplier Schema
  */
 var ServiceSupplierSchema = new Schema({
-    user_id: {
-        type: Schema.Types.ObjectId,
-        trim: true,
-        required: 'Please fill in a user id'
+    user: {
+        type: Schema.ObjectId,
+        ref: 'User'
     },
     display_name: {
         type: String,
@@ -36,16 +35,14 @@ var ServiceSupplierSchema = new Schema({
         type: Date,
         default: Date.now
     },
-
     description: {
         type: String,
         default: ''
     },
     services: {
         type: [Schema.Types.ObjectId],
-        required: 'At least one service subcategory is required'
+        //required: 'At least one service subcategory is required'
     }
-
 });
 
 mongoose.model('ServiceSupplier', ServiceSupplierSchema);

@@ -15,7 +15,7 @@ angular.module('admin').config(
 			})
 			.state('admin.servicesuppliers', {
 				url: '/servicesuppliers',
-				templateUrl: 'modules/admin/views/servicesuppliers.client.view.html',
+				templateUrl: 'modules/servicesuppliers/views/list-servicesuppliers.client.view.html',
 			})
 			.state('admin.servicecategories', {
 				url: '/servicecategories',
