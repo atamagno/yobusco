@@ -2,8 +2,22 @@
 
 // ServiceSuppliers controller
 angular.module('servicesuppliers').controller('ServiceSuppliersController',
-    function($scope, $stateParams, $state, $location, Authentication, ServiceSuppliers) {
+    function($scope, $stateParams, $state, $location, Authentication, ServiceSuppliers, ServiceSubcategories) {
         $scope.authentication = Authentication;
+
+        $scope.getServiceSubcategories = function() {
+            $scope.servicesubcategories = ServiceSubcategories.query();
+            $scope.selectedservicesubcategories = [];
+            $scope.servicesubcategories.$promise.then(function () {
+                $scope.servicesubcategories.forEach(function(service) {
+                    $scope.selectedservicesubcategories.push({
+                        _id: service._id,
+                        name: service.name,
+                        checked: false
+                    });
+                });
+            });
+        };
 
         // Create new ServiceSupplier
         $scope.create = function() {
@@ -13,6 +27,13 @@ angular.module('servicesuppliers').controller('ServiceSuppliersController',
                 phone_number: this.phone_number,
                 email: this.email,
                 description: this.description
+            });
+
+            servicesupplier.services = [];
+            $scope.selectedservicesubcategories.forEach(function(service) {
+                if (service.checked) {
+                    servicesupplier.services.push(service._id);
+                }
             });
 
             // Redirect after save
@@ -50,6 +71,13 @@ angular.module('servicesuppliers').controller('ServiceSuppliersController',
         $scope.update = function() {
             var servicesupplier = $scope.servicesupplier;
 
+            servicesupplier.services = [];
+            $scope.selectedservicesubcategories.forEach(function(service) {
+                if (service.checked) {
+                    servicesupplier.services.push(service._id);
+                }
+            });
+
             servicesupplier.$update(function() {
                 $state.go('admin.viewServiceSupplier', { servicesupplierId: servicesupplier._id});
             }, function(errorResponse) {
@@ -64,8 +92,57 @@ angular.module('servicesuppliers').controller('ServiceSuppliersController',
 
         // Find existing ServiceSupplier
         $scope.findOne = function() {
-            $scope.servicesupplier = ServiceSuppliers.get({
+            ServiceSuppliers.get({
                 servicesupplierId: $stateParams.servicesupplierId
+            }).$promise.then(function(servicesupplier) {
+                    $scope.servicesupplier = servicesupplier;
+
+                    $scope.servicesubcategories = ServiceSubcategories.query();
+                    $scope.selectedservicesubcategories = [];
+                    $scope.servicesubcategories.$promise.then(function () {
+                        $scope.servicesubcategories.forEach(function(service) {
+
+                            var checked = false;
+                            for (var i = 0; i < $scope.servicesupplier.services.length; i++) {
+                                if ($scope.servicesupplier.services[i] === service._id) {
+                                    checked = true;
+                                    break;
+                                }
+                            }
+
+                            $scope.selectedservicesubcategories.push({
+                                _id: service._id,
+                                name: service.name,
+                                checked: checked
+                            });
+                        });
+                    });
+                });
+
+            /*
+            $scope.servicesubcategories = ServiceSubcategories.query();
+            $scope.selectedservicesubcategories = [];
+            $scope.servicesubcategories.$promise.then(function () {
+                $scope.servicesubcategories.forEach(function(service) {
+
+                    var checked = $scope.servicesupplier.services !== null;
+
+                    for (var i = 0; i < $scope.servicesupplier.services.length; i++) {
+                        if ($scope.servicesupplier.services[i]._id === service._id) {
+                            checked = true;
+                            break;
+                        }
+                    }
+
+
+                    $scope.selectedservicesubcategories.push({
+                        _id: service._id,
+                        name: service.name,
+                        checked: checked
+                    });
+                });
             });
+            */
+
         };
     });

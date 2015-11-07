@@ -22,6 +22,10 @@
                     <div class="controls">
                         <textarea name="description" data-ng-model="servicesupplier.description" id="description" class="form-control" cols="30" rows="5" placeholder="Description"></textarea>
                     </div>
+                    <label class="control-label">Service Subcategory</label>
+                    <div data-ng-repeat="servicesubcategory in selectedservicesubcategories">
+                        <input type="checkbox" data-ng-model="servicesubcategory.checked">{{servicesubcategory.name}}<br>
+                    </div>
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Update" class="btn btn-default">

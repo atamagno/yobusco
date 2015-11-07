@@ -4,6 +4,8 @@
 angular.module('users').controller('UsersAdminController',
 	function($scope, $stateParams, $state, Authentication, UsersAdmin) {
 		$scope.authentication = Authentication;
+		$scope.isAdmin = false;
+		$scope.password = '';
 
 		// Create new User
 		$scope.create = function() {
@@ -13,7 +15,8 @@ angular.module('users').controller('UsersAdminController',
 				lastName: this.lastName,
 				email: this.email,
 				username: this.username,
-				password: this.password
+				password: this.password,
+				roles: $scope.isAdmin ? ['admin'] : ['user']
 			});
 
 			// Redirect after save
@@ -26,6 +29,7 @@ angular.module('users').controller('UsersAdminController',
 				$scope.email = '';
 				$scope.username = '';
 				$scope.password = '';
+				$scope.isAdmin = false;
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
@@ -51,6 +55,8 @@ angular.module('users').controller('UsersAdminController',
 		// Update existing User
 		$scope.update = function() {
 			var user = $scope.user;
+			user.roles = $scope.isAdmin ? ['admin'] : ['user'];
+			user.password = $scope.password;
 
 			user.$update(function() {
 				$state.go('admin.viewUser', { userForAdminId: user._id});

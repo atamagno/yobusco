@@ -41,7 +41,7 @@ var ServiceSupplierSchema = new Schema({
     },
     services: {
         type: [Schema.Types.ObjectId],
-        //required: 'At least one service subcategory is required'
+        required: 'At least one service subcategory is required'
     }
 });
 

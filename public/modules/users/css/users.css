@@ -12,3 +12,7 @@
 	right: 10px;
 	position: absolute;
 }
+input[type="checkbox"] {
+	position: relative;
+	top: 2px;
+}
