@@ -2,8 +2,35 @@
 
 // ServiceCategories controller
 angular.module('servicecategories').controller('ServiceCategoriesController',
-	function($scope, $stateParams, $state, Authentication, ServiceCategories) {
+	function($scope, $stateParams, $state, Authentication, ServiceCategories, $modal, Alerts) {
 		$scope.authentication = Authentication;
+		$scope.alerts = Alerts;
+
+		$scope.createModalInstance = function (templateUrl) {
+
+			var modalInstance = $modal.open({
+				templateUrl: templateUrl,
+				controller: 'ServiceCategoryModalInstanceCtrl'
+			});
+
+			return modalInstance;
+		};
+
+		$scope.openDeleteModal = function () {
+
+			var modalInstance = $scope.createModalInstance('deleteServiceCategoryModal');
+			modalInstance.result.then(function () {
+				$scope.remove()
+			});
+		};
+
+		$scope.openEditModal = function () {
+
+			var modalInstance = $scope.createModalInstance('editServiceCategoryModal');
+			modalInstance.result.then(function () {
+				$scope.update()
+			});
+		};
 
 		// Create new ServiceCategory
 		$scope.create = function() {
@@ -14,30 +41,26 @@ angular.module('servicecategories').controller('ServiceCategoriesController',
 
 			// Redirect after save
 			servicecategory.$save(function(response) {
+				Alerts.show('success','Service category successfully created');
 				$state.go('admin.viewServiceCategory', { servicecategoryId: response._id});
 
 				// Clear form fields
 				$scope.name = '';
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
 			});
 		};
 
 		// Remove existing ServiceCategory
-		$scope.remove = function(servicecategory) {
-			if ( servicecategory ) { 
-				servicecategory.$remove();
-
-				for (var i in $scope.servicecategories) {
-					if ($scope.servicecategories [i] === servicecategory) {
-						$scope.servicecategories.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.servicecategory.$remove(function() {
-					$state.go('admin.listServiceCategories');
-				});
-			}
+		$scope.remove = function() {
+			$scope.servicecategory.$remove(function() {
+				Alerts.show('success','Service category successfully deleted');
+				$state.go('admin.listServiceCategories');
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
+			});
 		};
 
 		// Update existing ServiceCategory
@@ -45,9 +68,11 @@ angular.module('servicecategories').controller('ServiceCategoriesController',
 			var servicecategory = $scope.servicecategory;
 
 			servicecategory.$update(function() {
+				Alerts.show('success','Service category successfully updated');
 				$state.go('admin.viewServiceCategory', { servicecategoryId: servicecategory._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
 			});
 		};
 
@@ -63,3 +88,15 @@ angular.module('servicecategories').controller('ServiceCategoriesController',
 			});
 		};
 	});
+
+angular.module('servicecategories').controller('ServiceCategoryModalInstanceCtrl',
+	function ($scope, $modalInstance) {
+
+	$scope.ok = function () {
+		$modalInstance.close();
+	};
+
+	$scope.cancel = function () {
+		$modalInstance.dismiss('cancel');
+	};
+});

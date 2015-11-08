@@ -19,6 +19,7 @@ module.exports = {
 			],
 			js: [
 				'public/libs/angular/angular.js',
+				'public/libs/angular-animate/angular-animate.js',
 				'public/libs/angular-resource/angular-resource.js',
 				'public/libs/angular-ui-router/release/angular-ui-router.js',
 				'public/libs/angular-bootstrap/ui-bootstrap-tpls.js'
@@ -30,8 +31,6 @@ module.exports = {
 		js: [
 			'public/config.js',
 			'public/application.js',
-			//'public/modules/api/api.client.module.js', // test to verify if order of modules matters
-			//'public/modules/api/*/*.js',               // due to dependencies...
 			'public/modules/*/*.js',
 			'public/modules/*/*[!tests]*/*.js'
 		]

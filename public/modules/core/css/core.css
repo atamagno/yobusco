@@ -16,3 +16,11 @@
 .ng-valid.ng-dirty {
 	border-color: #78FA89;
 }
+
+.custom-alert {
+	-webkit-transition:all linear 0.5s;
+	transition:all linear 0.5s;
+}
+.custom-alert.ng-hide {
+	opacity:0;
+}

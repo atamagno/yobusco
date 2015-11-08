@@ -2,9 +2,36 @@
 
 // ServiceSubcategories controller
 angular.module('servicesubcategories').controller('ServiceSubcategoriesController',
-	function($scope, $stateParams, $state, Authentication, ServiceSubcategories, ServiceCategories) {
+	function($scope, $stateParams, $state, Authentication, ServiceSubcategories, ServiceCategories, $modal, Alerts) {
 		$scope.authentication = Authentication;
         $scope.servicecategories = ServiceCategories.query();
+		$scope.alerts = Alerts;
+
+		$scope.createModalInstance = function (templateUrl) {
+
+			var modalInstance = $modal.open({
+				templateUrl: templateUrl,
+				controller: 'ServiceSubcategoryModalInstanceCtrl'
+			});
+
+			return modalInstance;
+		};
+
+		$scope.openDeleteModal = function () {
+
+			var modalInstance = $scope.createModalInstance('deleteServiceSubcategoryModal');
+			modalInstance.result.then(function () {
+				$scope.remove()
+			});
+		};
+
+		$scope.openEditModal = function () {
+
+			var modalInstance = $scope.createModalInstance('editServiceSubcategoryModal');
+			modalInstance.result.then(function () {
+				$scope.update()
+			});
+		};
 
 		// Create new ServiceSubcategory
 		$scope.create = function() {
@@ -18,6 +45,7 @@ angular.module('servicesubcategories').controller('ServiceSubcategoriesControlle
 
 			// Redirect after save
 			servicesubcategory.$save(function(response) {
+				Alerts.show('success','Service subcategory successfully created');
 				$state.go('admin.viewServiceSubcategory', { servicesubcategoryId: response._id});
 
 				// Clear form fields
@@ -27,24 +55,19 @@ angular.module('servicesubcategories').controller('ServiceSubcategoriesControlle
                 $scope.service_category_id = '';
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
 			});
 		};
 
 		// Remove existing ServiceSubcategory
 		$scope.remove = function(servicesubcategory) {
-			if ( servicesubcategory ) { 
-				servicesubcategory.$remove();
-
-				for (var i in $scope.servicesubcategories) {
-					if ($scope.servicesubcategories [i] === servicesubcategory) {
-						$scope.servicesubcategories.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.servicesubcategory.$remove(function() {
-					$state.go('admin.listServiceSubcategories');
-				});
-			}
+			$scope.servicesubcategory.$remove(function() {
+				Alerts.show('success','Service subcategory successfully deleted');
+				$state.go('admin.listServiceSubcategories');
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
+			});
 		};
 
 		// Update existing ServiceSubcategory
@@ -52,9 +75,11 @@ angular.module('servicesubcategories').controller('ServiceSubcategoriesControlle
 			var servicesubcategory = $scope.servicesubcategory;
 
 			servicesubcategory.$update(function() {
+				Alerts.show('success','Service subcategory successfully updated');
 				$state.go('admin.viewServiceSubcategory', { servicesubcategoryId: servicesubcategory._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
 			});
 		};
 
@@ -68,5 +93,17 @@ angular.module('servicesubcategories').controller('ServiceSubcategoriesControlle
 			$scope.servicesubcategory = ServiceSubcategories.get({
 				servicesubcategoryId: $stateParams.servicesubcategoryId
 			});
+		};
+	});
+
+angular.module('servicesubcategories').controller('ServiceSubcategoryModalInstanceCtrl',
+	function ($scope, $modalInstance) {
+
+		$scope.ok = function () {
+			$modalInstance.close();
+		};
+
+		$scope.cancel = function () {
+			$modalInstance.dismiss('cancel');
 		};
 	});
