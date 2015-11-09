@@ -17,4 +17,9 @@ module.exports = function(app) {
 
     // Finish by binding the Servicesupplier middleware
     app.param('servicesupplierId', servicesuppliers.servicesupplierByID);
+
+    app.route('/servicesuppliers-results/:serviceId')
+        .get(servicesuppliers.search);
+
+    app.param('serviceId', servicesuppliers.serviceSuppliersBySubcategory);
 };

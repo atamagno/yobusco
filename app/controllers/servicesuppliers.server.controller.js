@@ -96,18 +96,21 @@ exports.servicesupplierByID = function(req, res, next, id) {
     });
 };
 
-/**
- * Using single controller file for now.
- * Once we add more features for servicesuppliers, we can split in
- * different files just like done in users.server.controller.js
- */
-exports.serviceSuppliersBySubcategory = function(req, res)
-{
-    ServiceSupplier.find({services: req.params.servicesubcategory}, function(err, serviceSuppliers)
-    {
-        if(err)  // TODO: how should we handle errors? Just send them back to the client along with a status code?
-            res.status(500).send(err);
+exports.search = function(req, res) {
+    res.json(req.servicesuppliers);
+};
 
-        res.json(serviceSuppliers);
+exports.serviceSuppliersBySubcategory = function(req, res, next, serviceId) {
+
+    // TODO: need to define sort strategy
+    ServiceSupplier.find({services: serviceId}, function(err, servicesuppliers)
+    {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(servicesuppliers);
+        }
     });
 };

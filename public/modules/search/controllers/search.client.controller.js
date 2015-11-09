@@ -1,19 +1,19 @@
 'use strict';
 
 angular.module('search').controller('SearchController',
-    function($scope, Authentication, ServiceSubcategoriesKeywords) {
+    function($scope, $location, $stateParams, Authentication, ServiceSubcategoriesKeywords, ServiceSuppliersSearch) {
 
         $scope.authentication = Authentication;
         $scope.serviceSubcategoriesKeywords = ServiceSubcategoriesKeywords.query();
 
-        $scope.searchServiceSuppliers = function ($model)
-        {
-            /*
-            ServiceSuppliers.searchBySubcategory($model.serviceSubcategoryId).then(function(serviceSuppliers)
-            {
-                $scope.serviceSuppliers = serviceSuppliers;
-                // TODO: change route to home.results here?
-            })
-             */
+        $scope.navigateToResults = function() {
+            $location.path('servicesuppliers-search/' + $scope.selectedSubcategory.serviceSubcategoryId + '/search');
+        };
+
+        $scope.getResults = function() {
+
+            $scope.servicesuppliers = ServiceSuppliersSearch.query({
+                serviceId: $stateParams.serviceId
+            });
         };
     });

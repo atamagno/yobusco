@@ -1,0 +1,27 @@
+.home-logo {
+    width: 20%;
+    height: 20%
+}
+
+.search-input {
+    width: 80%;
+}
+
+.search-result-container {
+    display: flex;
+}
+
+.search-result-details {
+    width: 100%;
+    padding-left: 10px;
+}
+
+.search-result-display-name {
+    display: flex;
+    position: relative;
+    color: midnightblue;
+}
+
+.search-result-rating-details {
+    color: #d17581;
+}
