@@ -139,3 +139,22 @@ exports.serviceSubcategoriesKeywords = function(req, res)
         res.json(sortedKeywords);
     });
 };
+
+exports.search = function(req, res) {
+    res.json(req.servicesubcategories);
+};
+
+exports.serviceSubcategoriesByServiceCategory = function(req, res, next, serviceCategoryId) {
+
+    // TODO: need to define sort strategy
+    ServiceSubcategory.find({service_category_id: serviceCategoryId}, function(err, servicesubcategories)
+    {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(servicesubcategories);
+        }
+    });
+};
