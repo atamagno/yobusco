@@ -1,7 +1,7 @@
 'use strict';
 
 // ServiceSubcategories controller
-angular.module('servicesubcategories').controller('ServiceSubcategoriesController',
+angular.module('admin').controller('ServiceSubcategoriesController',
 	function($scope, $stateParams, $state, Authentication, ServiceSubcategories, ServiceCategories, $modal, Alerts) {
 		$scope.authentication = Authentication;
         $scope.servicecategories = ServiceCategories.query();
@@ -96,7 +96,7 @@ angular.module('servicesubcategories').controller('ServiceSubcategoriesControlle
 		};
 	});
 
-angular.module('servicesubcategories').controller('ServiceSubcategoryModalInstanceCtrl',
+angular.module('admin').controller('ServiceSubcategoryModalInstanceCtrl',
 	function ($scope, $modalInstance) {
 
 		$scope.ok = function () {

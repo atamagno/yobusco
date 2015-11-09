@@ -42,6 +42,7 @@ exports.update = function(req, res) {
 	var user = req.user ;
 
 	user = _.extend(user , req.body);
+	user.displayName = user.firstName + ' ' + user.lastName;
 
 	user.save(function(err) {
 		if (err) {

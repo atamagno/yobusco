@@ -4,7 +4,7 @@
 	</div>
 	<nav class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation">
 		<ul class="nav navbar-nav" data-ng-if="menu.renderIfAdmin(authentication.user);">
-			<li><a ui-sref="admin.users">Admin</a></li>
+			<li><a ui-sref="admin.listUsers">Admin</a></li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right" data-ng-hide="authentication.user">
 			<li ui-route="/signup" ng-class="{active: $uiRoute}">

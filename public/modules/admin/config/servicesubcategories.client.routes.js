@@ -1,24 +1,24 @@
 'use strict';
 
 //Setting up route
-angular.module('servicesubcategories').config(
+angular.module('admin').config(
 	function($stateProvider) {
 		// ServiceSubcategories state routing
 		$stateProvider.
 		state('admin.listServiceSubcategories', {
 			url: '/servicesubcategories',
-			templateUrl: 'modules/servicesubcategories/views/list-servicesubcategories.client.view.html'
+			templateUrl: 'modules/admin/views/servicesubcategories/list-servicesubcategories.client.view.html'
 		}).
 		state('admin.createServiceSubcategory', {
 			url: '/servicesubcategories/create',
-			templateUrl: 'modules/servicesubcategories/views/create-servicesubcategory.client.view.html'
+			templateUrl: 'modules/admin/views/servicesubcategories/create-servicesubcategory.client.view.html'
 		}).
 		state('admin.viewServiceSubcategory', {
 			url: '/servicesubcategories/:servicesubcategoryId',
-			templateUrl: 'modules/servicesubcategories/views/view-servicesubcategory.client.view.html'
+			templateUrl: 'modules/admin/views/servicesubcategories/view-servicesubcategory.client.view.html'
 		}).
 		state('admin.editServiceSubcategory', {
 			url: '/servicesubcategories/:servicesubcategoryId/edit',
-			templateUrl: 'modules/servicesubcategories/views/edit-servicesubcategory.client.view.html'
+			templateUrl: 'modules/admin/views/servicesubcategories/edit-servicesubcategory.client.view.html'
 		});
 	});

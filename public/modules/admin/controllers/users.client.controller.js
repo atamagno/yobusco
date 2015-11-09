@@ -1,7 +1,7 @@
 'use strict';
 
 // ServiceCategories controller
-angular.module('users').controller('UsersAdminController',
+angular.module('admin').controller('UsersAdminController',
 	function($scope, $stateParams, $state, Authentication, UsersAdmin, $modal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
@@ -103,7 +103,7 @@ angular.module('users').controller('UsersAdminController',
 		};
 	});
 
-angular.module('users').controller('UserModalInstanceCtrl',
+angular.module('admin').controller('UserModalInstanceCtrl',
 	function ($scope, $modalInstance) {
 
 		$scope.ok = function () {

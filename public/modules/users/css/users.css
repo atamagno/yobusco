@@ -12,12 +12,3 @@
 	right: 10px;
 	position: absolute;
 }
-input[type="checkbox"] {
-	position: relative;
-	top: 2px;
-}
-
-input[type="radio"] {
-  position: relative;
-  top: 1px;
-}

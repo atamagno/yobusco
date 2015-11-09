@@ -8,12 +8,4 @@ angular.module('users')
 					method: 'PUT'
 				}
 			});
-		})
-	.factory('UsersAdmin',
-		function($resource) {
-			return $resource('users-admin/:userForAdminId', { userForAdminId: '@_id'}, {
-				update: {
-					method: 'PUT'
-				}
-			});
 		});

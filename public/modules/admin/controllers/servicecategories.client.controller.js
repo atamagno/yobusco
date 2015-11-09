@@ -1,7 +1,7 @@
 'use strict';
 
 // ServiceCategories controller
-angular.module('servicecategories').controller('ServiceCategoriesController',
+angular.module('admin').controller('ServiceCategoriesController',
 	function($scope, $stateParams, $state, Authentication, ServiceCategories, $modal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
@@ -89,7 +89,7 @@ angular.module('servicecategories').controller('ServiceCategoriesController',
 		};
 	});
 
-angular.module('servicecategories').controller('ServiceCategoryModalInstanceCtrl',
+angular.module('admin').controller('ServiceCategoryModalInstanceCtrl',
 	function ($scope, $modalInstance) {
 
 	$scope.ok = function () {
