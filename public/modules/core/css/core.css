@@ -1,6 +1,9 @@
 .content {
 	margin-top: 50px;
 }
+.main-container {
+	padding-top: 15px;
+}
 .undecorated-link:hover {
 	text-decoration: none;
 }
@@ -12,4 +15,12 @@
 }
 .ng-valid.ng-dirty {
 	border-color: #78FA89;
+}
+
+.custom-alert {
+	-webkit-transition:all linear 0.5s;
+	transition:all linear 0.5s;
+}
+.custom-alert.ng-hide {
+	opacity:0;
 }

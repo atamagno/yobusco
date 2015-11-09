@@ -1,21 +1,21 @@
-
 'use strict';
 
-/**
- * Module dependencies.
- */
-
-
 module.exports = function(app) {
-
-    // Static data Routes
     var servicesubcategories = require('../../app/controllers/servicesubcategories.server.controller');
 
-    // Setting up the different routes to get static data.
+    // ServiceSubcategories Routes
+    app.route('/servicesubcategories')
+        .get(servicesubcategories.list)
+        .post(servicesubcategories.create);
 
-    // Service subcategories
-    app.route('/servicesubcategories').get(servicesubcategories.serviceSubcategories);
+    app.route('/servicesubcategories/:servicesubcategoryId')
+        .get(servicesubcategories.read)
+        .put(servicesubcategories.update)
+        .delete(servicesubcategories.delete);
+
+    // Finish by binding the ServiceSubcategories middleware
+    app.param('servicesubcategoryId', servicesubcategories.servicesubcategoryByID);
 
     // Just the keywords associated to each service subcategory
-    app.route('/servicesubcategories/keywords').get(servicesubcategories.serviceSubcategoriesKeywords);
+    app.route('/servicesubcategories-keywords').get(servicesubcategories.serviceSubcategoriesKeywords);
 };

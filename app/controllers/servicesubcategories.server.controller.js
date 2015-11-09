@@ -4,25 +4,114 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-    ServiceSubcategory = mongoose.model('ServiceSubcategory');
+    errorHandler = require('./errors.server.controller'),
+    ServiceSubcategory = mongoose.model('ServiceSubcategory'),
+    ServiceCategory = mongoose.model('ServiceCategory'),
+    _ = require('lodash');
+
+/**
+ * Create a ServiceSubcategory
+ */
+exports.create = function(req, res) {
+    var servicesubcategory = new ServiceSubcategory(req.body);
+
+    // TODO: need to change the way the keywords are populated
+    if (servicesubcategory.keywords && servicesubcategory.keywords.length) {
+        servicesubcategory.keywords = servicesubcategory.keywords[0].split(",");
+    }
+
+    servicesubcategory.save(function(err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(servicesubcategory);
+        }
+    });
+};
+
+/**
+ * Show the current ServiceSubcategory
+ */
+exports.read = function(req, res) {
+    res.jsonp(req.servicesubcategory);
+};
+
+/**
+ * Update a ServiceSubcategory
+ */
+exports.update = function(req, res) {
+    var servicesubcategory = req.servicesubcategory ;
+
+    servicesubcategory = _.extend(servicesubcategory , req.body);
+
+    // TODO: need to change the way the keywords are populated
+    if (servicesubcategory.keywords && servicesubcategory.keywords.length) {
+        servicesubcategory.keywords = servicesubcategory.keywords[0].split(",");
+    }
+
+    servicesubcategory.save(function(err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(servicesubcategory);
+        }
+    });
+};
+
+/**
+ * Delete an ServiceSubcategory
+ */
+exports.delete = function(req, res) {
+    var servicesubcategory = req.servicesubcategory ;
+
+    servicesubcategory.remove(function(err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(servicesubcategory);
+        }
+    });
+};
+
+/**
+ * List of ServiceSubcategories
+ */
+exports.list = function(req, res) {
+    ServiceSubcategory.find().exec(function(err, servicesubcategories) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(servicesubcategories);
+        }
+    });
+};
+
+/**
+ * ServiceSubcategory middleware
+ */
+exports.servicesubcategoryByID = function(req, res, next, id) {
+    ServiceSubcategory.findById(id).exec(function(err, servicesubcategory) {
+        if (err) return next(err);
+        if (! servicesubcategory) return next(new Error('Failed to load Servicesubcategory ' + id));
+        req.servicesubcategory = servicesubcategory ;
+        next();
+    });
+};
 
 // TODO: get data from db on app initialization - and cache the results. Use app.locals / redis for cache?, and return
 // cached results from these route handlers?
 
-exports.serviceSubcategories = function(req, res)
-{
-    ServiceSubcategory.find({},'-keywords', function(err, serviceSubcategories)
-    {
-        if(err)  // TODO: how should we handle errors? Just send them back to the client along with a status code?
-            res.status(500).send(err);
-
-        res.json(serviceSubcategories);
-    });
-};
-
 exports.serviceSubcategoriesKeywords = function(req, res)
 {
-    ServiceSubcategory.find({}, function(err, serviceSubcategories)
+    ServiceSubcategory.find().exec(function(err, serviceSubcategories)
     {
         if(err)  // TODO: how should we handle errors? Just send them back to the client along with a status code?
             res.status(500).send(err);
@@ -34,12 +123,19 @@ exports.serviceSubcategoriesKeywords = function(req, res)
                 serviceSubcategory.keywords.map(function(keyword)
                 {
                     return {keyword:keyword, serviceSubcategoryId:serviceSubcategory.id.toString()}
-
                 }));
         });
 
-        res.json(serviceSubcategoriesKeywords);
+        var sortedKeywords = serviceSubcategoriesKeywords.sort(function(a, b) {
+            if (a.keyword > b.keyword) {
+                return 1;
+            }
+            if (a.keyword < b.keyword) {
+                return -1;
+            }
+            return 0;
+        });
+
+        res.json(sortedKeywords);
     });
 };
-
-

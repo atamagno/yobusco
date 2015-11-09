@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('servicesuppliers').controller('ServiceSuppliersController',
+angular.module('search').controller('SearchController',
     function($scope, Authentication, ServiceSubcategoriesKeywords) {
 
         $scope.authentication = Authentication;
-        $scope.serviceSubcategoriesKeywords = ServiceSubcategoriesKeywords;
+        $scope.serviceSubcategoriesKeywords = ServiceSubcategoriesKeywords.query();
 
         $scope.searchServiceSuppliers = function ($model)
         {
@@ -14,6 +14,6 @@ angular.module('servicesuppliers').controller('ServiceSuppliersController',
                 $scope.serviceSuppliers = serviceSuppliers;
                 // TODO: change route to home.results here?
             })
-            */
+             */
         };
     });

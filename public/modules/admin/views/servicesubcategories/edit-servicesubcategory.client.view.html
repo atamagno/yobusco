@@ -1,0 +1,48 @@
+<section data-ng-controller="ServiceSubcategoriesController" data-ng-init="findOne()">
+    <div class="admin-page-header">
+        <h1>Edit Service Subcategory</h1>
+    </div>
+    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+    <div class="col-md-12">
+        <form class="form-horizontal" data-ng-submit="openEditModal()" novalidate>
+            <fieldset>
+                <div class="form-group">
+                    <label class="control-label" for="name">Name</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="servicesubcategory.name" id="name" class="form-control" placeholder="Name" required>
+                    </div>
+                    <label class="control-label" for="abbr">Abbreviation</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="servicesubcategory.abbr" id="abbr" class="form-control" placeholder="Abbreviation" required>
+                    </div>
+                    <label class="control-label" for="keywords">Keywords</label>
+                    <span>(Comma separated values)</span>
+                    <div class="controls">
+                        <textarea name="keywords" data-ng-model="servicesubcategory.keywords" id="keywords" class="form-control" cols="30" rows="5" placeholder="Keywords" required></textarea>
+                    </div>
+                    <label class="control-label">Service Category</label>
+                    <div data-ng-repeat="servicecategory in servicecategories">
+                        <input type="radio" data-ng-model="$parent.servicesubcategory.service_category_id" data-ng-value="servicecategory._id">{{servicecategory.name}}<br>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Update" class="btn btn-default">
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <script type="text/ng-template" id="editServiceSubcategoryModal">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Service Subcategory</h3>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to update this service subcategory?
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+</section>

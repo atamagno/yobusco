@@ -1,0 +1,20 @@
+<section data-ng-controller="ServiceSuppliersController" data-ng-init="find()">
+    <div class="admin-page-header">
+        <h1>Service Suppliers</h1>
+    </div>
+    <div class="alert alert-warning text-center">
+        <a ui-sref="admin.createServiceSupplier">Create Service Supplier</a>
+    </div>
+
+    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+
+    <div class="list-group">
+        <a data-ng-repeat="servicesupplier in servicesuppliers" ui-sref="admin.viewServiceSupplier({ servicesupplierId: servicesupplier._id })" class="list-group-item">
+			<small class="list-group-item-text">
+				Registered on
+				<span data-ng-bind="servicesupplier.registration_date | date:'medium'"></span>
+			</small>
+			<h4 data-ng-bind="servicesupplier.display_name"></h4>
+        </a>
+    </div>
+</section>
