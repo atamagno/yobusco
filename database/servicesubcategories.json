@@ -1,0 +1,26 @@
+{ 
+    "_id" : ObjectId("5626924f477f11b0b2a6dd8d"), 
+    "name" : "Albañilería", 
+    "abbr" : "ALB", 
+    "service_category_id" : ObjectId("56269183477f11b0b2a6dd88"), 
+    "keywords" : [
+        "albañil", 
+        "revoque fino", 
+        "revoque grueso", 
+        "pared", 
+        "mampostería"
+    ]
+}
+{ 
+    "_id" : ObjectId("562e3d3c477f0817f38d3069"),
+    "abbr": "PIN", 
+    "name" : "Pintura", 
+    "service_category_id" : ObjectId("56269183477f11b0b2a6dd88"),
+    "keywords" : [
+        "latex", 
+        "pintura exterior", 
+        "pintura interior", 
+        "revear", 
+        "enduido"
+    ]
+}
