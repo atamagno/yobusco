@@ -8,10 +8,10 @@ angular.module('search').controller('SearchController',
         $scope.serviceCategories = ServiceCategories.query();
         $scope.dropDownDisabled = true;
         $scope.selectedCategory = 'Service Categories';
-        $scope.selectedSubCategory = 'Services';
+        $scope.selectedSubCategoryName = 'Services';
 
         $scope.navigateToResults = function() {
-            $location.path('servicesuppliers-search/' + $scope.selectedSubcategory.serviceSubcategoryId + '/search');
+            $location.path('servicesuppliers-search/' + $scope.selectedKeyword.serviceSubcategoryId + '/search');
         };
 
         $scope.getResults = function() {
@@ -32,6 +32,13 @@ angular.module('search').controller('SearchController',
         }
 
         $scope.selectSubCategory = function(serviceSubCategory) {
-            $scope.selectedSubCategory = serviceSubCategory.name;
+            $scope.selectedSubCategoryName = serviceSubCategory.name;
+            $scope.selectedSubCategory = serviceSubCategory;
         }
+
+        $scope.advancedSearchNavigateToResults = function() {
+            if ($scope.selectedSubCategory) {
+                $location.path('servicesuppliers-search/' + $scope.selectedSubCategory._id + '/search');
+            }
+        };
     });

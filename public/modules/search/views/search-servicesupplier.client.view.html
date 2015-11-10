@@ -5,7 +5,7 @@
     <p class="text-center">Conectando consumidores y proveedores de servicios en construccion</p>
     <form role="form">
         <div class="form-group search-input">
-            <input type="text" class="form-control center-block" data-ng-model="selectedSubcategory"
+            <input type="text" class="form-control center-block" data-ng-model="selectedKeyword"
                    data-ng-keypress="$event.keyCode == 13 && navigateToResults()"
                    typeahead="serviceSubcategoryKeyword as serviceSubcategoryKeyword.keyword for serviceSubcategoryKeyword in serviceSubcategoriesKeywords | filter:$viewValue"
                    placeholder="Ingresa el rubro que buscas." />
@@ -29,7 +29,7 @@
 
                 <div class="btn-group" dropdown>
                     <button type="button" class="btn btn-default dropdown-toggle" ng-disabled="dropDownDisabled">
-                        {{selectedSubCategory}} <span class="caret"></span>
+                        {{selectedSubCategoryName}} <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
                         <li data-ng-repeat="servicesubcategory in serviceSubcategories">
@@ -38,7 +38,7 @@
                     </ul>
                 </div>
 
-                <button class="btn btn-large btn-primary search-button">Search</button>
+                <button class="btn btn-large btn-primary search-button" data-ng-click="advancedSearchNavigateToResults()">Search</button>
             </div>
         </div>
     </form>
