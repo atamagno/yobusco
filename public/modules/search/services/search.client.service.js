@@ -14,4 +14,10 @@ angular.module('search')
             return $resource('servicesuppliers-results/:serviceId', {
                 serviceId: '@_id'
             });
+        })
+    .factory('ServiceSubcategoriesSearch',
+        function($resource) {
+            return $resource('servicesubcategories-by-servicecategory/:serviceCategoryId', {
+                serviceCategoryId: '@_id'
+            });
         });

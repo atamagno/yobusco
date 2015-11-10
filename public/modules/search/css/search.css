@@ -5,6 +5,37 @@
 
 .search-input {
     width: 80%;
+    margin: 0 auto;
+}
+
+.advanced-search-link-container {
+    width: 100%;
+    position: relative;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.advanced-search-link {
+    position: absolute;
+    right: 0;
+    padding: 5px 5px 0 0;
+}
+
+.filters-container {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 25px;
+    position: relative;
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+.search-button {
+    position: absolute;
+    margin-right: 24px;
+    right: 0;
 }
 
 .search-result-container {
