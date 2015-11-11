@@ -1,4 +1,4 @@
-<div class="jumbotron" data-ng-controller="SearchController">
+<div class="jumbotron" data-ng-controller="SuppliersSearchController">
     <h1 class="text-center">Mano de Obra</h1>
     <img src="/modules/search/img/logo.jpg" class="img-responsive center-block home-logo" />
     <br>
@@ -6,7 +6,7 @@
     <form role="form">
         <div class="form-group search-input">
             <input type="text" class="form-control center-block" data-ng-model="selectedKeyword"
-                   data-ng-keypress="$event.keyCode == 13 && navigateToResults()"
+                   data-ng-keypress="$event.keyCode == 13 && navigateToResultsFromKeywordSearch()"
                    typeahead="serviceSubcategoryKeyword as serviceSubcategoryKeyword.keyword for serviceSubcategoryKeyword in serviceSubcategoriesKeywords | filter:$viewValue"
                    placeholder="Ingresa el rubro que buscas." />
             <div class="advanced-search-link-container">
@@ -38,7 +38,7 @@
                     </ul>
                 </div>
 
-                <button class="btn btn-large btn-primary search-button" data-ng-click="advancedSearchNavigateToResults()">Search</button>
+                <button class="btn btn-large btn-primary search-button" data-ng-click="navigateToResultsFromAdvancedSearch()">Search</button>
             </div>
         </div>
     </form>

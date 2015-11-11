@@ -96,21 +96,45 @@ exports.servicesupplierByID = function(req, res, next, id) {
     });
 };
 
-exports.search = function(req, res) {
-    res.json(req.servicesuppliers);
-};
+exports.serviceSuppliersBySubcategory = function(req, res) {
 
-exports.serviceSuppliersBySubcategory = function(req, res, next, serviceId) {
+    var currentPage = req.params.currentPage;
+    var itemsPerPage = req.params.itemsPerPage;
+    var serviceId = req.params.serviceId;
 
-    // TODO: need to define sort strategy
-    ServiceSupplier.find({services: serviceId}, function(err, servicesuppliers)
-    {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            res.jsonp(servicesuppliers);
-        }
-    });
+    // TODO: add more validation to query string parameters here.
+    if (currentPage && itemsPerPage) {
+        currentPage = parseInt(currentPage);
+        itemsPerPage = parseInt(itemsPerPage);
+        var startIndex = (currentPage - 1) * itemsPerPage;
+        var endIndex = startIndex + itemsPerPage;
+
+        var response = {};
+        ServiceSupplier.count({ services: serviceId }, function (err, count) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+
+                response.totalItems = count;
+                // TODO: need to define sort strategy
+                ServiceSupplier.find({ services: serviceId }, {}, { skip: startIndex, limit: endIndex }, function(err, servicesuppliers) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getErrorMessage(err)
+                        });
+                    } else {
+                        response.servicesuppliers = servicesuppliers;
+                        res.jsonp(response);
+                    }
+                });
+            }
+        });
+
+    } else {
+        return res.status(400).send({
+            message: errorHandler.getErrorMessage(err)
+        });
+    }
 };

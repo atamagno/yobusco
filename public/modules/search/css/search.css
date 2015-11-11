@@ -56,3 +56,7 @@
 .search-result-rating-details {
     color: #d17581;
 }
+
+.pagination-container {
+    text-align: center;
+}

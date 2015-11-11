@@ -11,9 +11,9 @@ angular.module('search')
         })
     .factory('ServiceSuppliersSearch',
         function($resource) {
-            return $resource('servicesuppliers-results/:serviceId', {
-                serviceId: '@_id'
-            });
+            return $resource('servicesuppliers-results/:serviceId/:currentPage/:itemsPerPage', null, {
+                    'query':  { method: 'GET', isArray: false }
+                });
         })
     .factory('ServiceSubcategoriesSearch',
         function($resource) {

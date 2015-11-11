@@ -12,23 +12,31 @@
 </head>
 
 <body class="ng-cloak">
-	<header data-ng-include="'/modules/core/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse"></header>
-	<section class="content">
-		<section class="container main-container">
-			{% block content %}{% endblock %}
-		</section>
-	</section>
 
-	<div class="container">
-		<hr>
-		<!-- Footer -->
-		<footer>
-			<div class="row">
-				<div class="col-lg-12">
-					<p>Copyright &copy; Mano de Obra 2015</p>
-				</div>
+	<div class="main-container">
+
+		<div class="header-container">
+			<header data-ng-include="'/modules/core/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse"></header>
+		</div>
+
+		<div class="body-container">
+			<section class="container">
+				{% block content %}{% endblock %}
+			</section>
+		</div>
+
+		<div class="footer-container">
+			<div class="container">
+				<hr>
+				<footer>
+					<div class="row">
+						<div class="col-lg-12">
+							<p>Copyright &copy; Mano de Obra 2015</p>
+						</div>
+					</div>
+				</footer>
 			</div>
-		</footer>
+		</div>
 	</div>
 
 	<!--Embedding The User Object-->
