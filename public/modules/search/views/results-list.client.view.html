@@ -1,11 +1,16 @@
 <div data-ng-controller="SuppliersResultsController" data-ng-init="getResults()">
     <p class="lead">Service Suppliers</p>
 
-    <div data-ng-show="totalItems !== 0 && !showList" style="text-align: center; padding: 60px 0;">
-        <img src="/modules/core/img/loaders/loader.gif"/>
+
+    <div data-ng-show="totalItems !== 0 && !showList" class="loading-container">
+        <img class="loading-img" src="/modules/core/img/loaders/loader.gif"/>
+        <div>Loading service suppliers...</div>
     </div>
 
     <div id="resultsContainer" data-ng-show="showList">
+        <div>
+            Items: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + servicesuppliers.length}} of {{totalItems}}
+        </div>
         <div class="list-group">
             <a data-ng-repeat="servicesupplier in servicesuppliers" data-ng-href="#!/servicesuppliers-detail/{{servicesupplier._id}}" class="list-group-item">
                 <div class="search-result-container">

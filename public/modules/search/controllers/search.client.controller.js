@@ -11,7 +11,7 @@ angular.module('search').controller('SuppliersSearchController',
         $scope.selectedSubCategoryName = 'Services';
 
         $scope.currentPage = 1;
-        $scope.itemsPerPage = 2;
+        $scope.itemsPerPage = 5;
 
         $scope.navigateToResultsFromKeywordSearch = function() {
             if ($scope.selectedKeyword && $scope.selectedKeyword.serviceSubcategoryId) {

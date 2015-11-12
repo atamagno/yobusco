@@ -8,7 +8,7 @@ angular.module('search').controller('SuppliersResultsController',
 
         // TODO: we need to increment this number, maybe between 10-20?
         // We keep it low for now just for testing purposes due to the few suppliers in the data base.
-        $scope.itemsPerPage = 2;
+        $scope.itemsPerPage = 5;
         $scope.maxPages = 5;
         $scope.showList = false;
 

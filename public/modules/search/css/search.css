@@ -38,6 +38,15 @@
     right: 0;
 }
 
+.loading-container {
+    text-align: center;
+    padding: 60px 0;
+}
+
+.loading-img {
+    padding-bottom: 20px;
+}
+
 .search-result-container {
     display: flex;
 }

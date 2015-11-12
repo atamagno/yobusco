@@ -107,7 +107,6 @@ exports.serviceSuppliersBySubcategory = function(req, res) {
         currentPage = parseInt(currentPage);
         itemsPerPage = parseInt(itemsPerPage);
         var startIndex = (currentPage - 1) * itemsPerPage;
-        var endIndex = startIndex + itemsPerPage;
 
         var response = {};
         ServiceSupplier.count({ services: serviceId }, function (err, count) {
@@ -119,7 +118,7 @@ exports.serviceSuppliersBySubcategory = function(req, res) {
 
                 response.totalItems = count;
                 // TODO: need to define sort strategy
-                ServiceSupplier.find({ services: serviceId }, {}, { skip: startIndex, limit: endIndex }, function(err, servicesuppliers) {
+                ServiceSupplier.find({ services: serviceId }, {}, { skip: startIndex, limit: itemsPerPage }, function(err, servicesuppliers) {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getErrorMessage(err)
