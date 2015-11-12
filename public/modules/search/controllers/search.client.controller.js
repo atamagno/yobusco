@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('search').controller('SearchController',
-    function($scope, $location, $stateParams, Authentication, ServiceSubcategoriesKeywords, ServiceCategories, ServiceSuppliersSearch, ServiceSubcategoriesSearch) {
+angular.module('search').controller('SuppliersSearchController',
+    function($scope, $state, Authentication, ServiceSubcategoriesKeywords, ServiceCategories, ServiceSubcategoriesSearch) {
 
         $scope.authentication = Authentication;
         $scope.serviceSubcategoriesKeywords = ServiceSubcategoriesKeywords.query();
@@ -10,14 +10,28 @@ angular.module('search').controller('SearchController',
         $scope.selectedCategory = 'Service Categories';
         $scope.selectedSubCategoryName = 'Services';
 
-        $scope.navigateToResults = function() {
-            $location.path('servicesuppliers-search/' + $scope.selectedKeyword.serviceSubcategoryId + '/search');
+        $scope.currentPage = 1;
+        $scope.itemsPerPage = 5;
+
+        $scope.navigateToResultsFromKeywordSearch = function() {
+            if ($scope.selectedKeyword && $scope.selectedKeyword.serviceSubcategoryId) {
+                $scope.serviceSubcategoryId = $scope.selectedKeyword.serviceSubcategoryId;
+                $scope.navigateToResults();
+            }
         };
 
-        $scope.getResults = function() {
+        $scope.navigateToResultsFromAdvancedSearch = function() {
+            if ($scope.selectedSubCategory && $scope.selectedSubCategory._id) {
+                $scope.serviceSubcategoryId = $scope.selectedSubCategory._id;
+                $scope.navigateToResults();
+            }
+        };
 
-            $scope.servicesuppliers = ServiceSuppliersSearch.query({
-                serviceId: $stateParams.serviceId
+        $scope.navigateToResults = function() {
+            $state.go('resultsServiceSupplier.list', {
+                serviceId: $scope.serviceSubcategoryId,
+                currentPage: $scope.currentPage,
+                itemsPerPage: $scope.itemsPerPage
             });
         };
 
@@ -35,10 +49,4 @@ angular.module('search').controller('SearchController',
             $scope.selectedSubCategoryName = serviceSubCategory.name;
             $scope.selectedSubCategory = serviceSubCategory;
         }
-
-        $scope.advancedSearchNavigateToResults = function() {
-            if ($scope.selectedSubCategory) {
-                $location.path('servicesuppliers-search/' + $scope.selectedSubCategory._id + '/search');
-            }
-        };
     });

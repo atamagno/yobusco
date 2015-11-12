@@ -1,4 +1,4 @@
-<div class="row" data-ng-controller="SearchController" data-ng-init="getResults()">
+<div class="row">
 
     <div class="col-md-3">
         <p class="lead">Filters</p>
@@ -8,36 +8,7 @@
             <a href="#" class="list-group-item">Filter 3</a>
         </div>
     </div>
-
     <div class="col-md-9">
-
-        <p class="lead">Service Suppliers</p>
-
-        <div class="list-group">
-            <a data-ng-repeat="servicesupplier in servicesuppliers" data-ng-href="#!/servicesuppliers-detail/{{servicesupplier._id}}" class="list-group-item">
-                <div class="search-result-container">
-                    <img src="http://placehold.it/140x100" alt="">
-
-                    <div class="search-result-details">
-                        <div class="search-result-display-name">
-                            <h4>{{servicesupplier.display_name}}</h4>
-                        </div>
-                        <p>{{servicesupplier.description}}</p>
-                        <div class="search-result-rating-details">
-                            <p class="pull-right">0 reviews</p>
-                            <p>
-                                <rating ng-model="servicesupplier.overall_rating" max="5" readonly="true"></rating>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="alert alert-warning text-center" data-ng-hide="servicesuppliers.length">
-            No results found.
-        </div>
-        
+        <section data-ui-view></section>
     </div>
-
 </div>
