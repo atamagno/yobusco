@@ -1,5 +1,5 @@
 { 
-    "_id" : ObjectId("563a15959c77c494207a04a5"), 
+    "_id" : ObjectId("564e5a0cdcea1d4c0e61bdc8"),
     "salt" : "l\u0015����\u0011���\fm�侃", 
     "displayName" : "Test User", 
     "provider" : "local", 
@@ -29,4 +29,20 @@
     "lastName" : "User", 
     "firstName" : "Admin", 
     "__v" : NumberInt(0)
+}
+{
+    "_id" : ObjectId("563a15959c77c494207a04a5"),
+    "salt" : "(c emS�4\t�A�lg��",
+    "displayName" : "Service Supplier",
+    "provider" : "local",
+    "username" : "service",
+    "created" : ISODate("2015-11-19T23:23:56.849+0000"),
+    "roles" : [
+
+    ],
+    "password" : "V6slsIMF6MzOPdODRNqcYKQD7HqpdbJTOPBnpuN50kUq6KqbNdm5wAkzeBOjxfSbO2VMy4eNEMaWWVyVNL/xpg==",
+    "email" : "servicesupplier@mail.com",
+    "lastName" : "Supplier",
+    "firstName" : "Service",
+    "__v" : NumberInt(3)
 }

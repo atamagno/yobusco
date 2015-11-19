@@ -3,6 +3,9 @@
 		<a href="/#!/" class="navbar-brand">Mano de Obra</a>
 	</div>
 	<nav class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation">
+		<ul class="nav navbar-nav">
+			<li><a ui-sref="jobs.list">My Jobs</a></li>
+		</ul>
 		<ul class="nav navbar-nav" data-ng-if="menu.renderIfAdmin(authentication.user);">
 			<li><a ui-sref="admin.listUsers({ currentPage: 1, itemsPerPage: 5 })">Admin</a></li>
 		</ul>

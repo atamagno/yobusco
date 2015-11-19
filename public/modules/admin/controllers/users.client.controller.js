@@ -5,7 +5,7 @@ angular.module('admin').controller('UsersAdminController',
 	function($scope, $stateParams, $state, Authentication, UsersAdmin, $modal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
-		$scope.isAdmin = false;
+		$scope.roles = [];
 		$scope.password = '';
 
 		$scope.createModalInstance = function (templateUrl) {
@@ -43,7 +43,7 @@ angular.module('admin').controller('UsersAdminController',
 				email: this.email,
 				username: this.username,
 				password: this.password,
-				roles: $scope.isAdmin ? ['admin'] : ['user']
+				roles: this.roles
 			});
 
 			// Redirect after save
@@ -57,7 +57,7 @@ angular.module('admin').controller('UsersAdminController',
 				$scope.email = '';
 				$scope.username = '';
 				$scope.password = '';
-				$scope.isAdmin = false;
+				$scope.roles = [];
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger',$scope.error);
@@ -79,7 +79,7 @@ angular.module('admin').controller('UsersAdminController',
 		// Update existing User
 		$scope.update = function() {
 			var user = $scope.user;
-			user.roles = $scope.isAdmin ? ['admin'] : ['user'];
+			user.roles = $scope.roles;
 			user.password = $scope.password;
 
 			user.$update(function() {
