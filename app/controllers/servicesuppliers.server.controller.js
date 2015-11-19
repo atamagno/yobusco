@@ -96,7 +96,7 @@ exports.servicesupplierByID = function(req, res, next, id) {
     });
 };
 
-exports.serviceSuppliersBySubcategory = function(req, res) {
+exports.listByPage = function(req, res) {
 
     var currentPage = req.params.currentPage;
     var itemsPerPage = req.params.itemsPerPage;
@@ -109,7 +109,8 @@ exports.serviceSuppliersBySubcategory = function(req, res) {
         var startIndex = (currentPage - 1) * itemsPerPage;
 
         var response = {};
-        ServiceSupplier.count({ services: serviceId }, function (err, count) {
+        var query = serviceId ? { services: serviceId } : {};
+        ServiceSupplier.count(query, function (err, count) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
@@ -118,7 +119,7 @@ exports.serviceSuppliersBySubcategory = function(req, res) {
 
                 response.totalItems = count;
                 // TODO: need to define sort strategy
-                ServiceSupplier.find({ services: serviceId }, {}, { skip: startIndex, limit: itemsPerPage }, function(err, servicesuppliers) {
+                ServiceSupplier.find(query, {}, { skip: startIndex, limit: itemsPerPage }, function(err, servicesuppliers) {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getErrorMessage(err)

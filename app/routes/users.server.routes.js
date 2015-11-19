@@ -14,6 +14,8 @@ module.exports = function(app) {
 		.put(users.update)
 		.delete(users.delete);
 
+	app.route('/users-admin/:currentPage/:itemsPerPage').get(users.listByPage);
+
 	app.param('userForAdminId', users.userForAdminByID);
 
 	// Setting up the users profile api

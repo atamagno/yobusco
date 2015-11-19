@@ -6,7 +6,7 @@ angular.module('admin').config(
 		// ServiceCategories state routing
 		$stateProvider.
 		state('admin.listServiceCategories', {
-			url: '/servicecategories',
+			url: '/servicecategories/list/:currentPage/:itemsPerPage',
 			templateUrl: 'modules/admin/views/servicecategories/list-servicecategories.client.view.html'
 		}).
 		state('admin.createServiceCategory', {

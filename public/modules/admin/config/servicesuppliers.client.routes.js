@@ -6,7 +6,7 @@ angular.module('admin').config(
 		// ServiceSuppliers state routing
 		$stateProvider.
 			state('admin.listServiceSuppliers', {
-				url: '/servicesuppliers',
+				url: '/servicesuppliers/list/:currentPage/:itemsPerPage',
 				templateUrl: 'modules/admin/views/servicesuppliers/list-servicesuppliers.client.view.html'
 			}).
 			state('admin.createServiceSupplier', {

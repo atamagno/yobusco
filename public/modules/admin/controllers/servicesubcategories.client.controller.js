@@ -2,7 +2,7 @@
 
 // ServiceSubcategories controller
 angular.module('admin').controller('ServiceSubcategoriesController',
-	function($scope, $stateParams, $state, Authentication, ServiceSubcategories, ServiceCategories, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, ServiceSubcategoriesAdmin, ServiceCategories, $modal, Alerts) {
 		$scope.authentication = Authentication;
         $scope.servicecategories = ServiceCategories.query();
 		$scope.alerts = Alerts;
@@ -36,7 +36,7 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 		// Create new ServiceSubcategory
 		$scope.create = function() {
 			// Create new ServiceSubcategory object
-			var servicesubcategory = new ServiceSubcategories ({
+			var servicesubcategory = new ServiceSubcategoriesAdmin ({
 				name: this.name,
 				abbr: this.abbr,
 				keywords: this.keywords,
@@ -63,7 +63,8 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 		$scope.remove = function(servicesubcategory) {
 			$scope.servicesubcategory.$remove(function() {
 				Alerts.show('success','Service subcategory successfully deleted');
-				$state.go('admin.listServiceSubcategories');
+				$scope.currentPage = 1;
+				$scope.navigateToPage();
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger',$scope.error);
@@ -83,14 +84,33 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 			});
 		};
 
+		$scope.itemsPerPage = 5;
+		$scope.maxPages = 5;
+		$scope.showList = false;
+
+		$scope.navigateToPage = function() {
+			$state.go('admin.listServiceSubcategories', {
+				currentPage: $scope.currentPage,
+				itemsPerPage: $scope.itemsPerPage
+			});
+		};
+
 		// Find a list of ServiceSubcategories
 		$scope.find = function() {
-			$scope.servicesubcategories = ServiceSubcategories.query();
+			$scope.servicesubcategories = ServiceSubcategoriesAdmin.query({
+				currentPage: $stateParams.currentPage,
+				itemsPerPage: $stateParams.itemsPerPage
+			}).$promise.then(function (response) {
+					$scope.currentPage = $stateParams.currentPage;
+					$scope.totalItems = response.totalItems;
+					$scope.servicesubcategories = response.servicesubcategories;
+					$scope.showList = $scope.totalItems > 0;
+				});
 		};
 
 		// Find existing ServiceSubcategory
 		$scope.findOne = function() {
-			$scope.servicesubcategory = ServiceSubcategories.get({
+			$scope.servicesubcategory = ServiceSubcategoriesAdmin.get({
 				servicesubcategoryId: $stateParams.servicesubcategoryId
 			});
 		};

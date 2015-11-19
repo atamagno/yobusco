@@ -2,7 +2,7 @@
 
 // ServiceSuppliers controller
 angular.module('admin').controller('ServiceSuppliersController',
-    function($scope, $stateParams, $state, $location, Authentication, ServiceSuppliers, ServiceSubcategories, $modal, Alerts) {
+    function($scope, $stateParams, $state, $location, Authentication, ServiceSuppliersAdmin, ServiceSubcategories, $modal, Alerts) {
         $scope.authentication = Authentication;
         $scope.alerts = Alerts;
 
@@ -49,7 +49,7 @@ angular.module('admin').controller('ServiceSuppliersController',
         // Create new ServiceSupplier
         $scope.create = function() {
             // Create new ServiceSupplier object
-            var servicesupplier = new ServiceSuppliers ({
+            var servicesupplier = new ServiceSuppliersAdmin ({
                 display_name: this.display_name,
                 phone_number: this.phone_number,
                 email: this.email,
@@ -83,7 +83,8 @@ angular.module('admin').controller('ServiceSuppliersController',
         $scope.remove = function(servicesupplier) {
             $scope.servicesupplier.$remove(function() {
                 Alerts.show('success','Service supplier successfully deleted');
-                $state.go('admin.listServiceSuppliers');
+                $scope.currentPage = 1;
+                $scope.navigateToPage();
             }, function(errorResponse) {
                 $scope.error = errorResponse.data.message;
                 Alerts.show('danger',$scope.error);
@@ -110,14 +111,34 @@ angular.module('admin').controller('ServiceSuppliersController',
             });
         };
 
+        $scope.itemsPerPage = 5;
+        $scope.maxPages = 5;
+        $scope.showList = false;
+
+        $scope.navigateToPage = function() {
+            $state.go('admin.listServiceSuppliers', {
+                currentPage: $scope.currentPage,
+                itemsPerPage: $scope.itemsPerPage
+            });
+        };
+
         // Find a list of ServiceSuppliers
         $scope.find = function() {
-            $scope.servicesuppliers = ServiceSuppliers.query();
+
+            $scope.servicesuppliers = ServiceSuppliersAdmin.query({
+                    currentPage: $stateParams.currentPage,
+                    itemsPerPage: $stateParams.itemsPerPage
+                }).$promise.then(function (response) {
+                    $scope.currentPage = $stateParams.currentPage;
+                    $scope.totalItems = response.totalItems;
+                    $scope.servicesuppliers = response.servicesuppliers;
+                    $scope.showList = $scope.totalItems > 0;
+                });
         };
 
         // Find existing ServiceSupplier
         $scope.findOne = function() {
-            ServiceSuppliers.get({
+            ServiceSuppliersAdmin.get({
                 servicesupplierId: $stateParams.servicesupplierId
             }).$promise.then(function(servicesupplier) {
                 $scope.servicesupplier = servicesupplier;

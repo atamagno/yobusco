@@ -94,3 +94,43 @@ exports.servicecategoryByID = function(req, res, next, id) {
 		next();
 	});
 };
+
+exports.listByPage = function(req, res) {
+
+	var currentPage = req.params.currentPage;
+	var itemsPerPage = req.params.itemsPerPage;
+
+	// TODO: add more validation to query string parameters here.
+	if (currentPage && itemsPerPage) {
+		currentPage = parseInt(currentPage);
+		itemsPerPage = parseInt(itemsPerPage);
+		var startIndex = (currentPage - 1) * itemsPerPage;
+
+		var response = {};
+		ServiceCategory.count({}, function (err, count) {
+			if (err) {
+				return res.status(400).send({
+					message: errorHandler.getErrorMessage(err)
+				});
+			} else {
+
+				response.totalItems = count;
+				ServiceCategory.find({}, {}, { skip: startIndex, limit: itemsPerPage }, function(err, servicecategories) {
+					if (err) {
+						return res.status(400).send({
+							message: errorHandler.getErrorMessage(err)
+						});
+					} else {
+						response.servicecategories = servicecategories;
+						res.jsonp(response);
+					}
+				});
+			}
+		});
+
+	} else {
+		return res.status(400).send({
+			message: errorHandler.getErrorMessage(err)
+		});
+	}
+};

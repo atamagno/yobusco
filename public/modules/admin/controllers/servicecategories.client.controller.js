@@ -2,7 +2,7 @@
 
 // ServiceCategories controller
 angular.module('admin').controller('ServiceCategoriesController',
-	function($scope, $stateParams, $state, Authentication, ServiceCategories, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, ServiceCategoriesAdmin, $modal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
@@ -35,7 +35,7 @@ angular.module('admin').controller('ServiceCategoriesController',
 		// Create new ServiceCategory
 		$scope.create = function() {
 			// Create new ServiceCategory object
-			var servicecategory = new ServiceCategories ({
+			var servicecategory = new ServiceCategoriesAdmin ({
 				name: this.name
 			});
 
@@ -56,7 +56,8 @@ angular.module('admin').controller('ServiceCategoriesController',
 		$scope.remove = function() {
 			$scope.servicecategory.$remove(function() {
 				Alerts.show('success','Service category successfully deleted');
-				$state.go('admin.listServiceCategories');
+				$scope.currentPage = 1;
+				$scope.navigateToPage();
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger',$scope.error);
@@ -76,14 +77,33 @@ angular.module('admin').controller('ServiceCategoriesController',
 			});
 		};
 
+		$scope.itemsPerPage = 5;
+		$scope.maxPages = 5;
+		$scope.showList = false;
+
+		$scope.navigateToPage = function() {
+			$state.go('admin.listServiceCategories', {
+				currentPage: $scope.currentPage,
+				itemsPerPage: $scope.itemsPerPage
+			});
+		};
+
 		// Find a list of ServiceCategory
 		$scope.find = function() {
-			$scope.servicecategories = ServiceCategories.query();
+			$scope.servicecategories = ServiceCategoriesAdmin.query({
+				currentPage: $stateParams.currentPage,
+				itemsPerPage: $stateParams.itemsPerPage
+			}).$promise.then(function (response) {
+					$scope.currentPage = $stateParams.currentPage;
+					$scope.totalItems = response.totalItems;
+					$scope.servicecategories = response.servicecategories;
+					$scope.showList = $scope.totalItems > 0;
+				});
 		};
 
 		// Find existing ServiceCategory
 		$scope.findOne = function() {
-			$scope.servicecategory = ServiceCategories.get({
+			$scope.servicecategory = ServiceCategoriesAdmin.get({
 				servicecategoryId: $stateParams.servicecategoryId
 			});
 		};
