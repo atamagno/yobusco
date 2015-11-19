@@ -139,3 +139,62 @@ exports.serviceSubcategoriesKeywords = function(req, res)
         res.json(sortedKeywords);
     });
 };
+
+exports.search = function(req, res) {
+    res.json(req.servicesubcategories);
+};
+
+exports.serviceSubcategoriesByServiceCategory = function(req, res, next, serviceCategoryId) {
+
+    // TODO: need to define sort strategy
+    ServiceSubcategory.find({service_category_id: serviceCategoryId}, function(err, servicesubcategories)
+    {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(servicesubcategories);
+        }
+    });
+};
+
+exports.listByPage = function(req, res) {
+
+    var currentPage = req.params.currentPage;
+    var itemsPerPage = req.params.itemsPerPage;
+
+    // TODO: add more validation to query string parameters here.
+    if (currentPage && itemsPerPage) {
+        currentPage = parseInt(currentPage);
+        itemsPerPage = parseInt(itemsPerPage);
+        var startIndex = (currentPage - 1) * itemsPerPage;
+
+        var response = {};
+        ServiceSubcategory.count({}, function (err, count) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+
+                response.totalItems = count;
+                ServiceSubcategory.find({}, {}, { skip: startIndex, limit: itemsPerPage }, function(err, servicesubcategories) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getErrorMessage(err)
+                        });
+                    } else {
+                        response.servicesubcategories = servicesubcategories;
+                        res.jsonp(response);
+                    }
+                });
+            }
+        });
+
+    } else {
+        return res.status(400).send({
+            message: errorHandler.getErrorMessage(err)
+        });
+    }
+};

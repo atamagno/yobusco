@@ -15,11 +15,9 @@ module.exports = function(app) {
         .put(users.requiresLogin, servicesuppliers.update)
         .delete(users.requiresLogin, servicesuppliers.delete);
 
-    // Finish by binding the Servicesupplier middleware
+    app.route('/servicesuppliers/:currentPage/:itemsPerPage').get(servicesuppliers.listByPage);
+
     app.param('servicesupplierId', servicesuppliers.servicesupplierByID);
 
-    app.route('/servicesuppliers-results/:serviceId')
-        .get(servicesuppliers.search);
-
-    app.param('serviceId', servicesuppliers.serviceSuppliersBySubcategory);
+    app.route('/servicesuppliers-results/:serviceId/:currentPage/:itemsPerPage').get(servicesuppliers.listByPage);
 };

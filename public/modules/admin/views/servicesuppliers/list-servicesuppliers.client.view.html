@@ -8,13 +8,24 @@
 
     <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
 
-    <div class="list-group">
-        <a data-ng-repeat="servicesupplier in servicesuppliers" ui-sref="admin.viewServiceSupplier({ servicesupplierId: servicesupplier._id })" class="list-group-item">
-			<small class="list-group-item-text">
-				Registered on
-				<span data-ng-bind="servicesupplier.registration_date | date:'medium'"></span>
-			</small>
-			<h4 data-ng-bind="servicesupplier.display_name"></h4>
-        </a>
+    <div id="resultsContainer" data-ng-show="showList">
+        <div>
+            Items: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + servicesuppliers.length}} of {{totalItems}}
+        </div>
+        <div class="list-group">
+            <a data-ng-repeat="servicesupplier in servicesuppliers" ui-sref="admin.viewServiceSupplier({ servicesupplierId: servicesupplier._id })" class="list-group-item">
+                <small class="list-group-item-text">
+                    Registered on
+                    <span data-ng-bind="servicesupplier.registration_date | date:'medium'"></span>
+                </small>
+                <h4 data-ng-bind="servicesupplier.display_name"></h4>
+            </a>
+        </div>
+
+        <div class="pagination-container" data-ng-hide="totalItems <= itemsPerPage">
+            <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" max-size="maxPages"
+                        items-per-page="itemsPerPage" ng-change="navigateToPage()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+        </div>
     </div>
 </section>

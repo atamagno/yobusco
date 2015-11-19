@@ -18,4 +18,10 @@ module.exports = function(app) {
 
     // Just the keywords associated to each service subcategory
     app.route('/servicesubcategories-keywords').get(servicesubcategories.serviceSubcategoriesKeywords);
+
+    app.route('/servicesubcategories-by-servicecategory/:serviceCategoryId').get(servicesubcategories.search);
+
+    app.param('serviceCategoryId', servicesubcategories.serviceSubcategoriesByServiceCategory);
+
+    app.route('/servicesubcategories/:currentPage/:itemsPerPage').get(servicesubcategories.listByPage);
 };

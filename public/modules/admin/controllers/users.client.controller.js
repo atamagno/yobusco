@@ -68,7 +68,8 @@ angular.module('admin').controller('UsersAdminController',
 		$scope.remove = function(user) {
 			$scope.user.$remove(function() {
 				Alerts.show('success','User successfully deleted');
-				$state.go('admin.listUsers');
+				$scope.currentPage = 1;
+				$scope.navigateToPage();
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger',$scope.error);
@@ -90,9 +91,28 @@ angular.module('admin').controller('UsersAdminController',
 			});
 		};
 
+		$scope.itemsPerPage = 5;
+		$scope.maxPages = 5;
+		$scope.showList = false;
+
+		$scope.navigateToPage = function() {
+			$state.go('admin.listUsers', {
+				currentPage: $scope.currentPage,
+				itemsPerPage: $scope.itemsPerPage
+			});
+		};
+
 		// Find a list of Users
 		$scope.find = function() {
-			$scope.users = UsersAdmin.query();
+			$scope.users = UsersAdmin.query({
+				currentPage: $stateParams.currentPage,
+				itemsPerPage: $stateParams.itemsPerPage
+			}).$promise.then(function (response) {
+					$scope.currentPage = $stateParams.currentPage;
+					$scope.totalItems = response.totalItems;
+					$scope.users = response.users;
+					$scope.showList = $scope.totalItems > 0;
+				});
 		};
 
 		// Find existing User

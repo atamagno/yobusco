@@ -15,4 +15,6 @@ module.exports = function(app) {
 
 	// Finish by binding the ServiceCategory middleware
 	app.param('servicecategoryId', servicecategories.servicecategoryByID);
+
+	app.route('/servicecategories/:currentPage/:itemsPerPage').get(servicecategories.listByPage);
 };
