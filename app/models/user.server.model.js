@@ -55,6 +55,9 @@ var UserSchema = new Schema({
 		required: 'Please fill in a username',
 		trim: true
 	},
+	profile_picture: {
+		type: String
+	},
 	password: {
 		type: String,
 		default: '',

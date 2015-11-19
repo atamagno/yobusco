@@ -36,6 +36,14 @@ html, body {
 	border-color: #78FA89;
 }
 
+.logged-user-info-container {
+	padding: 8px 10px !important;
+}
+
+.logged-user-profile-img {
+	margin-right: 10px;
+}
+
 .custom-alert {
 	-webkit-transition:all linear 0.5s;
 	transition:all linear 0.5s;
@@ -43,7 +51,6 @@ html, body {
 .custom-alert.ng-hide {
 	opacity:0;
 }
-
 
 .caption {
 	height: 130px;

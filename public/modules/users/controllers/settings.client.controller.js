@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('users').controller('SettingsController',
-	function($scope, $http, $location, Users, Authentication) {
+	function($scope, $http, $location, Users, Upload, Authentication) {
 		$scope.user = Authentication.user;
 
 		// If user is not signed in then redirect back home
@@ -44,15 +44,27 @@ angular.module('users').controller('SettingsController',
 				$scope.success = $scope.error = null;
 				var user = new Users($scope.user);
 
-				user.$update(function(response) {
-					$scope.success = true;
-					Authentication.user = response;
-				}, function(response) {
-					$scope.error = response.data.message;
-				});
+				if ($scope.picFile) {
+					Upload.base64DataUrl($scope.picFile).then(function(url){
+						user.profile_picture = url;
+						updateUser(user);
+					});
+				} else {
+					updateUser(user);
+				}
+
 			} else {
 				$scope.submitted = true;
 			}
+		};
+
+		function updateUser(user) {
+			user.$update(function(response) {
+				$scope.success = true;
+				Authentication.user = response;
+			}, function(response) {
+				$scope.error = response.data.message;
+			});
 		};
 
 		// Change user password
