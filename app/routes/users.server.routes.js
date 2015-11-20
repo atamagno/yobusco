@@ -11,7 +11,7 @@ module.exports = function(app) {
 
 	app.route('/users-admin/:userForAdminId')
 		.get(users.read)
-		.put(users.update)
+		.put(users.updateForAdmin)
 		.delete(users.delete);
 
 	app.route('/users-admin/:currentPage/:itemsPerPage').get(users.listByPage);

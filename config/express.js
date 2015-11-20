@@ -35,9 +35,8 @@ module.exports = function(db) {
 
     // get all data/stuff of the body (POST) parameters
     // parse application/json
-    app.use(bodyParser.json());
+    app.use(bodyParser.json({limit: '5mb'}));
 
-    // parse application/x-www-form-urlencoded
     app.use(bodyParser.urlencoded({ extended: true }));
 
     // override with the X-HTTP-Method-Override header in the request. simulate DELETE/PUT

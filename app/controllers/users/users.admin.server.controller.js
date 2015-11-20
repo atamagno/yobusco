@@ -38,7 +38,7 @@ exports.read = function(req, res) {
 /**
  * Update a User
  */
-exports.update = function(req, res) {
+exports.updateForAdmin = function(req, res) {
 	var user = req.user ;
 
 	user = _.extend(user , req.body);
