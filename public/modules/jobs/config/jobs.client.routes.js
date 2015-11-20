@@ -13,6 +13,10 @@ angular.module('jobs').config(
 				url: '/list',
 				templateUrl: 'modules/jobs/views/list-jobs.client.view.html'
 			}).
+			state('jobs.viewDetail', {
+				url: '/detail/:jobId',
+				templateUrl: 'modules/jobs/views/job-detail.client.view.html'
+			}).
 			state('jobs.create', {
 				url: '/create',
 				templateUrl: 'modules/jobs/views/create-job.client.view.html'

@@ -10,6 +10,10 @@ var mongoose = require('mongoose'),
  * Job Schema
  */
 var JobSchema = new Schema({
+	user: {
+		type: Schema.ObjectId,
+		ref: 'User'
+	},
 	name: {
 		type: String,
 		default: '',
@@ -21,14 +25,14 @@ var JobSchema = new Schema({
 		default: '',
 		trim: true
 	},
-	service_supplier_id: {
-		type: Schema.Types.ObjectId,
-		trim: true,
+	service_supplier: {
+		type: Schema.ObjectId,
+		ref: 'ServiceSupplier',
 		required: 'Please select a service supplier'
 	},
-	job_status_id: {
-		type: Schema.Types.ObjectId,
-		trim: true,
+	status: {
+		type: Schema.ObjectId,
+		ref: 'JobStatus',
 		required: 'Please select a status'
 	},
 	start_date: {

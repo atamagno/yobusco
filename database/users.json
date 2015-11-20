@@ -5,9 +5,7 @@
     "provider" : "local", 
     "username" : "testuser", 
     "created" : ISODate("2015-11-04T14:26:29.952+0000"), 
-    "roles" : [
-        "user"
-    ], 
+    "roles" : ["user"],
     "password" : "ThCvoDdeQz7iGH6Bx7wnlUvUs/VAgYtmNV3FHEDPUX9xHqScp1q0LRn1gRl9W0p9auGbDGVGnAKE5Hh9mqwQMw==", 
     "email" : "test@mail.com", 
     "lastName" : "Test", 
@@ -21,9 +19,7 @@
     "provider" : "local", 
     "username" : "admin", 
     "created" : ISODate("2015-11-04T18:09:39.606+0000"), 
-    "roles" : [ 
-        "admin"
-    ], 
+    "roles" : ["admin"],
     "password" : "R88MK0/j7rBY3f2ZCXF5cqm6u1+Y4Fhxvg1jDKHbk3RLhr/wsb4ddsKg6IVPbArpphKR6BjBmwN+j+yIpdZU2w==", 
     "email" : "admin@yobusco.com", 
     "lastName" : "User", 
@@ -37,12 +33,24 @@
     "provider" : "local",
     "username" : "service",
     "created" : ISODate("2015-11-19T23:23:56.849+0000"),
-    "roles" : [
-
-    ],
+    "roles" : ['servicesupplier'],
     "password" : "V6slsIMF6MzOPdODRNqcYKQD7HqpdbJTOPBnpuN50kUq6KqbNdm5wAkzeBOjxfSbO2VMy4eNEMaWWVyVNL/xpg==",
     "email" : "servicesupplier@mail.com",
     "lastName" : "Supplier",
     "firstName" : "Service",
     "__v" : NumberInt(3)
+}
+{
+    "_id" : ObjectId("564f5531a8df043c1db478c5"),
+    "salt" : ",�QZ{����;��a2\u0017�",
+    "displayName" : "Another User",
+    "provider" : "local",
+    "username" : "another",
+    "created" : ISODate("2015-11-20T17:15:29.875+0000"),
+    "roles" : ["user"],
+    "password" : "aSjhilqHpDdRB6D6rj/RW+q1R74Uz+eSnpKMFOp9J61pjpaoNHtbmVq0mga6yTfKviRio8WQ04AoEF4MAXImbA==",
+    "email" : "another@mail.com",
+    "lastName" : "User",
+    "firstName" : "Another",
+    "__v" : NumberInt(0)
 }

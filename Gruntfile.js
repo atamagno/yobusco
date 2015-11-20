@@ -34,6 +34,11 @@
                         name: 'jobstatuses',
                         file: 'database/jobstatuses.json',
                         drop: true
+                    },
+                    {
+                        name: 'jobs',
+                        file: 'database/jobs.json',
+                        drop: true
                     }
                 ]
             }

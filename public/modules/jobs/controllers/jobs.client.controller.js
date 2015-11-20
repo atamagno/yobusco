@@ -2,9 +2,16 @@
 
 // ServiceSubcategories controller
 angular.module('jobs').controller('JobsController',
-	function($scope, $stateParams, $state, Authentication, Jobs, JobsStatus, ServiceSuppliers, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobsStatus, ServiceSuppliers, $modal, Alerts) {
 		$scope.authentication = Authentication;
-        $scope.jobstatus = JobsStatus.query();
+        $scope.jobstatus = JobsStatus.query().$promise.then(function (statuses) {
+			for (var i = 0; i < statuses.length; i++) {
+				if (statuses[i].name === 'In Progress') {
+					$scope.defaultStatus = statuses[i];
+					break;
+				}
+			}
+		});
 		$scope.servicesuppliers = ServiceSuppliers.query();
 		$scope.selectedServiceSupplier = undefined;
 		$scope.alerts = Alerts;
@@ -20,8 +27,8 @@ angular.module('jobs').controller('JobsController',
 					description: this.description,
 					start_date: this.start_date,
 					expected_date: this.expected_date,
-					job_status_id: $scope.jobstatus[0]._id,
-					service_supplier_id: $scope.selectedServiceSupplier._id
+					status: $scope.defaultStatus._id,
+					service_supplier: $scope.selectedServiceSupplier._id
 				});
 
 				// Redirect after save
@@ -44,6 +51,13 @@ angular.module('jobs').controller('JobsController',
 			}
 		};
 
+		// Find existing Job
+		$scope.findOne = function() {
+			$scope.job = Jobs.get({
+				jobId: $stateParams.jobId
+			});
+		};
+
 		$scope.dateFormats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
 		$scope.dateFormat = $scope.dateFormats[0];
 		$scope.today = new Date();
@@ -62,16 +76,12 @@ angular.module('jobs').controller('JobsController',
 
 			$scope.expectedDateOpened = true;
 		};
-	});
 
-angular.module('jobs').controller('JobModalInstanceCtrl',
-	function ($scope, $modalInstance) {
-
-		$scope.ok = function () {
-			$modalInstance.close();
-		};
-
-		$scope.cancel = function () {
-			$modalInstance.dismiss('cancel');
+		$scope.getAllJobs = function() {
+			JobSearch.query({
+				userId: $scope.authentication.user._id,
+			}).$promise.then(function (response) {
+				$scope.jobs = response;
+			});
 		};
 	});

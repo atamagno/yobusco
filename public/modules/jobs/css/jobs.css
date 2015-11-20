@@ -1,0 +1,11 @@
+.job-details-container {
+    padding: 10px;
+}
+
+.job-description-container {
+    min-height: 60px;
+}
+
+.job-detail-list-container {
+    padding-left: 20px;
+}
