@@ -29,7 +29,12 @@
                       name: 'users',
                       file: 'database/users.json',
                       drop: true
-                  }
+                  },
+                    {
+                        name: 'jobstatuses',
+                        file: 'database/jobstatuses.json',
+                        drop: true
+                    }
                 ]
             }
         }
