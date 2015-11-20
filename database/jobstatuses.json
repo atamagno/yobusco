@@ -1,0 +1,20 @@
+{
+    "_id": ObjectId("56269183477f11b662a6dd88"),
+    "name": "In Progress"
+}
+{
+    "_id": ObjectId("56269183455f11b0b2a6dd88"),
+    "name": "Paused"
+}
+{
+    "_id": ObjectId("56264483477f11b0b2a6dd88"),
+    "name": "Completed"
+}
+{
+    "_id": ObjectId("56269183477f11b0b2a99d88"),
+    "name": "Delayed"
+}
+{
+    "_id": ObjectId("56263383477f11b0b2a6dd88"),
+    "name": "Abandoned"
+}
