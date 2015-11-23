@@ -15,4 +15,12 @@ angular.module('jobs')
 	.factory('JobSearch',
 		function($resource) {
 			return $resource('jobs-by-user/:userId', { userId: '@_id'});
+		})
+	.factory('Reviews',
+		function($resource) {
+			return $resource('reviews/:reviewId', { reviewId: '@_id'});
+		})
+	.factory('RatingTypes',
+		function($resource) {
+			return $resource('ratingtypes');
 		});
