@@ -39,6 +39,11 @@
                         name: 'jobs',
                         file: 'database/jobs.json',
                         drop: true
+                    },
+                    {
+                        name: 'ratingtypes',
+                        file: 'database/ratingtypes.json',
+                        drop: true
                     }
                 ]
             }

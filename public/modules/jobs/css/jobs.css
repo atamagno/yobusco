@@ -9,3 +9,33 @@
 .job-detail-list-container {
     padding-left: 20px;
 }
+
+.review-services-title {
+    border-bottom: 1px solid #eee;
+    margin: 0 0 5px 0;
+}
+
+.review-service-selector {
+    margin-bottom: 5px;
+}
+
+.review-selected-services {
+    padding-bottom: 10px;
+}
+
+.review-selected-service {
+    margin-right: 5px;
+}
+
+.review-ratings-title {
+    border-bottom: 1px solid #eee;
+    margin: 20px 0 5px 0;
+}
+
+.review-ratings-container {
+    padding: 5px 10px 10px 10px;
+}
+
+.review-rating-selector {
+    cursor: pointer;
+}
