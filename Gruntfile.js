@@ -44,6 +44,11 @@
                         name: 'ratingtypes',
                         file: 'database/ratingtypes.json',
                         drop: true
+                    },
+                    {
+                        name: 'reviews',
+                        file: 'database/reviews.json',
+                        drop: true
                     }
                 ]
             }

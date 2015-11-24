@@ -1,0 +1,30 @@
+<section data-ng-controller="ReviewsController" data-ng-init="find()">
+    <div class="admin-page-header">
+        <h1>Reviews</h1>
+    </div>
+    <div class="alert alert-warning text-center">
+        <a ui-sref="admin.createReview">Create Review</a>
+    </div>
+
+    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+
+    <div id="resultsContainer" data-ng-show="showList">
+        <div>
+            Items: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + reviews.length}} of {{totalItems}}
+        </div>
+        <div class="list-group">
+            <a data-ng-repeat="review in reviews" ui-sref="admin.viewReview({ reviewId: review._id })" class="list-group-item">
+                <small class="list-group-item-text">
+                    Posted on
+                    <span data-ng-bind="review.created | date:'medium'"></span>
+                </small>
+                <h4 data-ng-bind="review.comment"></h4>
+            </a>
+        </div>
+        <div class="pagination-container" data-ng-hide="totalItems <= itemsPerPage">
+            <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" max-size="maxPages"
+                        items-per-page="itemsPerPage" ng-change="navigateToPage()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+        </div>
+    </div>
+</section>

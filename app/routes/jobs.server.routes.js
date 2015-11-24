@@ -2,17 +2,20 @@
 
 module.exports = function(app) {
 	var jobs = require('../../app/controllers/jobs.server.controller');
-	var jobstatus = require('../../app/controllers/jobstatus.server.controller');
 
 	// Jobs Routes
-	app.route('/jobs').post(jobs.create);
-	app.route('/jobs/:jobId').get(jobs.read);
+	app.route('/jobs')
+		.get(jobs.list)
+		.post(jobs.create);
+
+	app.route('/jobs/:jobId')
+		.get(jobs.read)
+		.put(jobs.update)
+		.delete(jobs.delete);
 
 	app.param('jobId', jobs.findJobByID);
+	app.route('/jobs/:currentPage/:itemsPerPage').get(jobs.listByPage);
 
 	app.route('/jobs-by-user/:userId').get(jobs.search);
 	app.param('userId', jobs.listByUser);
-
-	// JobStatus Routes
-	app.route('/jobstatus').get(jobstatus.list);
 };

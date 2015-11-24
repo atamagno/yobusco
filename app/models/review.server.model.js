@@ -28,15 +28,15 @@ var ReviewSchema = new Schema({
 		ref: 'Job',
 		required: 'Please select a job'
 	},
-	services: {
-		type: [Schema.ObjectId],
+	services: [{
+		type: Schema.ObjectId,
 		ref: 'ServiceSubcategory',
-		required: 'Please select a job'
-	},
+	}],
 	comment: {
 		type: String,
 		default: '',
-		trim: true
+		trim: true,
+		required: 'Please fill in a comment'
 	},
 	ratings: [Ratings],
 	created: {

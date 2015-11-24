@@ -1,0 +1,68 @@
+<section data-ng-controller="ReviewsController" data-ng-init="findOne()">
+    <div class="admin-page-header">
+        <h1>Edit Review</h1>
+    </div>
+    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+    <div class="col-md-12">
+        <form class="form-horizontal" data-ng-submit="openEditModal()" novalidate>
+            <fieldset>
+                <div class="form-group">
+
+                    <label class="control-label">User</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="review.user" class="form-control" required
+                               typeahead="user as user.displayName for user in users | filter:$viewValue | limitTo:8" placeholder="Select a user.">
+                    </div>
+
+                    <label class="control-label">Job</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="review.job" class="form-control" required
+                               typeahead="job as job.name for job in jobs | filter:$viewValue | limitTo:8" placeholder="Select a service supplier.">
+                    </div>
+
+                    <label class="control-label">Services</label>
+                    <input type="text" data-ng-model="selected" class="form-control review-service-selector" typeahead-on-select="selectService($item, review.services)"
+                           typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
+                           placeholder="Select a service.">
+
+                    <div data-ng-show="review.services.length" class="review-selected-services">
+                        <button data-ng-click="deleteSelectedService($index, review.services)" type="button" class="btn btn-default review-selected-service"
+                                data-ng-repeat="selectedservice in review.services">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{selectedservice.name}}</button>
+                    </div>
+
+                    <label class="control-label">Ratings</label>
+                    <div data-ng-repeat="rating in review.ratings">
+                        {{rating.type.name}}
+                        <div class="pull-right">
+                            <rating ng-model="rating.rate" max="5" class="review-rating-selector"></rating>{{rating.rate}} Stars
+                        </div>
+                    </div>
+
+                    <label class="control-label" for="comment">Comment</label>
+                    <div class="controls">
+                        <textarea id="comment" data-ng-model="review.comment" class="form-control" cols="30" rows="4" placeholder="Leave a comment."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default">
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <script type="text/ng-template" id="editReviewModal">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Review</h3>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to update this review?
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+</section>
