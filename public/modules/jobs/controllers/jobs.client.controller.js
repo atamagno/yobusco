@@ -1,10 +1,12 @@
 'use strict';
 
 // ServiceSubcategories controller
-angular.module('jobs').controller('JobsController',
+angular.module('jobs').controller('UserJobsController',
 	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobsStatus, ServiceSuppliers, Reviews, $modal, Alerts) {
 		$scope.authentication = Authentication;
-        $scope.jobstatus = JobsStatus.query().$promise.then(function (statuses) {
+		$scope.alerts = Alerts;
+
+		$scope.jobstatus = JobsStatus.query().$promise.then(function (statuses) {
 			for (var i = 0; i < statuses.length; i++) {
 				if (statuses[i].name === 'In Progress') {
 					$scope.defaultStatus = statuses[i];
@@ -12,9 +14,9 @@ angular.module('jobs').controller('JobsController',
 				}
 			}
 		});
+
 		$scope.servicesuppliers = ServiceSuppliers.query();
 		$scope.selectedServiceSupplier = undefined;
-		$scope.alerts = Alerts;
 
 		// Create new Job
 		$scope.create = function() {
