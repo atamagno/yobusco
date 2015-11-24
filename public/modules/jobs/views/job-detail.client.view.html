@@ -74,7 +74,7 @@
                    placeholder="Select a service.">
 
             <div data-ng-show="selectedservices.length" class="review-selected-services">
-                <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default" class="review-selected-service"
+                <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default review-selected-service"
                         data-ng-repeat="selectedservice in selectedservices">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{selectedservice.name}}</button>
             </div>

@@ -1,6 +1,6 @@
 'use strict';
 
-// ServiceSubcategories controller
+// UserJobs controller
 angular.module('jobs').controller('UserJobsController',
 	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobsStatus, ServiceSuppliers, Reviews, $modal, Alerts) {
 		$scope.authentication = Authentication;
@@ -103,6 +103,7 @@ angular.module('jobs').controller('UserJobsController',
 			var review = new Reviews({
 				comment: reviewInfo.comment,
 				job: $scope.job._id,
+				user: $scope.authentication.user._id,
 				services: services,
 				ratings: ratings
 			});

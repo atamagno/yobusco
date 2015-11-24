@@ -20,7 +20,9 @@ module.exports = function(app) {
 
 	// Setting up the users profile api
 	app.route('/users/me').get(users.me);
-	app.route('/users').put(users.update);
+	app.route('/users')
+		.get(users.list)
+		.put(users.update);
 
 	// Setting up the users password api
 	app.route('/users/password').post(users.changePassword);

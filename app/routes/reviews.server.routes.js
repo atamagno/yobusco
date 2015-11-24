@@ -5,7 +5,18 @@ module.exports = function(app) {
 		ratingtypes = require('../../app/controllers/ratingtypes.server.controller');
 
 	// Reviews Routes
-	app.route('/reviews').post(reviews.create);
+	app.route('/reviews')
+		.get(reviews.list)
+		.post(reviews.create);
+
+	app.route('/reviews/:reviewId')
+		.get(reviews.read)
+		.put(reviews.update)
+		.delete(reviews.delete);
+
+	app.param('reviewId', reviews.reviewByID);
+
+	app.route('/reviews/:currentPage/:itemsPerPage').get(reviews.listByPage);
 
 	// RatingTypes Routes
 	app.route('/ratingtypes').get(ratingtypes.list);
