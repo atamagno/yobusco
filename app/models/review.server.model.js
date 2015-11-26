@@ -26,7 +26,11 @@ var ReviewSchema = new Schema({
 	job: {
 		type: Schema.ObjectId,
 		ref: 'Job',
-		required: 'Please select a job'
+	},
+	service_supplier: {
+		type: Schema.ObjectId,
+		ref: 'ServiceSupplier',
+		required: 'Please select a service supplier'
 	},
 	services: [{
 		type: Schema.ObjectId,

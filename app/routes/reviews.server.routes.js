@@ -18,6 +18,9 @@ module.exports = function(app) {
 
 	app.route('/reviews/:currentPage/:itemsPerPage').get(reviews.listByPage);
 
+	app.route('/reviews-by-servicesupplier/:serviceSupplierId').get(reviews.search);
+	app.param('serviceSupplierId', reviews.listByServiceSupplier);
+
 	// RatingTypes Routes
 	app.route('/ratingtypes').get(ratingtypes.list);
 };

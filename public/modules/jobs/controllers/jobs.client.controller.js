@@ -103,6 +103,7 @@ angular.module('jobs').controller('UserJobsController',
 			var review = new Reviews({
 				comment: reviewInfo.comment,
 				job: $scope.job._id,
+				service_supplier: $scope.job.service_supplier._id,
 				user: $scope.authentication.user._id,
 				services: services,
 				ratings: ratings

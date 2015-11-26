@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	Review = mongoose.model('Review'),
+	Job = mongoose.model('Job'),
 	_ = require('lodash');
 
 /**
@@ -87,11 +88,26 @@ exports.list = function(req, res) {
  * Review middleware
  */
 exports.reviewByID = function(req, res, next, id) {
-	Review.findById(id).populate('user', 'displayName').populate('job', 'name').populate('ratings.type').populate('services').exec(function(err, review) {
+	Review.findById(id).populate('user', 'displayName')
+						.populate('job')
+						.populate('service_supplier')
+						.populate('ratings.type')
+						.populate('services').exec(function(err, review) {
+
 		if (err) return next(err);
 		if (!review) return next(new Error('Failed to load Review ' + id));
-		req.review = review;
-		next();
+		if (review.job) {
+			Job.populate(review.job, {path: 'service_supplier', select: 'display_name'}, function(err, job){
+				if (err) return next(err);
+				if (!job) return next(new Error('Failed to load Job'));
+				req.review = review;
+				next();
+			});
+		} else {
+			req.review = review;
+			next();
+		}
+
 	});
 };
 
@@ -133,4 +149,21 @@ exports.listByPage = function(req, res) {
 			message: errorHandler.getErrorMessage(err)
 		});
 	}
+};
+
+exports.search = function(req, res) {
+	res.json(req.reviews);
+};
+
+exports.listByServiceSupplier = function(req, res, next, serviceSupplierId) {
+
+	Review.find({service_supplier: serviceSupplierId}).exec(function(err, reviews) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(reviews);
+		}
+	});
 };

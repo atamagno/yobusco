@@ -7,8 +7,9 @@
 	<h3>Details</h3>
 	<ul class="job-detail-list-container">
 		<li><strong>Posted on: </strong>{{review.created | date: 'medium'}}</li>
-		<li><strong>User: </strong>{{review.user.displayName}}</li>
+		<li><strong>Service Supplier: </strong>{{review.service_supplier.display_name}}</li>
 		<li><strong>Job: </strong>{{review.job.name}}</li>
+		<li><strong>User: </strong>{{review.user.displayName}}</li>
 		<li><strong>Services: </strong><span data-ng-repeat="service in review.services">[{{service.name}}] </span></li>
 	</ul>
 

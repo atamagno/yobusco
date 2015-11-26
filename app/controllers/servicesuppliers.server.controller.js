@@ -88,9 +88,9 @@ exports.list = function(req, res) {
  * ServiceSupplier middleware
  */
 exports.servicesupplierByID = function(req, res, next, id) {
-    ServiceSupplier.findById(id).populate('user', 'displayName').exec(function(err, servicesupplier) {
+    ServiceSupplier.findById(id).populate('user', 'displayName').populate('services').exec(function(err, servicesupplier) {
         if (err) return next(err);
-        if (! servicesupplier) return next(new Error('Failed to load Servicesupplier ' + id));
+        if (!servicesupplier) return next(new Error('Failed to load Servicesupplier ' + id));
         req.servicesupplier = servicesupplier ;
         next();
     });

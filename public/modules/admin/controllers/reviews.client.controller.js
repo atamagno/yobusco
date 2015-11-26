@@ -2,7 +2,7 @@
 
 // Review controller
 angular.module('admin').controller('ReviewsController',
-	function($scope, $stateParams, $state, Authentication, ReviewsAdmin, RatingTypes, ServiceSubcategories, Users, Jobs, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, ReviewsAdmin, RatingTypes, ServiceSuppliers, ServiceSubcategories, Users, ServiceSuppliersDetails, $modal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
@@ -16,10 +16,12 @@ angular.module('admin').controller('ReviewsController',
 		$scope.servicesubcategories = ServiceSubcategories.query();
 		$scope.selectedservices = [];
 
+		$scope.servicesuppliers = ServiceSuppliers.query();
+		$scope.selectedServiceSupplier = undefined;
+
 		$scope.users = Users.query();
 		$scope.selectedUser = undefined;
 
-		$scope.jobs = Jobs.query();
 		$scope.selectedJob = undefined;
 
 		$scope.selectService = function ($item, selectedservices) {
@@ -41,6 +43,19 @@ angular.module('admin').controller('ReviewsController',
 
 		$scope.deleteSelectedService = function(index, selectedservices) {
 			selectedservices.splice(index, 1);
+		};
+
+		$scope.selectServiceSupplier = function($item) {
+
+			ServiceSuppliersDetails.jobs.query({
+				serviceSupplierId: $item._id,
+			}).$promise.then(function (response) {
+				$scope.jobs = response;
+				if (!$scope.jobs.length) {
+					$scope.selectedJob = undefined;
+					$scope.review.job = undefined;
+				}
+			});
 		};
 
 		$scope.createModalInstance = function (templateUrl) {
@@ -74,7 +89,7 @@ angular.module('admin').controller('ReviewsController',
 
 			if ($scope.selectedUser && $scope.selectedUser._id) {
 
-				if ($scope.selectedJob && $scope.selectedJob._id) {
+				if ($scope.selectedServiceSupplier && $scope.selectedServiceSupplier._id) {
 
 					var services = [];
 					for (var i = 0; i < $scope.selectedservices.length; i++) {
@@ -88,7 +103,8 @@ angular.module('admin').controller('ReviewsController',
 
 					// Create new Review object
 					var review = new ReviewsAdmin({
-						job: $scope.selectedJob._id,
+						job: $scope.selectedJob && $scope.selectedJob._id ? $scope.selectedJob._id : null,
+						service_supplier: $scope.selectedServiceSupplier._id,
 						user: $scope.selectedUser._id,
 						comment: $scope.comment,
 						services: services,
@@ -104,7 +120,7 @@ angular.module('admin').controller('ReviewsController',
 						Alerts.show('danger', $scope.error);
 					});
 				} else {
-					Alerts.show('danger','You must select a valid job');
+					Alerts.show('danger','You must select a valid service supplier');
 				}
 			} else {
 				Alerts.show('danger','You must select a valid user');
@@ -126,6 +142,7 @@ angular.module('admin').controller('ReviewsController',
 		// Update existing Review
 		$scope.update = function() {
 			var review = $scope.review;
+			review.job = review.job && review.job._id ? review.job._id : null;
 
 			review.$update(function() {
 				Alerts.show('success','Review successfully updated');

@@ -39,8 +39,11 @@ var ServiceSupplierSchema = new Schema({
         type: String,
         default: ''
     },
-    services: {
-        type: [Schema.Types.ObjectId],
+    services:{
+        type: [{
+            type: Schema.ObjectId,
+            ref: 'ServiceSubcategory'
+        }],
         required: 'At least one service subcategory is required'
     },
     overall_rating: {

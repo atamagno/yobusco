@@ -143,8 +143,20 @@ exports.search = function(req, res) {
 exports.listByUser = function(req, res, next, userId) {
 
 	Job.find({user: userId}).populate('service_supplier', 'display_name')
-							.populate('status', 'name').exec(function(err, jobs)
-	{
+							.populate('status', 'name').exec(function(err, jobs) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(jobs);
+		}
+	});
+};
+
+exports.listByServiceSupplier = function(req, res, next, serviceSupplierId) {
+
+	Job.find({service_supplier: serviceSupplierId}).populate('status', 'name').exec(function(err, jobs) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
