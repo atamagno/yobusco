@@ -11,7 +11,7 @@ angular.module('jobs').config(
 			}).
 			state('jobs.list', {
 				url: '/list',
-				templateUrl: 'modules/jobs/views/list-jobs.client.view.html'
+				templateUrl: 'modules/jobs/views/job-list.client.view.html'
 			}).
 			state('jobs.viewDetail', {
 				url: '/detail/:jobId',

@@ -18,4 +18,7 @@ module.exports = function(app) {
 
 	app.route('/jobs-by-user/:userId').get(jobs.search);
 	app.param('userId', jobs.listByUser);
+
+	app.route('/jobs-by-servicesupplier/:servicesSupplierId').get(jobs.search);
+	app.param('servicesSupplierId', jobs.listByServiceSupplier);
 };

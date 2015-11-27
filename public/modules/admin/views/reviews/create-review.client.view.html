@@ -14,10 +14,18 @@
                                typeahead="user as user.displayName for user in users | filter:$viewValue | limitTo:8" placeholder="Select a user.">
                     </div>
 
-                    <label class="control-label">Job</label>
+                    <label class="control-label">Service Supplier</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="selectedJob" class="form-control" required
-                               typeahead="job as job.name for job in jobs | filter:$viewValue | limitTo:8" placeholder="Select a service supplier.">
+                        <input type="text" data-ng-model="selectedServiceSupplier" class="form-control" typeahead-on-select="selectServiceSupplier($item)"
+                               typeahead="servicesupplier as servicesupplier.display_name for servicesupplier in servicesuppliers | filter:$viewValue" placeholder="Select a service supplier.">
+                    </div>
+
+                    <div data-ng-show="jobs.length">
+                        <label class="control-label">Job</label>
+                        <div class="controls">
+                            <input type="text" data-ng-model="selectedJob" class="form-control"
+                                   typeahead="job as job.name for job in jobs | filter:$viewValue | limitTo:8" placeholder="Select a Job.">
+                        </div>
                     </div>
 
                     <label class="control-label">Services</label>

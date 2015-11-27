@@ -150,7 +150,7 @@ angular.module('admin').controller('ServiceSuppliersController',
 
                         var checked = false;
                         for (var i = 0; i < $scope.servicesupplier.services.length; i++) {
-                            if ($scope.servicesupplier.services[i] === service._id) {
+                            if ($scope.servicesupplier.services[i]._id === service._id) {
                                 checked = true;
                                 break;
                             }
