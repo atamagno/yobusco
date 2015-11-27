@@ -80,8 +80,10 @@ angular.module('jobs').controller('UserJobsController',
 		};
 
 		$scope.getAllJobs = function() {
+
 			JobSearch.query({
 				userId: $scope.authentication.user._id,
+				status: $stateParams.status
 			}).$promise.then(function (response) {
 				$scope.jobs = response;
 			});

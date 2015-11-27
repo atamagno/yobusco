@@ -14,7 +14,7 @@ angular.module('jobs')
 		})
 	.factory('JobSearch',
 		function($resource) {
-			return $resource('jobs-by-user/:userId', { userId: '@_id'});
+			return $resource('jobs-by-user/:userId/:status', { userId: '@_id'});
 		})
 	.factory('Reviews',
 		function($resource) {
