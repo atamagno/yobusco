@@ -1,0 +1,32 @@
+<section data-ng-controller="UserJobsController" data-ng-init="getAllJobs()">
+    <h1 class="gray-border-bottom">Job List</h1>
+
+    <div class="alert alert-warning text-center" data-ng-hide="jobs.length">
+        You don't have any job yet.
+    </div>
+
+    <div data-ng-repeat="job in jobs" class="col-sm-4 col-lg-4 col-md-4 no-padding-left">
+        <div class="thumbnail">
+            <img src="http://placehold.it/320x150" alt="">
+            <div class="job-details-container">
+                <h4 class="pull-right">{{job.status.name}}</h4>
+                <h4><a ui-sref="jobs.viewDetail({ jobId: job._id })">{{job.name}}</a>
+                </h4>
+                <div class="job-description-container">{{job.description}}</div>
+                <strong>Service Supplier:</strong><br>
+                <span>{{ job.service_supplier.display_name }}</span>
+            </div>
+            <div class="ratings">
+                <p class="pull-right">15 reviews</p>
+                <p>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</section>

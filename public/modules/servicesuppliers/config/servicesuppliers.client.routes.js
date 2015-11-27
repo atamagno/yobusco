@@ -5,9 +5,20 @@ angular.module('servicesuppliers').config(
 	function($stateProvider) {
 
 		$stateProvider.
-			state('detailServiceSupplier', {
-				url: '/servicesuppliers-detail/:servicesupplierId',
-				templateUrl: 'modules/servicesuppliers/views/detail-servicesupplier.client.view.html',
-				controller: 'ServiceSuppliersDetailController'
+			state('servicesupplier', {
+				url: '/servicesuppliers-detail',
+				templateUrl: 'modules/servicesuppliers/views/servicesupplier.client.view.html',
+			}).
+			state('servicesupplier.detail', {
+				url: '/:servicesupplierId',
+				templateUrl: 'modules/servicesuppliers/views/servicesupplier-detail.client.view.html',
+			}).
+			state('servicesupplier.jobs', {
+				url: '/jobs/:servicesupplierId',
+				templateUrl: 'modules/servicesuppliers/views/servicesupplier-jobs.client.view.html',
+			}).
+			state('servicesupplier.reviews', {
+				url: '/reviews/:servicesupplierId',
+				templateUrl: 'modules/servicesuppliers/views/servicesupplier-reviews.client.view.html',
 			});
 	});

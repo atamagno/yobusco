@@ -156,7 +156,8 @@ exports.listByUser = function(req, res, next, userId) {
 
 exports.listByServiceSupplier = function(req, res, next, serviceSupplierId) {
 
-	Job.find({service_supplier: serviceSupplierId}).populate('status', 'name').exec(function(err, jobs) {
+	Job.find({service_supplier: serviceSupplierId}).populate('service_supplier', 'display_name')
+												   .populate('status', 'name').exec(function(err, jobs) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

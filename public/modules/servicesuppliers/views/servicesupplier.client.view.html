@@ -1,0 +1,17 @@
+<div class="container" data-ng-controller="ServiceSuppliersDetailController">
+    <div class="row">
+        <div class="col-md-3">
+
+            <p class="lead">Service Supplier</p>
+            <div class="list-group">
+                <a ui-sref=".detail({ servicesupplierId: servicesupplier._id })" class="list-group-item">Details</a>
+                <a ui-sref=".jobs({ servicesupplierId: servicesupplier._id })" class="list-group-item">Jobs</a>
+                <a ui-sref=".reviews({ servicesupplierId: servicesupplier._id })" class="list-group-item">Reviews</a>
+            </div>
+
+        </div>
+        <div class="col-md-9">
+            <section data-ui-view></section>
+        </div>
+    </div>
+</div>

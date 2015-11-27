@@ -36,12 +36,12 @@ html, body {
 	border-color: #78FA89;
 }
 
-.logged-user-info-container {
-	padding: 8px 10px !important;
-}
-
 .logged-user-profile-img {
-	margin-right: 10px;
+	width: 34px;
+	height: 34px;
+	position: absolute;
+	left: -34px;
+	top: 9px;
 }
 
 .custom-alert {
@@ -78,4 +78,16 @@ html, body {
 .thumbnail .caption-full {
 	padding: 9px;
 	color: #333;
+}
+
+.no-padding-left {
+	padding-left: 0;
+}
+
+.gray-border-bottom {
+	border-bottom: 1px solid #eee;
+}
+
+.flex-display {
+	display: flex;
 }
