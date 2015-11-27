@@ -1,0 +1,31 @@
+.service-supplier-img {
+    padding: 10px;
+}
+
+.service-supplier-details-container {
+    width: 100%;
+    position: relative;
+    padding-bottom: 40px;
+}
+
+.service-supplier-rating-count {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.reviews-header-container {
+    border-bottom: 1px solid #eee;
+    height: 50px;
+    position: relative;
+}
+
+.review-button-container {
+    padding-top: 5px;
+}
+
+.reviews-label-container {
+    font-size: 20px;
+    position: absolute;
+    top: 15px;
+}

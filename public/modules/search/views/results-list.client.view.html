@@ -1,0 +1,45 @@
+<div data-ng-controller="SuppliersResultsController" data-ng-init="getResults()">
+    <p class="lead">Service Suppliers</p>
+
+
+    <div data-ng-show="totalItems !== 0 && !showList" class="loading-container">
+        <img class="loading-img" src="/modules/core/img/loaders/loader.gif"/>
+        <div>Loading service suppliers...</div>
+    </div>
+
+    <div id="resultsContainer" data-ng-show="showList">
+        <div>
+            Items: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + servicesuppliers.length}} of {{totalItems}}
+        </div>
+        <div class="list-group">
+            <a data-ng-repeat="servicesupplier in servicesuppliers" ui-sref="servicesupplier.detail({ servicesupplierId: servicesupplier._id })" class="list-group-item">
+                <div class="search-result-container">
+                    <img src="http://placehold.it/140x100" alt="">
+
+                    <div class="search-result-details">
+                        <div class="search-result-display-name">
+                            <h4>{{servicesupplier.display_name}}</h4>
+                        </div>
+                        <p>{{servicesupplier.description}}</p>
+                        <div class="search-result-rating-details">
+                            <p class="pull-right">0 reviews</p>
+                            <p>
+                                <rating ng-model="servicesupplier.overall_rating" max="5" readonly="true"></rating>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="pagination-container" data-ng-hide="totalItems <= itemsPerPage">
+            <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" max-size="maxPages"
+                        items-per-page="itemsPerPage" ng-change="navigateToResults()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+        </div>
+    </div>
+
+    <div class="alert alert-warning text-center" data-ng-show="totalItems === 0 && !showList">
+        No results found.
+    </div>
+</div>

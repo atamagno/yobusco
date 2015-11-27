@@ -7,3 +7,7 @@ node_modules
 
 # Openshift config
 .openshift
+
+# Local docs folder
+ docs
+

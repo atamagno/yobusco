@@ -1,0 +1,51 @@
+<section data-ng-controller="ServiceSuppliersController" data-ng-init="findOne()">
+    <div class="admin-page-header">
+        <h1>Edit Service Supplier</h1>
+    </div>
+    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+    <div class="col-md-12">
+        <form class="form-horizontal" data-ng-submit="openEditModal()" novalidate>
+            <fieldset>
+                <div class="form-group">
+                    <label class="control-label" for="name">Name</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="servicesupplier.display_name" id="name" class="form-control" placeholder="Name" required>
+                    </div>
+                    <label class="control-label" for="phone">Phone</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="servicesupplier.phone_number" id="phone" class="form-control" placeholder="Phone">
+                    </div>
+                    <label class="control-label" for="email">Email</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="servicesupplier.email" id="email" class="form-control" placeholder="Email">
+                    </div>
+                    <label class="control-label" for="description">Description</label>
+                    <div class="controls">
+                        <textarea name="description" data-ng-model="servicesupplier.description" id="description" class="form-control" cols="30" rows="5" placeholder="Description"></textarea>
+                    </div>
+                    <label class="control-label">Service Subcategory</label>
+                    <div data-ng-repeat="servicesubcategory in selectedservicesubcategories">
+                        <input type="checkbox" data-ng-model="servicesubcategory.checked">{{servicesubcategory.name}}<br>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Update" class="btn btn-default">
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <script type="text/ng-template" id="editServiceSupplierModal">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Service Supplier</h3>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to update this service supplier?
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+</section>
