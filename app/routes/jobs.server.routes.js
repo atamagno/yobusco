@@ -17,6 +17,7 @@ module.exports = function(app) {
 	app.route('/jobs/:currentPage/:itemsPerPage').get(jobs.listByPage);
 
 	app.route('/jobs-by-user/:userId').get(jobs.search);
+	app.route('/jobs-by-user/:userId/:status').get(jobs.search);
 	app.param('userId', jobs.listByUser);
 
 	app.route('/jobs-by-servicesupplier/:servicesSupplierId').get(jobs.search);

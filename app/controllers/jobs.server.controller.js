@@ -143,12 +143,31 @@ exports.search = function(req, res) {
 exports.listByUser = function(req, res, next, userId) {
 
 	Job.find({user: userId}).populate('service_supplier', 'display_name')
-							.populate('status', 'name').exec(function(err, jobs) {
+							.populate('status')
+		.exec(function(err, jobs) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
+			var status = req.params.status, statusquery;
+			if (status === 'finished') {
+				statusquery = ['Completed', 'Abandoned'];
+			} else if (status === 'active') {
+				statusquery = ['In Progress', 'Paused', 'Delayed'];
+			}
+
+			var filteredJobs = [];
+			if (jobs.length && statusquery) {
+				for (var i = 0; i < jobs.length; i++) {
+					if (statusquery.indexOf(jobs[i].status.name) !== -1) {
+						filteredJobs.push(jobs[i]);
+					}
+				}
+
+				jobs = filteredJobs;
+			}
+
 			res.jsonp(jobs);
 		}
 	});
