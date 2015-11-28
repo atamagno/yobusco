@@ -1,8 +1,10 @@
 <section data-ng-controller="UserJobsController" data-ng-init="getAllJobs()">
-    <h1 class="gray-border-bottom">Job List</h1>
+    <h1 class="gray-border-bottom">
+        {{ jobstatus ? jobstatus.charAt(0).toUpperCase() + jobstatus.slice(1) : 'All' }} jobs
+    </h1>
 
     <div class="alert alert-warning text-center" data-ng-hide="jobs.length">
-        You don't have any job yet.
+        You don't have any {{jobstatus}} job yet.
     </div>
 
     <div data-ng-repeat="job in jobs" class="col-sm-4 col-lg-4 col-md-4 no-padding-left">
