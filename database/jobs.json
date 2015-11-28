@@ -38,6 +38,7 @@
     "status" : ObjectId("56264483477f11b0b2a6dd88"),
     "service_supplier" : ObjectId("562e3d3c477f0817f38d3078"),
     "start_date" : ISODate("2015-11-23T17:30:06.685+0000"),
+    "finish_date" : ISODate("2015-11-28T17:30:06.685+0000"),
     "description" : "Arreglo de cuerito de inodoro.",
     "name" : "Trabajo de Plomería",
     "__v" : NumberInt(0)
@@ -49,6 +50,7 @@
     "status" : ObjectId("56264483477f11b0b2a6dd88"),
     "service_supplier" : ObjectId("562e3d3c477f0817f38d3078"),
     "start_date" : ISODate("2015-11-23T17:30:06.685+0000"),
+    "finish_date" : ISODate("2015-11-27T17:30:06.685+0000"),
     "description" : "Destapación de cañeria del baño.",
     "name" : "Trabajo de Plomería",
     "__v" : NumberInt(0)
@@ -60,18 +62,19 @@
     "status": ObjectId("56264483477f11b0b2a6dd88"),
     "service_supplier": ObjectId("562e3d3c477f0817f38d3078"),
     "start_date": ISODate("2015-11-23T17:30:06.685+0000"),
+    "finish_date" : ISODate("2015-11-28T17:30:06.685+0000"),
     "description": "Destapación de cañeria del baño.",
     "name": "Trabajo de Plomería",
     "__v": NumberInt(0)
 }
-{ 
-    "_id" : ObjectId("564f43d0a8df043c1db478ca"), 
-    "user" : ObjectId("564e5a0cdcea1d4c0e61bdc8"), 
-    "expected_date" : ISODate("2015-12-03T03:00:00.000+0000"), 
-    "status" : ObjectId("56269183477f11b662a6dd88"), 
-    "service_supplier" : ObjectId("562e3d3c477f0817f38d3075"), 
-    "start_date" : ISODate("2015-11-20T17:43:11.762+0000"), 
-    "description" : "Cableado de iluminacion para la cocina.", 
-    "name" : "Trabajo de Electricidad", 
+{
+    "_id" : ObjectId("564f43d0a8df043c1db478ca"),
+    "user" : ObjectId("564e5a0cdcea1d4c0e61bdc8"),
+    "expected_date" : ISODate("2015-12-03T03:00:00.000+0000"),
+    "status" : ObjectId("56269183477f11b662a6dd88"),
+    "service_supplier" : ObjectId("562e3d3c477f0817f38d3075"),
+    "start_date" : ISODate("2015-11-20T17:43:11.762+0000"),
+    "description" : "Cableado de iluminacion para la cocina.",
+    "name" : "Trabajo de Electricidad",
     "__v" : NumberInt(0)
 }

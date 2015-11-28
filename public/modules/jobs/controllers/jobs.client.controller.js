@@ -6,7 +6,7 @@ angular.module('jobs').controller('UserJobsController',
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
-		$scope.jobstatus = JobsStatus.query().$promise.then(function (statuses) {
+		$scope.jobstatuses = JobsStatus.query().$promise.then(function (statuses) {
 			for (var i = 0; i < statuses.length; i++) {
 				if (statuses[i].name === 'In Progress') {
 					$scope.defaultStatus = statuses[i];
@@ -55,9 +55,14 @@ angular.module('jobs').controller('UserJobsController',
 
 		// Find existing Job
 		$scope.findOne = function() {
-			$scope.job = Jobs.get({
+			Jobs.get({
 				jobId: $stateParams.jobId
-			});
+			}).$promise.then(function(job) {
+					$scope.job = job;
+					if (['Completed', 'Abandoned'].indexOf(job.status.name) !== -1) {
+						$scope.showLeaveReviewButton = true;
+					}
+				});
 		};
 
 		$scope.dateFormats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
@@ -81,12 +86,13 @@ angular.module('jobs').controller('UserJobsController',
 
 		$scope.getAllJobs = function() {
 
+			$scope.jobstatus = $stateParams.status;
 			JobSearch.query({
 				userId: $scope.authentication.user._id,
-				status: $stateParams.status
+				status: $scope.jobstatus
 			}).$promise.then(function (response) {
-				$scope.jobs = response;
-			});
+					$scope.jobs = response;
+				});
 		};
 
 		$scope.addReview = function(reviewInfo) {

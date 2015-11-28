@@ -1,10 +1,6 @@
-<div class="alert alert-warning text-center" data-ng-hide="reviews.length">
-    This service supplier doesn't have any reviews yet.
-</div>
-
 <div class="reviews-header-container">
     <div class="pull-right review-button-container">
-        <a class="btn btn-success">Leave a Review</a>
+        <a data-ng-click="openReviewModal()" class="btn btn-success">Leave a Review</a>
     </div>
     <h1>Reviews</h1>
 </div>

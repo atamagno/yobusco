@@ -5,7 +5,8 @@
             <h1>
                 Job Detail
                 <small>{{job.name}}</small>
-                <a data-ng-click="openReviewModal()" class="btn btn-success pull-right">Leave a Review</a>
+                <a data-ng-show="showLeaveReviewButton"
+                   data-ng-click="openReviewModal()" class="btn btn-success pull-right">Leave a Review</a>
             </h1>
         </div>
     </div>
