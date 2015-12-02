@@ -65,6 +65,13 @@ angular.module('admin').controller('JobsController',
 			$scope.expectedDateOpened = true;
 		};
 
+		$scope.openFinishDatePicker = function($event) {
+			$event.preventDefault();
+			$event.stopPropagation();
+
+			$scope.finishDateOpened = true;
+		};
+
 		$scope.changeStatus = function(status) {
 			$scope.job.status = status;
 		};

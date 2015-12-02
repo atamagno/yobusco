@@ -18,7 +18,11 @@ angular.module('jobs').config(
 				templateUrl: 'modules/jobs/views/job-detail.client.view.html'
 			}).
 			state('jobs.create', {
-				url: '/create',
-				templateUrl: 'modules/jobs/views/create-job.client.view.html'
+				url: '/create/:servicesupplierId',
+				templateUrl: 'modules/jobs/views/job-create.client.view.html'
+			}).
+			state('jobs.edit', {
+				url: '/edit/:jobId',
+				templateUrl: 'modules/jobs/views/job-edit.client.view.html'
 			});
 	});
