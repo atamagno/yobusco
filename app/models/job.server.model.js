@@ -35,6 +35,10 @@ var JobSchema = new Schema({
 		ref: 'JobStatus',
 		required: 'Please select a status'
 	},
+	reviews:[{
+		type: Schema.ObjectId,
+		ref: 'Review',
+	}],
 	start_date: {
 		type: Date,
 		default: Date.now,

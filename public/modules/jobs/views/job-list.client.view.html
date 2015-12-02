@@ -12,14 +12,21 @@
             <img src="http://placehold.it/320x150" alt="">
             <div class="job-details-container">
                 <h4 class="pull-right">{{job.status.name}}</h4>
-                <h4><a ui-sref="jobs.viewDetail({ jobId: job._id })">{{job.name}}</a>
+                <h4 class="job-name-container">
+                    <a ui-sref="jobs.viewDetail({ jobId: job._id })">{{job.name}}</a>
                 </h4>
                 <div class="job-description-container">{{job.description}}</div>
                 <strong>Service Supplier:</strong><br>
                 <span>{{ job.service_supplier.display_name }}</span>
             </div>
             <div class="ratings">
-                <p class="pull-right">15 reviews</p>
+                <p class="pull-right">
+                    <ng-pluralize count="job.reviews.length"
+                                  when="{'0': '0 Reviews',
+                                     '1': '{{job.reviews.length}} review',
+                                     'other': '{{job.reviews.length}} reviews'}">
+                    </ng-pluralize>
+                </p>
                 <p>
                     <span class="glyphicon glyphicon-star"></span>
                     <span class="glyphicon glyphicon-star"></span>

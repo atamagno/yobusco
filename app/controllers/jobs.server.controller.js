@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	Job = mongoose.model('Job'),
+	ServiceSupplier = mongoose.model('ServiceSupplier'),
 	_ = require('lodash');
 
 /**
@@ -21,7 +22,25 @@ exports.create = function(req, res) {
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(job);
+			ServiceSupplier.findById(job.service_supplier).exec(function(err, servicesupplier) {
+				if (err) {
+					return res.status(400).send({
+						message: errorHandler.getErrorMessage(err)
+					});
+				} else {
+					servicesupplier.jobs.push(job);
+					servicesupplier.overall_rating++;
+					servicesupplier.save(function (err) {
+						if (err) {
+							return res.status(400).send({
+								message: errorHandler.getErrorMessage(err)
+							});
+						} else {
+							res.jsonp(job);
+						}
+					});
+				}
+			});
 		}
 	});
 };

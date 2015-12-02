@@ -1,15 +1,15 @@
 { 
     "_id" : ObjectId("564e5a0cdcea1d4c0e61bdc8"),
     "salt" : "l\u0015����\u0011���\fm�侃", 
-    "displayName" : "Test User", 
+    "displayName" : "Agustin Tamagno", 
     "provider" : "local", 
-    "username" : "testuser", 
+    "username" : "atamagno", 
     "created" : ISODate("2015-11-04T14:26:29.952+0000"), 
     "roles" : ["user"],
     "password" : "ThCvoDdeQz7iGH6Bx7wnlUvUs/VAgYtmNV3FHEDPUX9xHqScp1q0LRn1gRl9W0p9auGbDGVGnAKE5Hh9mqwQMw==", 
     "email" : "test@mail.com", 
-    "lastName" : "Test", 
-    "firstName" : "User", 
+    "lastName" : "Agustin", 
+    "firstName" : "Tamagno", 
     "__v" : NumberInt(0)
 }
 { 
@@ -43,14 +43,14 @@
 {
     "_id" : ObjectId("564f5531a8df043c1db478c5"),
     "salt" : ",�QZ{����;��a2\u0017�",
-    "displayName" : "Another User",
+    "displayName" : "Fernando Carreño",
     "provider" : "local",
-    "username" : "another",
+    "username" : "fcarreno",
     "created" : ISODate("2015-11-20T17:15:29.875+0000"),
     "roles" : ["user"],
     "password" : "aSjhilqHpDdRB6D6rj/RW+q1R74Uz+eSnpKMFOp9J61pjpaoNHtbmVq0mga6yTfKviRio8WQ04AoEF4MAXImbA==",
     "email" : "another@mail.com",
-    "lastName" : "User",
-    "firstName" : "Another",
+    "lastName" : "Fernando",
+    "firstName" : "Carreño",
     "__v" : NumberInt(0)
 }
