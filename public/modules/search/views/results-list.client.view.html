@@ -17,15 +17,29 @@
                     <img src="http://placehold.it/140x100" alt="">
 
                     <div class="search-result-details">
-                        <div class="search-result-display-name">
-                            <h4>{{servicesupplier.display_name}}</h4>
-                        </div>
+                        <strong class="pull-right">
+                            <ng-pluralize count="servicesupplier.jobs.length"
+                                          when="{'0': 'No Jobs',
+                                     '1': '{{servicesupplier.jobs.length}} Job',
+                                     'other': '{{servicesupplier.jobs.length}} Jobs'}">
+                            </ng-pluralize>
+                        </strong>
+
+                        <div class="search-result-display-name">{{servicesupplier.display_name}}</div>
+
                         <p>{{servicesupplier.description}}</p>
+
                         <div class="search-result-rating-details">
-                            <p class="pull-right">0 reviews</p>
-                            <p>
+                            <div class="pull-right">
+                                <ng-pluralize count="servicesupplier.reviews.length"
+                                              when="{'0': '0 Reviews',
+                                                     '1': '{{servicesupplier.reviews.length}} review',
+                                                     'other': '{{servicesupplier.reviews.length}} reviews'}">
+                                </ng-pluralize>
+                            </div>
+                            <div>
                                 <rating ng-model="servicesupplier.overall_rating" max="5" readonly="true"></rating>
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </div>

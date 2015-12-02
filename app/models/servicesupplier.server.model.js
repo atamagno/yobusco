@@ -46,9 +46,16 @@ var ServiceSupplierSchema = new Schema({
         }],
         required: 'At least one service subcategory is required'
     },
+    reviews:[{
+        type: Schema.ObjectId,
+        ref: 'Review',
+    }],
+    jobs:[{
+        type: Schema.ObjectId,
+        ref: 'Job',
+    }],
     overall_rating: {
         type: Number,
-        max: 5,
         default: 0
     }
 });

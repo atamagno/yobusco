@@ -119,7 +119,7 @@ exports.listByPage = function(req, res) {
 
                 response.totalItems = count;
                 // TODO: need to define sort strategy
-                ServiceSupplier.find(query, {}, { skip: startIndex, limit: itemsPerPage }, function(err, servicesuppliers) {
+                ServiceSupplier.find(query, {}, { skip: startIndex, limit: itemsPerPage, sort: { overall_rating: -1, registration_date: 1 } }, function(err, servicesuppliers) {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getErrorMessage(err)

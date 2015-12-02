@@ -2,6 +2,10 @@
     padding: 10px;
 }
 
+.job-name-container {
+    min-height: 38px;
+}
+
 .job-description-container {
     min-height: 60px;
 }
