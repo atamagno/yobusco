@@ -6,17 +6,29 @@ angular.module('jobs').controller('UserJobsController',
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
-		$scope.jobstatuses = JobsStatus.query().$promise.then(function (statuses) {
+		JobsStatus.query().$promise.then(function (statuses) {
 			for (var i = 0; i < statuses.length; i++) {
 				if (statuses[i].name === 'In Progress') {
 					$scope.defaultStatus = statuses[i];
 					break;
 				}
 			}
+
+			$scope.jobstatuses = statuses;
 		});
 
-		$scope.servicesuppliers = ServiceSuppliers.query();
 		$scope.selectedServiceSupplier = undefined;
+		ServiceSuppliers.query().$promise.then(function(servicesuppliers) {
+			$scope.servicesuppliers = servicesuppliers;
+			if ($stateParams.servicesupplierId) {
+				for (var i = 0; i < servicesuppliers.length; i++) {
+					if (servicesuppliers[i]._id === $stateParams.servicesupplierId) {
+						$scope.selectedServiceSupplier = servicesuppliers[i];
+						break;
+					}
+				}
+			}
+		});
 
 		// Create new Job
 		$scope.create = function() {
@@ -84,6 +96,13 @@ angular.module('jobs').controller('UserJobsController',
 			$scope.expectedDateOpened = true;
 		};
 
+		$scope.openFinishDatePicker = function($event) {
+			$event.preventDefault();
+			$event.stopPropagation();
+
+			$scope.finishDateOpened = true;
+		};
+
 		$scope.getAllJobs = function() {
 
 			$scope.jobstatus = $stateParams.status;
@@ -124,7 +143,46 @@ angular.module('jobs').controller('UserJobsController',
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger', $scope.error);
 			});
+		};
 
+		$scope.changeStatus = function(status) {
+			$scope.job.status = status;
+		};
+
+		// Update existing Job
+		$scope.update = function() {
+			var job = $scope.job;
+
+			if (job.service_supplier && job.service_supplier._id) {
+
+				if ((['Completed', 'Abandoned'].indexOf(job.status.name) !== -1) && !job.finish_date) {
+					Alerts.show('danger','You must select a finish date');
+				} else {
+					job.$update(function() {
+						Alerts.show('success','Job successfully updated');
+						$state.go('jobs.viewDetail', { jobId: job._id});
+					}, function(errorResponse) {
+						$scope.error = errorResponse.data.message;
+						Alerts.show('danger',$scope.error);
+					});
+				}
+
+			} else {
+				Alerts.show('danger','You must select a valid service supplier');
+			}
+		};
+
+		$scope.openEditJobModal = function () {
+
+			$scope.lalal = 'fasfa';
+			var modalInstance = $modal.open({
+				templateUrl: 'editJobByUserModal',
+				controller: 'EditJobModalInstanceCtrl'
+			});
+
+			modalInstance.result.then(function () {
+				$scope.update()
+			});
 		};
 
 		$scope.openReviewModal = function () {
@@ -186,5 +244,17 @@ angular.module('jobs').controller('ReviewModalInstanceCtrl',
 
 		$scope.deleteSelectedService = function(index) {
 			$scope.selectedservices.splice(index, 1);
+		};
+	});
+
+angular.module('jobs').controller('EditJobModalInstanceCtrl',
+	function ($scope, $modalInstance) {
+
+		$scope.ok = function () {
+			$modalInstance.close();
+		};
+
+		$scope.cancel = function () {
+			$modalInstance.dismiss('cancel');
 		};
 	});

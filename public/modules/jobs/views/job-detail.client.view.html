@@ -7,6 +7,8 @@
                 <small>{{job.name}}</small>
                 <a data-ng-show="showLeaveReviewButton"
                    data-ng-click="openReviewModal()" class="btn btn-success pull-right">Leave a Review</a>
+                <a data-ng-show="!showLeaveReviewButton"
+                   ui-sref="jobs.edit({ jobId: job._id })" class="btn btn-success pull-right">Update job</a>
             </h1>
         </div>
     </div>
@@ -24,6 +26,7 @@
             <ul class="job-detail-list-container">
                 <li><strong>Start Date: </strong>{{job.start_date | date: 'shortDate'}}</li>
                 <li><strong>Expected Date: </strong>{{job.expected_date | date: 'shortDate'}}</li>
+                <li><strong>Finish Date: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
                 <li><strong>Status: </strong>{{job.status.name}}</li>
                 <li><strong>Service Supplier: </strong>{{job.service_supplier.display_name}}</li>
             </ul>
