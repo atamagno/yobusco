@@ -8,6 +8,9 @@ angular.module('admin').controller('UsersAdminController',
 		$scope.roles = [];
 		$scope.password = '';
 
+		// If user is not signed in then redirect back home
+		if (!$scope.authentication.user || ($scope.authentication.user.roles.indexOf('admin') === -1)) $state.go('home');
+
 		$scope.createModalInstance = function (templateUrl) {
 
 			var modalInstance = $modal.open({
@@ -49,7 +52,7 @@ angular.module('admin').controller('UsersAdminController',
 			// Redirect after save
 			user.$save(function(response) {
 				Alerts.show('success','User successfully created');
-				$state.go('admin.viewUser', { userForAdminId: response._id});
+				$state.go('admin.viewUser', { userId: response._id});
 
 				// Clear form fields
 				$scope.firstName = '';
@@ -66,7 +69,7 @@ angular.module('admin').controller('UsersAdminController',
 
 		// Remove existing User
 		$scope.remove = function(user) {
-			$scope.user.$remove(function() {
+			$scope.userInfo.$remove(function() {
 				Alerts.show('success','User successfully deleted');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
@@ -78,13 +81,13 @@ angular.module('admin').controller('UsersAdminController',
 
 		// Update existing User
 		$scope.update = function() {
-			var user = $scope.user;
-			user.roles = $scope.roles;
-			user.password = $scope.password;
+			var userInfo = $scope.userInfo;
+			userInfo.roles = [$scope.role];
+			userInfo.password = $scope.password;
 
-			user.$update(function() {
+			userInfo.$update(function() {
 				Alerts.show('success','User successfully updated');
-				$state.go('admin.viewUser', { userForAdminId: user._id});
+				$state.go('admin.viewUser', { userId: userInfo._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger',$scope.error);
@@ -117,8 +120,11 @@ angular.module('admin').controller('UsersAdminController',
 
 		// Find existing User
 		$scope.findOne = function() {
-			$scope.user = UsersAdmin.get({
-				userForAdminId: $stateParams.userForAdminId
+			UsersAdmin.get({
+				userId: $stateParams.userId
+			}).$promise.then(function(user) {
+				$scope.userInfo = user;
+				$scope.role = user.roles.length && user.roles.length === 1 ? user.roles[0] : '';
 			});
 		};
 	});

@@ -1,23 +1,25 @@
 'use strict';
 
 module.exports = function(app) {
-    // Service Supplier Routes
-    var users = require('../../app/controllers/users.server.controller');
-    var servicesuppliers = require('../../app/controllers/servicesuppliers.server.controller');
+    var servicesuppliers = require('../../app/controllers/servicesuppliers.server.controller'),
+        users = require('../../app/controllers/users.server.controller');
 
-    // ServiceSuppliers Routes
-    app.route('/servicesuppliers')
+    // ServiceSuppliers admin routes
+    app.route('/servicesuppliers-admin')
         .get(servicesuppliers.list)
-        .post(users.requiresLogin, servicesuppliers.create);
+        .post(users.requiresLogin, users.isAdmin, servicesuppliers.create);
 
-    app.route('/servicesuppliers/:servicesupplierId')
+    app.route('/servicesuppliers-admin/:servicesupplierId')
         .get(servicesuppliers.read)
-        .put(users.requiresLogin, servicesuppliers.update)
-        .delete(users.requiresLogin, servicesuppliers.delete);
+        .put(users.requiresLogin, users.isAdmin, servicesuppliers.update)
+        .delete(users.requiresLogin, users.isAdmin, servicesuppliers.delete);
 
-    app.route('/servicesuppliers/:currentPage/:itemsPerPage').get(servicesuppliers.listByPage);
+    app.route('/servicesuppliers-admin/:currentPage/:itemsPerPage').get(servicesuppliers.listByPage);
 
     app.param('servicesupplierId', servicesuppliers.servicesupplierByID);
 
+    //ServiceSuppliers routes
+    app.route('/servicesuppliers').get(servicesuppliers.list)
+    app.route('/servicesuppliers/:servicesupplierId').get(servicesuppliers.read)
     app.route('/servicesuppliers-results/:serviceId/:currentPage/:itemsPerPage').get(servicesuppliers.listByPage);
 };

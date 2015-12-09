@@ -6,6 +6,9 @@ angular.module('admin').controller('ReviewsController',
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
+		// If user is not signed in then redirect back home
+		if (!$scope.authentication.user || ($scope.authentication.user.roles.indexOf('admin') === -1)) $state.go('home');
+
 		$scope.ratings = [];
 		RatingTypes.query().$promise.then(function (types) {
 			for (var i = 0; i < types.length; i++) {

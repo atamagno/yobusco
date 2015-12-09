@@ -1,27 +1,26 @@
 'use strict';
 
 module.exports = function(app) {
-    var servicesubcategories = require('../../app/controllers/servicesubcategories.server.controller');
+    var servicesubcategories = require('../../app/controllers/servicesubcategories.server.controller'),
+        users = require('../../app/controllers/users.server.controller');
 
-    // ServiceSubcategories Routes
-    app.route('/servicesubcategories')
+    // ServiceSubcategories admin routes
+    app.route('/servicesubcategories-admin')
         .get(servicesubcategories.list)
-        .post(servicesubcategories.create);
+        .post(users.requiresLogin, users.isAdmin, servicesubcategories.create);
 
-    app.route('/servicesubcategories/:servicesubcategoryId')
+    app.route('/servicesubcategories-admin/:servicesubcategoryId')
         .get(servicesubcategories.read)
-        .put(servicesubcategories.update)
-        .delete(servicesubcategories.delete);
+        .put(users.requiresLogin, users.isAdmin, servicesubcategories.update)
+        .delete(users.requiresLogin, users.isAdmin, servicesubcategories.delete);
 
-    // Finish by binding the ServiceSubcategories middleware
     app.param('servicesubcategoryId', servicesubcategories.servicesubcategoryByID);
 
-    // Just the keywords associated to each service subcategory
+    app.route('/servicesubcategories-admin/:currentPage/:itemsPerPage').get(servicesubcategories.listByPage);
+
+    // ServiceSubcategories routes
+    app.route('/servicesubcategories').get(servicesubcategories.list);
     app.route('/servicesubcategories-keywords').get(servicesubcategories.serviceSubcategoriesKeywords);
-
     app.route('/servicesubcategories-by-servicecategory/:serviceCategoryId').get(servicesubcategories.search);
-
     app.param('serviceCategoryId', servicesubcategories.serviceSubcategoriesByServiceCategory);
-
-    app.route('/servicesubcategories/:currentPage/:itemsPerPage').get(servicesubcategories.listByPage);
 };

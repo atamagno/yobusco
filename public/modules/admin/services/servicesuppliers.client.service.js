@@ -4,14 +4,11 @@
 angular.module('admin')
     .factory('ServiceSuppliers',
         function($resource) {
-            return $resource('servicesuppliers/:servicesupplierId/:currentPage/:itemsPerPage', { servicesupplierId: '@_id'
-            }, {
-                update: { method: 'PUT' }
-            });
+            return $resource('servicesuppliers/:servicesupplierId');
         })
     .factory('ServiceSuppliersAdmin',
         function($resource) {
-            return $resource('servicesuppliers/:servicesupplierId/:currentPage/:itemsPerPage', { servicesupplierId: '@_id'
+            return $resource('servicesuppliers-admin/:servicesupplierId/:currentPage/:itemsPerPage', { servicesupplierId: '@_id'
             }, {
                 query:  { method: 'GET', isArray: false },
                 update: { method: 'PUT' }
