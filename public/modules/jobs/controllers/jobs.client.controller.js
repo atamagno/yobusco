@@ -2,11 +2,11 @@
 
 // UserJobs controller
 angular.module('jobs').controller('UserJobsController',
-	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobsStatus, ServiceSuppliers, Reviews, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobStatus, ServiceSuppliers, Reviews, $modal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
-		JobsStatus.query().$promise.then(function (statuses) {
+		JobStatus.query().$promise.then(function (statuses) {
 			for (var i = 0; i < statuses.length; i++) {
 				if (statuses[i].name === 'In Progress') {
 					$scope.defaultStatus = statuses[i];
@@ -48,7 +48,7 @@ angular.module('jobs').controller('UserJobsController',
 				// Redirect after save
 				job.$save(function (response) {
 					//Alerts.show('success','Job successfully created');
-					$state.go('jobs.list', {jobId: response._id});
+					$state.go('jobs.list', { jobId: response._id, status: 'all' });
 
 					// Clear form fields
 					$scope.name = '';
@@ -107,7 +107,7 @@ angular.module('jobs').controller('UserJobsController',
 
 			$scope.jobstatus = $stateParams.status;
 			JobSearch.query({
-				userId: $scope.authentication.user._id,
+				jobUserId: $scope.authentication.user._id,
 				status: $scope.jobstatus
 			}).$promise.then(function (response) {
 					$scope.jobs = response;

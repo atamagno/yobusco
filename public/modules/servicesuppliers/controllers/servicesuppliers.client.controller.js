@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('servicesuppliers').controller('ServiceSuppliersDetailController',
-    function($scope, $stateParams, Authentication, ServiceSuppliersAdmin, ServiceSuppliersDetails, Reviews, Alerts, $modal) {
+    function($scope, $stateParams, Authentication, ServiceSuppliers, ServiceSuppliersDetails, Reviews, Alerts, $modal) {
         $scope.authentication = Authentication;
 
-        ServiceSuppliersAdmin.get({
+        ServiceSuppliers.get({
             servicesupplierId: $stateParams.servicesupplierId
         }).$promise.then(function(servicesupplier) {
                 $scope.servicesupplier = servicesupplier;

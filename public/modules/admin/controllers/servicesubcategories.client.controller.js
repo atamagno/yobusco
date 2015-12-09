@@ -7,6 +7,9 @@ angular.module('admin').controller('ServiceSubcategoriesController',
         $scope.servicecategories = ServiceCategories.query();
 		$scope.alerts = Alerts;
 
+		// If user is not signed in then redirect back home
+		if (!$scope.authentication.user || ($scope.authentication.user.roles.indexOf('admin') === -1)) $state.go('home');
+
 		$scope.createModalInstance = function (templateUrl) {
 
 			var modalInstance = $modal.open({

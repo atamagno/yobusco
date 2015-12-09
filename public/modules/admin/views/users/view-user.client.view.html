@@ -1,16 +1,16 @@
 <section data-ng-controller="UsersAdminController" data-ng-init="findOne()">
 	<alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
 	<div class="admin-page-header">
-		<h1 data-ng-bind="user.displayName"></h1>
+		<h1 data-ng-bind="userInfo.displayName"></h1>
 	</div>
 	<div class="page-content">
-		<h3 data-ng-bind="user.email"></h3>
+		<h3 data-ng-bind="userInfo.email"></h3>
 	</div>
 	<div class="page-content">
-		<h4 data-ng-bind="user.username"></h4>
+		<h4 data-ng-bind="userInfo.username"></h4>
 	</div>
 	<div class="pull-right admin-action-buttons">
-		<a class="btn btn-primary" ui-sref="admin.editUser({ userForAdminId: user._id })">
+		<a class="btn btn-primary" ui-sref="admin.editUser({ userId: userInfo._id })">
 			<i class="glyphicon glyphicon-edit"></i>
 		</a>
 		<a class="btn btn-primary" data-ng-click="openDeleteModal();">

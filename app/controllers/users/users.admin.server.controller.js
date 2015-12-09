@@ -32,14 +32,14 @@ exports.create = function(req, res) {
  * Show the current User
  */
 exports.read = function(req, res) {
-	res.jsonp(req.user);
+	res.jsonp(req.userInfo);
 };
 
 /**
  * Update a User
  */
 exports.updateForAdmin = function(req, res) {
-	var user = req.user ;
+	var user = req.userInfo;
 
 	user = _.extend(user , req.body);
 	user.displayName = user.firstName + ' ' + user.lastName;
@@ -59,7 +59,7 @@ exports.updateForAdmin = function(req, res) {
  * Delete an User
  */
 exports.delete = function(req, res) {
-	var user = req.user ;
+	var user = req.userInfo;
 
 	user.remove(function(err) {
 		if (err) {
@@ -94,7 +94,7 @@ exports.userForAdminByID = function(req, res, next, id) {
 	User.findById(id).exec(function(err, user) {
 		if (err) return next(err);
 		if (!user) return next(new Error('Failed to load User ' + id));
-		req.user = user;
+		req.userInfo = user;
 		next();
 	});
 };

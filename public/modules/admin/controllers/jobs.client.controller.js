@@ -2,11 +2,14 @@
 
 // Jobs controller
 angular.module('admin').controller('JobsController',
-	function($scope, $stateParams, $state, Authentication, JobsAdmin, JobsStatus, ServiceSuppliers, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, JobsAdmin, JobStatus, ServiceSuppliers, $modal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
-		JobsStatus.query().$promise.then(function (statuses) {
+		// If user is not signed in then redirect back home
+		if (!$scope.authentication.user || ($scope.authentication.user.roles.indexOf('admin') === -1)) $state.go('home');
+
+		JobStatus.query().$promise.then(function (statuses) {
 			for (var i = 0; i < statuses.length; i++) {
 				if (statuses[i].name === 'In Progress') {
 					$scope.defaultStatus = statuses[i];

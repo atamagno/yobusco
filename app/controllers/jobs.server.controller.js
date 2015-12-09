@@ -159,9 +159,9 @@ exports.search = function(req, res) {
 	res.json(req.jobs);
 };
 
-exports.listByUser = function(req, res, next, userId) {
+exports.listByUser = function(req, res, next, jobUserId) {
 
-	Job.find({user: userId}).populate('service_supplier', 'display_name')
+	Job.find({user: jobUserId}).populate('service_supplier', 'display_name')
 							.populate('status')
 		.exec(function(err, jobs) {
 		if (err) {

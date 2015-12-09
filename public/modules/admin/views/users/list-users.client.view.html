@@ -13,7 +13,7 @@
             Items: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + users.length}} of {{totalItems}}
         </div>
         <div class="list-group">
-            <a data-ng-repeat="user in users" ui-sref="admin.viewUser({ userForAdminId: user._id })" class="list-group-item">
+            <a data-ng-repeat="user in users" ui-sref="admin.viewUser({ userId: user._id })" class="list-group-item">
                 <small class="list-group-item-text">
                     Registered on
                     <span data-ng-bind="user.created | date:'medium'"></span>
