@@ -1,6 +1,4 @@
 <div data-ng-controller="SuppliersResultsController" data-ng-init="getResults()">
-    <p class="lead">Service Suppliers</p>
-
 
     <div data-ng-show="totalItems !== 0 && !showList" class="loading-container">
         <img class="loading-img" src="/modules/core/img/loaders/loader.gif"/>
@@ -47,8 +45,8 @@
         </div>
 
         <div class="pagination-container" data-ng-hide="totalItems <= itemsPerPage">
-            <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" max-size="maxPages"
-                        items-per-page="itemsPerPage" ng-change="navigateToResults()"
+            <pagination boundary-links="true" total-items="totalItems" data-ng-model="currentPage" class="pagination-sm" max-size="maxPages"
+                        items-per-page="itemsPerPage" data-ng-change="navigateToResults()"
                         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
         </div>
     </div>
