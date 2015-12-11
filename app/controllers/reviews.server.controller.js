@@ -29,7 +29,8 @@ exports.create = function(req, res) {
 						message: errorHandler.getErrorMessage(err)
 					});
 				} else {
-					servicesupplier.reviews.push(review);
+
+					servicesupplier.reviewCount++;
 					servicesupplier.overall_rating++;
 					servicesupplier.save(function(err) {
 						if (err) {
@@ -45,7 +46,7 @@ exports.create = function(req, res) {
 											message: errorHandler.getErrorMessage(err)
 										});
 									} else {
-										job.reviews.push(review);
+										job.reviewCount++;
 										job.save(function(err) {
 											if (err) {
 												return res.status(400).send({
@@ -106,7 +107,48 @@ exports.delete = function(req, res) {
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(review);
+			ServiceSupplier.findById(review.service_supplier).exec(function(err, servicesupplier) {
+				if (err) {
+					return res.status(400).send({
+						message: errorHandler.getErrorMessage(err)
+					});
+				} else {
+
+					servicesupplier.reviewCount--;
+					servicesupplier.overall_rating--;
+					servicesupplier.save(function(err) {
+						if (err) {
+							return res.status(400).send({
+								message: errorHandler.getErrorMessage(err)
+							});
+						} else {
+
+							if (review.job) {
+								Job.findById(review.job).exec(function(err, job) {
+									if (err) {
+										return res.status(400).send({
+											message: errorHandler.getErrorMessage(err)
+										});
+									} else {
+										job.reviewCount--;
+										job.save(function(err) {
+											if (err) {
+												return res.status(400).send({
+													message: errorHandler.getErrorMessage(err)
+												});
+											} else {
+												res.jsonp(review);
+											}
+										});
+									}
+								});
+							} else {
+								res.jsonp(review);
+							}
+						}
+					});
+				}
+			});
 		}
 	});
 };

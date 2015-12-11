@@ -84,6 +84,10 @@ html, body {
 	padding-left: 0;
 }
 
+.no-margin-top {
+	margin-top: 0;
+}
+
 .gray-border-bottom {
 	border-bottom: 1px solid #eee;
 }

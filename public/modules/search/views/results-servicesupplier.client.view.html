@@ -1,11 +1,49 @@
-<div class="row">
+<div data-ng-controller="SuppliersFiltersController" class="row">
 
     <div class="col-md-3">
-        <p class="lead">Filters</p>
-        <div class="list-group">
-            <a href="#" class="list-group-item">Filter 1</a>
-            <a href="#" class="list-group-item">Filter 2</a>
-            <a href="#" class="list-group-item">Filter 3</a>
+        <div class="well">
+            <h4 class="no-margin-top">Services</h4>
+            <div data-ng-repeat="servicesubcategory in serviceSubcategories">
+                <label class="service-filter-label">
+                    <input type="checkbox" data-ng-model="servicesubcategory.checked"> {{servicesubcategory.name}}
+                </label>
+                <br>
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <h4>Jobs</h4>
+            <div class="flex-display">
+                <span class="job-count-filter-label">At least</span>
+                <input type="number" class="form-control job-count-filter-input" min="0" data-ng-model="jobAmount" data-ng-keypress="$event.keyCode == 13 && applyFilters()">
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <h4>Ratings</h4>
+            <div data-ng-repeat="rating in ratings" class="ratings-filter-container">
+                <div class="ratings-filter-label">{{rating.name}}</div>
+                <div class="ratings-filter-option">
+                    <rating ng-model="rating.rate" max="5" class="review-rating-selector"></rating>
+                </div>
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <h4>Search Supplier</h4>
+            <div class="input-group">
+                <input type="text" class="form-control" data-ng-model="supplierName" data-ng-keypress="$event.keyCode == 13 && applyFilters()">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+
+            <br>
+
+            <a class="btn btn-default" data-ng-click="resetFilters()">Reset Filters</a>
+            <a class="btn btn-primary" data-ng-click="applyFilters()">Apply Filters</a>
         </div>
     </div>
     <div class="col-md-9">

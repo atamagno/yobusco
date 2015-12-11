@@ -173,8 +173,7 @@ angular.module('jobs').controller('UserJobsController',
 		};
 
 		$scope.openEditJobModal = function () {
-
-			$scope.lalal = 'fasfa';
+			
 			var modalInstance = $modal.open({
 				templateUrl: 'editJobByUserModal',
 				controller: 'EditJobModalInstanceCtrl'

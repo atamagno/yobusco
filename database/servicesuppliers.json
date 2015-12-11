@@ -11,12 +11,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("5626984b477f11b0b2a6dd97"), 
@@ -31,12 +27,8 @@
     "overall_rating" : NumberInt(1), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-        ObjectId("5654ae1fe9b387444024cb2e")
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(1),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269852477f11b0b2a6dd99"), 
@@ -51,12 +43,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b0b2a6dd91"), 
@@ -71,12 +59,8 @@
     "overall_rating" : NumberInt(2), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(5), 
-    "reviews" : [
-        ObjectId("5654ae1fe9b387a82024cb2e")
-    ], 
-    "jobs" : [
-        ObjectId("564f560ca8df043c1db478c6")
-    ]
+    "reviewCount" : NumberInt(1),
+    "jobCount" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3072"), 
@@ -91,12 +75,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3069"), 
@@ -111,12 +91,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3070"), 
@@ -131,12 +107,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3077"), 
@@ -151,12 +123,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3076"), 
@@ -171,12 +139,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3080"), 
@@ -191,12 +155,8 @@
     "overall_rating" : NumberInt(1), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-        ObjectId("565f628526f01d7013ef7af1")
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3075"), 
@@ -211,12 +171,8 @@
     "overall_rating" : NumberInt(2), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-        ObjectId("5654ad86e9b387a82024cb24")
-    ], 
-    "jobs" : [
-        ObjectId("564f43d0a8df043c1db478ca")
-    ]
+    "reviewCount" : NumberInt(1),
+    "jobCount" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("56269584477f11b0b299dd91"), 
@@ -231,12 +187,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3078"), 
@@ -251,17 +203,8 @@
     "overall_rating" : NumberInt(7), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-        ObjectId("5654acfbe9b387a82024cb1f"), 
-        ObjectId("5654adc9e9b387a82024cb29")
-    ], 
-    "jobs" : [
-        ObjectId("564f58f4a8df043c1db478c7"), 
-        ObjectId("564f58f4a8df043c1db47877"), 
-        ObjectId("564f58f4a855543c1d0178c7"), 
-        ObjectId("564f5895a8df443c1db478c7"), 
-        ObjectId("564f58f4a8dff4343db478c7")
-    ]
+    "reviewCount" : NumberInt(2),
+    "jobCount" : NumberInt(5)
 }
 { 
     "_id" : ObjectId("56269584477f24b0b2a6dd91"), 
@@ -276,12 +219,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(3), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477121b0b2a6dd91"), 
@@ -296,12 +235,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b0b288dd91"), 
@@ -316,12 +251,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f44b0b2a6dd91"), 
@@ -336,12 +267,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b552a6dd91"), 
@@ -356,12 +283,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11bdd2a6dd91"), 
@@ -376,12 +299,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b0b2a61191"), 
@@ -396,12 +315,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3071"), 
@@ -416,12 +331,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b0bcc6dd91"), 
@@ -436,12 +347,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b0b2aaad91"), 
@@ -456,12 +363,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b0b2a6df91"), 
@@ -476,12 +379,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3073"), 
@@ -496,12 +395,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b0b2a6db91"), 
@@ -516,12 +411,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3011"), 
@@ -536,12 +427,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b0b2a3dd91"), 
@@ -556,12 +443,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b0b2a6de91"), 
@@ -576,12 +459,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b0b2b6dd91"), 
@@ -596,12 +475,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b092a6dd91"), 
@@ -616,12 +491,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f1140b2a6dd91"), 
@@ -636,12 +507,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11bab2a6dd91"), 
@@ -656,12 +523,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("56269584477f11b082a6dd91"), 
@@ -676,13 +539,8 @@
     "overall_rating" : NumberInt(2), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-        ObjectId("5654ae1fe9b344444024cb2e"), 
-        ObjectId("5654ae1fe9b387445554cb2e")
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(2),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3074"), 
@@ -697,12 +555,8 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3079"), 
@@ -717,10 +571,6 @@
     "overall_rating" : NumberInt(0), 
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
-    "reviews" : [
-
-    ], 
-    "jobs" : [
-
-    ]
+    "reviewCount" : NumberInt(0),
+    "jobCount" : NumberInt(0)
 }

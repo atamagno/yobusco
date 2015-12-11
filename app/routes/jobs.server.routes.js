@@ -20,7 +20,9 @@ module.exports = function(app) {
 
 	// Jobs routes
 	app.route('/jobs').post(users.requiresLogin, jobs.create);
-	app.route('/jobs/:jobId').get(jobs.read);
+	app.route('/jobs/:jobId')
+		.get(jobs.read)
+		.put(users.requiresLogin, jobs.update);
 
 	app.route('/jobs-by-user/:jobUserId/:status').get(jobs.search);
 	app.param('jobUserId', jobs.listByUser);

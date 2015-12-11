@@ -3,7 +3,7 @@
 angular.module('admin')
 	.factory('Jobs',
 		function($resource) {
-			return $resource('jobs/:jobId', { jobId: '@_id' });
+			return $resource('jobs/:jobId', { jobId: '@_id' }, { update: { method: 'PUT' } });
 		})
 	.factory('JobsAdmin',
 		function($resource) {
