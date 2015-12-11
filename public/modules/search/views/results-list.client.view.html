@@ -1,5 +1,7 @@
 <div data-ng-controller="SuppliersResultsController" data-ng-init="getResults()">
 
+    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+
     <div data-ng-show="totalItems !== 0 && !showList" class="loading-container">
         <img class="loading-img" src="/modules/core/img/loaders/loader.gif"/>
         <div>Loading service suppliers...</div>
@@ -16,10 +18,10 @@
 
                     <div class="search-result-details">
                         <strong class="pull-right">
-                            <ng-pluralize count="servicesupplier.jobs.length"
+                            <ng-pluralize count="servicesupplier.jobCount"
                                           when="{'0': 'No Jobs',
-                                     '1': '{{servicesupplier.jobs.length}} Job',
-                                     'other': '{{servicesupplier.jobs.length}} Jobs'}">
+                                     '1': '{{servicesupplier.jobCount}} Job',
+                                     'other': '{{servicesupplier.jobCount}} Jobs'}">
                             </ng-pluralize>
                         </strong>
 
@@ -29,10 +31,10 @@
 
                         <div class="search-result-rating-details">
                             <div class="pull-right">
-                                <ng-pluralize count="servicesupplier.reviews.length"
+                                <ng-pluralize count="servicesupplier.reviewCount"
                                               when="{'0': '0 Reviews',
-                                                     '1': '{{servicesupplier.reviews.length}} review',
-                                                     'other': '{{servicesupplier.reviews.length}} reviews'}">
+                                                     '1': '{{servicesupplier.reviewCount}} review',
+                                                     'other': '{{servicesupplier.reviewCount}} reviews'}">
                                 </ng-pluralize>
                             </div>
                             <div>

@@ -21,10 +21,10 @@
             </div>
             <div class="ratings">
                 <p class="pull-right">
-                    <ng-pluralize count="job.reviews.length"
+                    <ng-pluralize count="job.reviewCount"
                                   when="{'0': '0 Reviews',
-                                     '1': '{{job.reviews.length}} review',
-                                     'other': '{{job.reviews.length}} reviews'}">
+                                     '1': '{{job.reviewCount}} review',
+                                     'other': '{{job.reviewCount}} reviews'}">
                     </ng-pluralize>
                 </p>
                 <p>

@@ -4,35 +4,35 @@
         <div class="well">
             <h4 class="no-margin-top">Services</h4>
             <div data-ng-repeat="servicesubcategory in serviceSubcategories">
-                <label style="font-weight: normal; cursor: pointer;">
+                <label class="service-filter-label">
                     <input type="checkbox" data-ng-model="servicesubcategory.checked"> {{servicesubcategory.name}}
                 </label>
                 <br>
             </div>
 
-            <div style="border-bottom: 1px solid #E0E0E0; padding-top: 10px;"></div>
+            <div class="filter-divider"></div>
 
             <h4>Jobs</h4>
-            <div style="display: flex;">
-                <span style="padding: 6px 6px 6px 0px;">At least</span>
-                <input type="number" class="form-control" min="0" style="width: 80px;" data-ng-model="jobAmount">
+            <div class="flex-display">
+                <span class="job-count-filter-label">At least</span>
+                <input type="number" class="form-control job-count-filter-input" min="0" data-ng-model="jobAmount" data-ng-keypress="$event.keyCode == 13 && applyFilters()">
             </div>
 
-            <div style="border-bottom: 1px solid #E0E0E0; padding-top: 10px;"></div>
+            <div class="filter-divider"></div>
 
             <h4>Ratings</h4>
-            <div data-ng-repeat="rating in ratings" style="display: flex; position: relative;">
-                <div style="overflow: hidden; text-overflow: ellipsis; width: 50%; white-space: nowrap;">{{rating.name}}</div>
-                <div style="position: absolute; right: 0;">
+            <div data-ng-repeat="rating in ratings" class="ratings-filter-container">
+                <div class="ratings-filter-label">{{rating.name}}</div>
+                <div class="ratings-filter-option">
                     <rating ng-model="rating.rate" max="5" class="review-rating-selector"></rating>
                 </div>
             </div>
 
-            <div style="border-bottom: 1px solid #E0E0E0; padding-top: 10px;"></div>
+            <div class="filter-divider"></div>
 
             <h4>Search Supplier</h4>
             <div class="input-group">
-                <input type="text" class="form-control" data-ng-model="supplierName">
+                <input type="text" class="form-control" data-ng-model="supplierName" data-ng-keypress="$event.keyCode == 13 && applyFilters()">
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="button">
                         <span class="glyphicon glyphicon-search"></span>

@@ -8,9 +8,7 @@
     "description" : "Revoque de pared.", 
     "name" : "Trabajo de albañilerí­a", 
     "__v" : NumberInt(0), 
-    "reviews" : [
-        ObjectId("5654ae1fe9b387a82024cb2e")
-    ]
+    "reviewCount" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("564f58f4a8df043c1db47877"), 
@@ -22,9 +20,7 @@
     "description" : "Destapación de cañeria de la cocina.", 
     "name" : "Trabajo de plomería", 
     "__v" : NumberInt(0), 
-    "reviews" : [
-
-    ]
+    "reviewCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("564f5895a8df443c1db478c7"), 
@@ -37,10 +33,7 @@
     "description" : "Destapación de cañeria del baño.", 
     "name" : "Trabajo de plomería", 
     "__v" : NumberInt(0), 
-    "reviews" : [
-        ObjectId("5654acfbe9b387a82024cb1f"), 
-        ObjectId("5654adc9e9b387a82024cb29")
-    ]
+    "reviewCount" : NumberInt(2)
 }
 { 
     "_id" : ObjectId("564f58f4a8df043c1db478c7"), 
@@ -52,9 +45,7 @@
     "description" : "Destapación de cañeria del baño.", 
     "name" : "Trabajo de plomería", 
     "__v" : NumberInt(0), 
-    "reviews" : [
-
-    ]
+    "reviewCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("564f58f4a8dff4343db478c7"), 
@@ -67,9 +58,7 @@
     "description" : "Destapación de cañeria del baño.", 
     "name" : "Trabajo de plomería", 
     "__v" : NumberInt(0), 
-    "reviews" : [
-
-    ]
+    "reviewCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("564f58f4a855543c1d0178c7"), 
@@ -82,9 +71,7 @@
     "description" : "Arreglo de cuerito de inodoro.", 
     "name" : "Trabajo de plomería", 
     "__v" : NumberInt(0), 
-    "reviews" : [
-
-    ]
+    "reviewCount" : NumberInt(0)
 }
 { 
     "_id" : ObjectId("564f43d0a8df043c1db478ca"), 
@@ -96,7 +83,5 @@
     "description" : "Cableado de iluminacion para la cocina.", 
     "name" : "Trabajo de electricidad", 
     "__v" : NumberInt(0), 
-    "reviews" : [
-        ObjectId("5654ad86e9b387a82024cb24")
-    ]
+    "reviewCount" : NumberInt(1)
 }

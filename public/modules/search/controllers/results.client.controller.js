@@ -2,8 +2,9 @@
 
 angular.module('search')
     .controller('SuppliersResultsController',
-        function($scope, $state, $stateParams, Authentication, ServiceSuppliersSearch) {
+        function($scope, $state, $stateParams, Authentication, ServiceSuppliersSearch, Alerts) {
 
+            $scope.alerts = Alerts;
             $scope.authentication = Authentication;
             $scope.serviceSubcategoryId = $stateParams.serviceId;
 
@@ -35,6 +36,9 @@ angular.module('search')
                     $scope.totalItems = response.totalItems;
                     $scope.servicesuppliers = response.servicesuppliers;
                     $scope.showList = $scope.totalItems > 0;
+                }, function(errorResponse) {
+                    $scope.error = errorResponse.data.message;
+                    Alerts.show('danger', $scope.error);
                 });
             };
         })

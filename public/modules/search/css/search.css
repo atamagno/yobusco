@@ -77,3 +77,38 @@
 .pagination-container {
     text-align: center;
 }
+
+.service-filter-label {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.filter-divider {
+    border-bottom: 1px solid #E0E0E0;
+    padding-top: 10px;
+}
+
+.job-count-filter-label {
+    padding: 6px 6px 6px 0px;
+}
+
+.job-count-filter-input {
+    width: 80px;
+}
+
+.ratings-filter-container {
+    display: flex;
+    position: relative;
+}
+
+.ratings-filter-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 50%;
+    white-space: nowrap;
+}
+
+.ratings-filter-option {
+    position: absolute;
+    right: 0;
+}

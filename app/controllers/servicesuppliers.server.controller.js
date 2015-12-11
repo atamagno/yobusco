@@ -108,33 +108,52 @@ exports.listByPage = function(req, res) {
         itemsPerPage = parseInt(itemsPerPage);
         var startIndex = (currentPage - 1) * itemsPerPage;
 
-        var response = {};
-        var query = serviceId ? { services: serviceId } : {};
+        var query = buildSearchQuery(req.query, serviceId);
         ServiceSupplier.count(query, function (err, count) {
             if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
+                return buildErrorResponse(res, err, 400);
             } else {
-
-                response.totalItems = count;
-                // TODO: need to define sort strategy
-                ServiceSupplier.find(query, {}, { skip: startIndex, limit: itemsPerPage, sort: { overall_rating: -1, registration_date: 1 } }, function(err, servicesuppliers) {
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getErrorMessage(err)
-                        });
-                    } else {
-                        response.servicesuppliers = servicesuppliers;
-                        res.jsonp(response);
-                    }
-                });
+                searchServiceSuppliers(query, startIndex, itemsPerPage, count, res);
             }
         });
 
     } else {
-        return res.status(400).send({
-            message: errorHandler.getErrorMessage(err)
-        });
+        return buildErrorResponse(res, err, 400, 'Something went wrong');
     }
+};
+
+function buildSearchQuery(queryString, serviceId) {
+
+    var query = serviceId ? { services: serviceId } : {};
+    if (queryString.supplierName) {
+        query.display_name = { $regex: queryString.supplierName, $options: 'i' };
+    }
+    if (queryString.jobAmount) {
+        query.jobCount = { $gte: queryString.jobAmount };
+    }
+
+    return query;
+};
+
+function searchServiceSuppliers(query, startIndex, itemsPerPage, count, res) {
+
+    var results = { totalItems: count };
+    // TODO: need to define sort strategy
+    ServiceSupplier.find(query, {}, { skip: startIndex, limit: itemsPerPage, sort: { overall_rating: -1, registration_date: 1 } }, function(err, servicesuppliers) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            results.servicesuppliers = servicesuppliers;
+            res.jsonp(results);
+        }
+    });
+};
+
+function buildErrorResponse(res, err, status, errorMessage) {
+    var message = errorMessage ? errorMessage : errorHandler.getErrorMessage(err);
+    return res.status(status).send({
+        message: message
+    });
 };
