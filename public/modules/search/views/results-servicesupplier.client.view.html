@@ -24,7 +24,7 @@
             <div data-ng-repeat="rating in ratings" class="ratings-filter-container">
                 <div class="ratings-filter-label">{{rating.name}}</div>
                 <div class="ratings-filter-option">
-                    <rating ng-model="rating.rate" max="5" class="review-rating-selector"></rating>
+                    <uib-rating data-ng-model="rating.rate" max="5" class="review-rating-selector"></uib-rating>
                 </div>
             </div>
 

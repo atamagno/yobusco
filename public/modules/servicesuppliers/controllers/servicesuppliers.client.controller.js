@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('servicesuppliers').controller('ServiceSuppliersDetailController',
-    function($scope, $stateParams, Authentication, ServiceSuppliers, ServiceSuppliersDetails, Reviews, Alerts, $modal) {
+    function($scope, $state, $stateParams, Authentication, ServiceSuppliers, ServiceSuppliersDetails, Reviews, Alerts, $uibModal) {
         $scope.authentication = Authentication;
 
         ServiceSuppliers.get({
@@ -22,6 +22,14 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
                     });
             });
 
+        $scope.navigateToJobDetails = function(jobId) {
+            if ($scope.authentication.user) {
+                $state.go('jobs.viewDetail', { jobId: jobId});
+            } else {
+                $state.go('viewJobDetail', { jobId: jobId});
+            }
+        };
+
         $scope.rate = 3;
         $scope.max = 5;
 
@@ -32,7 +40,7 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
 
         $scope.openReviewModal = function () {
 
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 templateUrl: 'addSupplierReviewModal',
                 controller: 'SupplierReviewModalInstanceCtrl',
                 resolve: {
@@ -88,7 +96,7 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
     });
 
 angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
-    function ($scope, $modalInstance, ServiceSubcategories, RatingTypes, Alerts, jobs) {
+    function ($scope, $uibModalInstance, ServiceSubcategories, RatingTypes, Alerts, jobs) {
 
         $scope.alerts = Alerts;
 
@@ -115,7 +123,7 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                         ratings: $scope.ratings
                     };
 
-                    $modalInstance.close(reviewInfo);
+                    $uibModalInstance.close(reviewInfo);
 
                 } else {
                     Alerts.show('danger', 'You must fill in a comment');
@@ -126,7 +134,7 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
 
         $scope.selectService = function ($item) {

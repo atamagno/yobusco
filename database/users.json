@@ -8,8 +8,9 @@
     "roles" : ["user"],
     "password" : "ThCvoDdeQz7iGH6Bx7wnlUvUs/VAgYtmNV3FHEDPUX9xHqScp1q0LRn1gRl9W0p9auGbDGVGnAKE5Hh9mqwQMw==", 
     "email" : "test@mail.com", 
-    "lastName" : "Agustin", 
-    "firstName" : "Tamagno", 
+    "lastName" : "Agustin",
+    "firstName": "Tamagno", 
+    "profile_picture":  "https://s3-sa-east-1.amazonaws.com/yobusco-bucket/profile_pictures/8400468.png",
     "__v" : NumberInt(0)
 }
 { 
@@ -22,8 +23,9 @@
     "roles" : ["admin"],
     "password" : "R88MK0/j7rBY3f2ZCXF5cqm6u1+Y4Fhxvg1jDKHbk3RLhr/wsb4ddsKg6IVPbArpphKR6BjBmwN+j+yIpdZU2w==", 
     "email" : "admin@yobusco.com", 
-    "lastName" : "User", 
-    "firstName" : "Admin", 
+    "lastName" : "User",
+    "firstName": "Admin", 
+    "profile_picture":  "https://s3-sa-east-1.amazonaws.com/yobusco-bucket/profile_pictures/12903217.png",
     "__v" : NumberInt(0)
 }
 {
@@ -37,7 +39,8 @@
     "password" : "V6slsIMF6MzOPdODRNqcYKQD7HqpdbJTOPBnpuN50kUq6KqbNdm5wAkzeBOjxfSbO2VMy4eNEMaWWVyVNL/xpg==",
     "email" : "servicesupplier@mail.com",
     "lastName" : "Supplier",
-    "firstName" : "Service",
+    "firstName": "Service",
+    "profile_picture":  "https://s3-sa-east-1.amazonaws.com/yobusco-bucket/profile_pictures/13755814.png",
     "__v" : NumberInt(3)
 }
 {
@@ -51,6 +54,7 @@
     "password" : "aSjhilqHpDdRB6D6rj/RW+q1R74Uz+eSnpKMFOp9J61pjpaoNHtbmVq0mga6yTfKviRio8WQ04AoEF4MAXImbA==",
     "email" : "another@mail.com",
     "lastName" : "Fernando",
-    "firstName" : "Carreño",
+    "firstName": "Carreño",
+    "profile_picture":  "https://s3-sa-east-1.amazonaws.com/yobusco-bucket/profile_pictures/7441214.png",
     "__v" : NumberInt(0)
 }

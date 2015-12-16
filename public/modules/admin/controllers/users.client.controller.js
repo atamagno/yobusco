@@ -2,7 +2,7 @@
 
 // ServiceCategories controller
 angular.module('admin').controller('UsersAdminController',
-	function($scope, $stateParams, $state, Authentication, UsersAdmin, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, UsersAdmin, $uibModal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 		$scope.roles = [];
@@ -13,7 +13,7 @@ angular.module('admin').controller('UsersAdminController',
 
 		$scope.createModalInstance = function (templateUrl) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: templateUrl,
 				controller: 'UserModalInstanceCtrl'
 			});
@@ -130,13 +130,13 @@ angular.module('admin').controller('UsersAdminController',
 	});
 
 angular.module('admin').controller('UserModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 		$scope.ok = function () {
-			$modalInstance.close();
+			$uibModalInstance.close();
 		};
 
 		$scope.cancel = function () {
-			$modalInstance.dismiss('cancel');
+			$uibModalInstance.dismiss('cancel');
 		};
 	});

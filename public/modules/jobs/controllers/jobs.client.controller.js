@@ -2,7 +2,7 @@
 
 // UserJobs controller
 angular.module('jobs').controller('UserJobsController',
-	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobStatus, ServiceSuppliers, Reviews, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobStatus, ServiceSuppliers, Reviews, $uibModal, Alerts, AmazonS3) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
@@ -114,6 +114,14 @@ angular.module('jobs').controller('UserJobsController',
 				});
 		};
 
+		$scope.navigateToJobDetails = function(jobId) {
+			if ($scope.authentication.user) {
+				$state.go('jobs.viewDetail', { jobId: jobId});
+			} else {
+				$state.go('viewJobDetail', { jobId: jobId});
+			}
+		};
+
 		$scope.addReview = function(reviewInfo) {
 
 			var services = [];
@@ -159,7 +167,6 @@ angular.module('jobs').controller('UserJobsController',
 					Alerts.show('danger','You must select a finish date');
 				} else {
 					job.$update(function() {
-						Alerts.show('success','Job successfully updated');
 						$state.go('jobs.viewDetail', { jobId: job._id});
 					}, function(errorResponse) {
 						$scope.error = errorResponse.data.message;
@@ -172,9 +179,41 @@ angular.module('jobs').controller('UserJobsController',
 			}
 		};
 
+		$scope.addImages = function(imagePaths) {
+
+			var job = $scope.job;
+			for (var i = 0; i < imagePaths.length; i++) {
+				if (job.pictures.indexOf(imagePaths[i]) === -1) {
+					job.pictures.push(imagePaths[i]);
+				}
+			}
+
+			job.$update(function() {
+				Alerts.show('success','Job successfully updated');
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
+			});
+		};
+
+		$scope.deleteImage = function(image) {
+
+			var job = $scope.job, index = job.pictures.indexOf(image);
+			if (index > -1) {
+				job.pictures.splice(index, 1);
+			}
+
+			job.$update(function() {
+				Alerts.show('success','Job successfully updated');
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
+			});
+		};
+
 		$scope.openEditJobModal = function () {
 			
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: 'editJobByUserModal',
 				controller: 'EditJobModalInstanceCtrl'
 			});
@@ -186,7 +225,7 @@ angular.module('jobs').controller('UserJobsController',
 
 		$scope.openReviewModal = function () {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: 'addReviewModal',
 				controller: 'ReviewModalInstanceCtrl',
 			});
@@ -195,10 +234,44 @@ angular.module('jobs').controller('UserJobsController',
 				$scope.addReview(reviewInfo)
 			});
 		};
+
+		$scope.openUploadImagesModal = function () {
+
+			var modalInstance = $uibModal.open({
+				templateUrl: 'addJobImagesModal',
+				controller: 'AddJobImagesModalInstanceCtrl',
+				resolve: {
+					job: function () {
+						return $scope.job;
+					}
+				}
+			});
+
+			modalInstance.result.then(function (imagePaths) {
+				$scope.addImages(imagePaths)
+			});
+		};
+
+		$scope.openImageModal = function (image) {
+
+			var modalInstance = $uibModal.open({
+				templateUrl: 'openImageModal',
+				controller: 'OpenImagesModalInstanceCtrl',
+				resolve: {
+					image: function () {
+						return image;
+					}
+				}
+			});
+
+			modalInstance.result.then(function (image) {
+				$scope.deleteImage(image)
+			});
+		};
 	});
 
 angular.module('jobs').controller('ReviewModalInstanceCtrl',
-	function ($scope, $modalInstance, ServiceSubcategories, RatingTypes) {
+	function ($scope, $uibModalInstance, ServiceSubcategories, RatingTypes) {
 
 		$scope.ratings = [];
 		RatingTypes.query().$promise.then(function (types) {
@@ -217,11 +290,11 @@ angular.module('jobs').controller('ReviewModalInstanceCtrl',
 				ratings: $scope.ratings
 			};
 
-			$modalInstance.close(reviewInfo);
+			$uibModalInstance.close(reviewInfo);
 		};
 
 		$scope.cancel = function () {
-			$modalInstance.dismiss('cancel');
+			$uibModalInstance.dismiss('cancel');
 		};
 
 		$scope.selectService = function ($item) {
@@ -247,13 +320,80 @@ angular.module('jobs').controller('ReviewModalInstanceCtrl',
 	});
 
 angular.module('jobs').controller('EditJobModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 		$scope.ok = function () {
-			$modalInstance.close();
+			$uibModalInstance.close();
 		};
 
 		$scope.cancel = function () {
-			$modalInstance.dismiss('cancel');
+			$uibModalInstance.dismiss('cancel');
+		};
+	});
+
+angular.module('jobs').controller('AddJobImagesModalInstanceCtrl',
+	function ($scope, $uibModalInstance, Upload, AmazonS3, job) {
+
+		$scope.uploadFiles = function(files) {
+			$scope.files = files;
+			var uploads = [], imagePaths = [], bucketFolder = 'job_pictures/' + job._id + '/';
+			angular.forEach(files, function(file, index) {
+				var imageName = job.pictures.length + index, imagePath = AmazonS3.bucketUrl + bucketFolder + imageName;
+				imagePaths.push(imagePath);
+				file.upload = Upload.upload({
+					url: AmazonS3.url,
+					method: 'POST',
+					data: {
+						key: bucketFolder + imageName,
+						AWSAccessKeyId: AmazonS3.AWSAccessKeyId,
+						acl: AmazonS3.acl,
+						policy: AmazonS3.policy,
+						signature: AmazonS3.signature,
+						"Content-Type": file.type != '' ? file.type : 'application/octet-stream',
+						filename: imageName,
+						file: file
+					}
+				});
+
+				file.upload.then(function (response) {
+					if (uploads.length === files.length) {
+						$uibModalInstance.close(imagePaths);
+					}
+				}, function (response) {
+					if (response.status > 0) {
+						$scope.errorMsg = response.status + ': ' + response.data;
+					}
+				}, function (evt) {
+					file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+					if (file.progress === 100 && uploads.indexOf(file.name) === -1) {
+						uploads.push(file.name);
+					}
+				});
+			});
+		}
+
+		$scope.cancel = function () {
+
+			angular.forEach($scope.files, function(file) {
+				if (file.progress !== 100) {
+					file.upload.abort();
+				}
+			});
+
+			$uibModalInstance.dismiss('cancel');
+		};
+	});
+
+angular.module('jobs').controller('OpenImagesModalInstanceCtrl',
+	function ($scope, $uibModalInstance, image) {
+
+		$scope.image = image;
+
+		$scope.delete = function () {
+			$uibModalInstance.close(image);
+		};
+
+		$scope.close = function () {
+			$uibModalInstance.dismiss('cancel');
 		};
 	});

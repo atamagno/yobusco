@@ -2,7 +2,7 @@
 
 // Review controller
 angular.module('admin').controller('ReviewsController',
-	function($scope, $stateParams, $state, Authentication, ReviewsAdmin, RatingTypes, ServiceSuppliers, ServiceSubcategories, Users, ServiceSuppliersDetails, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, ReviewsAdmin, RatingTypes, ServiceSuppliers, ServiceSubcategories, Users, ServiceSuppliersDetails, $uibModal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
@@ -63,7 +63,7 @@ angular.module('admin').controller('ReviewsController',
 
 		$scope.createModalInstance = function (templateUrl) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: templateUrl,
 				controller: 'ReviewModalInstanceCtrl'
 			});
@@ -189,13 +189,13 @@ angular.module('admin').controller('ReviewsController',
 	});
 
 angular.module('admin').controller('ReviewModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 	$scope.ok = function () {
-		$modalInstance.close();
+		$uibModalInstance.close();
 	};
 
 	$scope.cancel = function () {
-		$modalInstance.dismiss('cancel');
+		$uibModalInstance.dismiss('cancel');
 	};
 });

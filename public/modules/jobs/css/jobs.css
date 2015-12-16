@@ -43,3 +43,66 @@
 .review-rating-selector {
     cursor: pointer;
 }
+
+.btn-upload-image {
+    position: relative;
+    top: 34px;
+}
+
+.thumb {
+    width: 24px;
+    height: 24px;
+}
+
+.progress {
+    margin-bottom: 5px !important;
+}
+
+.drop-box {
+    background: #F8F8F8;
+    border: 5px dashed #DDD !important;
+    width: 300px;
+    text-align: center;
+    padding: 25px;
+    margin: 0 auto 10px auto;
+}
+
+.dragover {
+    border: 5px dashed #808080 !important;
+}
+
+.slide-container {
+    margin: 0 auto;
+}
+
+.job-thumbnail {
+    height: 180px;
+    padding-bottom: 5px;
+}
+
+.job-img-upload-detail-container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.job-img-progres-container {
+    font-size: smaller;
+    padding-top: 5px;
+}
+
+.img-upload-error {
+    color: red;
+    font-size: smaller;
+}
+
+.job-img-upload-thumbnail {
+    padding-bottom: 5px;
+}
+
+.upload-requirements-container {
+    padding-top: 10px;
+}
+
+.opened-img {
+    margin: 0 auto;
+}

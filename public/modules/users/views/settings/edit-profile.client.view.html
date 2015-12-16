@@ -7,7 +7,7 @@
 				<div class="form-group">
 					<label for="profilePicture">Profile Picture</label>
 					<input id="profilePicture" type="file" ngf-select data-ng-model="picFile" name="file" accept="image/*" ngf-max-size="2MB" required>
-					<i ng-show="userForm.file.$error.maxSize">File too large {{picFile.size / 1000000|number:1}}MB: max 2M</i>
+					<i data-ng-show="userForm.file.$error.maxSize">File too large {{picFile.size / 1000000|number:1}}MB: max 2M</i>
 					<div class="profile-image-container" data-ng-show="picFile">
 						<img width="80" height="80" ngf-thumbnail="picFile">
 					</div>

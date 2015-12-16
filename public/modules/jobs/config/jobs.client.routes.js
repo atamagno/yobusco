@@ -17,6 +17,10 @@ angular.module('jobs').config(
 				url: '/detail/:jobId',
 				templateUrl: 'modules/jobs/views/job-detail.client.view.html'
 			}).
+			state('viewJobDetail', {
+				url: '/detail/:jobId',
+				templateUrl: 'modules/jobs/views/job-detail.client.view.html'
+			}).
 			state('jobs.create', {
 				url: '/create/:servicesupplierId',
 				templateUrl: 'modules/jobs/views/job-create.client.view.html'

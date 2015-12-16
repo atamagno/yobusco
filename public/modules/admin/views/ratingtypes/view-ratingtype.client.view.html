@@ -1,5 +1,7 @@
 <section data-ng-controller="RatingTypesController" data-ng-init="findOne()">
-	<alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+
+	<uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
+
 	<div class="admin-page-header">
 		<h1 data-ng-bind="ratingtype.name"></h1>
 	</div>
@@ -23,8 +25,8 @@
 			Are you sure you want to delete this rating type?
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-			<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+			<button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
+			<button class="btn btn-default" type="button" data-ng-click="cancel()">Cancel</button>
 		</div>
 	</script>
 

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('users').controller('SettingsController',
-	function($scope, $http, $location, Users, Upload, Authentication) {
+	function($scope, $http, $location, Users, Upload, Authentication, AmazonS3) {
 		$scope.user = Authentication.user;
 
 		// If user is not signed in then redirect back home
@@ -44,9 +44,24 @@ angular.module('users').controller('SettingsController',
 				$scope.success = $scope.error = null;
 				var user = new Users($scope.user);
 
+				var bucketFolder = 'profile_pictures/';
 				if ($scope.picFile) {
-					Upload.base64DataUrl($scope.picFile).then(function(url){
-						user.profile_picture = url;
+
+					Upload.upload({
+						url: AmazonS3.url,
+						method: 'POST',
+						data: {
+							key: bucketFolder + $scope.picFile.name,
+							AWSAccessKeyId: AmazonS3.AWSAccessKeyId,
+							acl: AmazonS3.acl,
+							policy: AmazonS3.policy,
+							signature: AmazonS3.signature,
+							"Content-Type": $scope.picFile.type != '' ? $scope.picFile.type : 'application/octet-stream',
+							filename: $scope.picFile.name,
+							file: $scope.picFile
+						}
+					}).then(function(res){
+						user.profile_picture = AmazonS3.bucketUrl + bucketFolder + $scope.picFile.name;
 						updateUser(user);
 					});
 				} else {

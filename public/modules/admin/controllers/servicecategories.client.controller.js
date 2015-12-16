@@ -2,7 +2,7 @@
 
 // ServiceCategories controller
 angular.module('admin').controller('ServiceCategoriesController',
-	function($scope, $stateParams, $state, Authentication, ServiceCategoriesAdmin, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, ServiceCategoriesAdmin, $uibModal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
@@ -11,7 +11,7 @@ angular.module('admin').controller('ServiceCategoriesController',
 
 		$scope.createModalInstance = function (templateUrl) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: templateUrl,
 				controller: 'ServiceCategoryModalInstanceCtrl'
 			});
@@ -113,13 +113,13 @@ angular.module('admin').controller('ServiceCategoriesController',
 	});
 
 angular.module('admin').controller('ServiceCategoryModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 	$scope.ok = function () {
-		$modalInstance.close();
+		$uibModalInstance.close();
 	};
 
 	$scope.cancel = function () {
-		$modalInstance.dismiss('cancel');
+		$uibModalInstance.dismiss('cancel');
 	};
 });

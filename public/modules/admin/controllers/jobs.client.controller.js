@@ -2,7 +2,7 @@
 
 // Jobs controller
 angular.module('admin').controller('JobsController',
-	function($scope, $stateParams, $state, Authentication, JobsAdmin, JobStatus, ServiceSuppliers, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, JobsAdmin, JobStatus, ServiceSuppliers, $uibModal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
@@ -25,7 +25,7 @@ angular.module('admin').controller('JobsController',
 
 		$scope.createModalInstance = function (templateUrl) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: templateUrl,
 				controller: 'JobsModalInstanceCtrl'
 			});
@@ -178,13 +178,13 @@ angular.module('admin').controller('JobsController',
 	});
 
 angular.module('admin').controller('JobsModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 	$scope.ok = function () {
-		$modalInstance.close();
+		$uibModalInstance.close();
 	};
 
 	$scope.cancel = function () {
-		$modalInstance.dismiss('cancel');
+		$uibModalInstance.dismiss('cancel');
 	};
 });

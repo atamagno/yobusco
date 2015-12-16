@@ -13,7 +13,7 @@
             <div class="job-details-container">
                 <h4 class="pull-right">{{job.status.name}}</h4>
                 <h4 class="job-name-container">
-                    <a ui-sref="jobs.viewDetail({ jobId: job._id })">{{job.name}}</a>
+                    <a href="" data-ng-click="navigateToJobDetails(job._id)">{{job.name}}</a>
                 </h4>
                 <div class="job-description-container">{{job.description}}</div>
                 <strong>Service Supplier:</strong><br>

@@ -2,7 +2,9 @@
     <div class="admin-page-header">
         <h1>Edit Review</h1>
     </div>
-    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+
+    <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
+
     <div class="col-md-12">
         <form class="form-horizontal" data-ng-submit="openEditModal()" novalidate>
             <fieldset>
@@ -11,26 +13,26 @@
                     <label class="control-label">User</label>
                     <div class="controls">
                         <input type="text" data-ng-model="review.user" class="form-control" required
-                               typeahead="user as user.displayName for user in users | filter:$viewValue | limitTo:8" placeholder="Select a user.">
+                               uib-typeahead="user as user.displayName for user in users | filter:$viewValue | limitTo:8" placeholder="Select a user.">
                     </div>
 
                     <label class="control-label">Service Supplier</label>
                     <div class="controls">
                         <input type="text" data-ng-model="review.service_supplier" class="form-control" typeahead-on-select="selectServiceSupplier($item)"
-                               typeahead="servicesupplier as servicesupplier.display_name for servicesupplier in servicesuppliers | filter:$viewValue" placeholder="Select a service supplier.">
+                               uib-typeahead="servicesupplier as servicesupplier.display_name for servicesupplier in servicesuppliers | filter:$viewValue" placeholder="Select a service supplier.">
                     </div>
 
                     <div data-ng-show="jobs.length || review.job">
                         <label class="control-label">Job</label>
                         <div class="controls">
                             <input type="text" data-ng-model="review.job" class="form-control" required
-                                   typeahead="job as job.name for job in jobs | filter:$viewValue | limitTo:8" placeholder="Select a service supplier.">
+                                   uib-typeahead="job as job.name for job in jobs | filter:$viewValue | limitTo:8" placeholder="Select a service supplier.">
                         </div>
                     </div>
 
                     <label class="control-label">Services</label>
                     <input type="text" data-ng-model="selected" class="form-control review-service-selector" typeahead-on-select="selectService($item, review.services)"
-                           typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
+                           uib-typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
                            placeholder="Select a service.">
 
                     <div data-ng-show="review.services.length" class="review-selected-services">
@@ -43,7 +45,7 @@
                     <div data-ng-repeat="rating in review.ratings">
                         {{rating.type.name}}
                         <div class="pull-right">
-                            <rating ng-model="rating.rate" max="5" class="review-rating-selector"></rating>{{rating.rate}} Stars
+                            <uib-rating data-ng-model="rating.rate" max="5" class="review-rating-selector"></uib-rating>{{rating.rate}} Stars
                         </div>
                     </div>
 
@@ -68,8 +70,8 @@
             Are you sure you want to update this review?
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
+            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancel</button>
         </div>
     </script>
 
