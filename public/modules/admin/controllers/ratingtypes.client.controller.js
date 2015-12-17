@@ -2,7 +2,7 @@
 
 // RatingType controller
 angular.module('admin').controller('RatingTypesController',
-	function($scope, $stateParams, $state, Authentication, RatingTypesAdmin, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, RatingTypesAdmin, $uibModal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
@@ -11,7 +11,7 @@ angular.module('admin').controller('RatingTypesController',
 
 		$scope.createModalInstance = function (templateUrl) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: templateUrl,
 				controller: 'RatingTypeModalInstanceCtrl'
 			});
@@ -115,13 +115,13 @@ angular.module('admin').controller('RatingTypesController',
 	});
 
 angular.module('admin').controller('RatingTypeModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 	$scope.ok = function () {
-		$modalInstance.close();
+		$uibModalInstance.close();
 	};
 
 	$scope.cancel = function () {
-		$modalInstance.dismiss('cancel');
+		$uibModalInstance.dismiss('cancel');
 	};
 });

@@ -50,7 +50,11 @@ var JobSchema = new Schema({
 	},
 	finish_date: {
 		type: Date
-	}
+	},
+	pictures: [{
+		type: String,
+		default: []
+	}],
 });
 
 mongoose.model('Job', JobSchema);

@@ -3,7 +3,7 @@
         <h1>Edit Job</h1>
     </div>
 
-    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+    <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
 
     <div class="col-md-12">
         <form class="form-horizontal" data-ng-submit="openEditModal()" novalidate>
@@ -15,11 +15,11 @@
                         <div class="col-md-3">
                             <label class="control-label">Start Date</label>
                             <p class="input-group">
-                                <input type="text" class="form-control" datepicker-popup="{{dateFormat}}" data-ng-model="job.start_date"
+                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" data-ng-model="job.start_date"
                                        min-date="today" show-button-bar="false" is-open="startDateOpened"
                                        data-ng-required="true" />
                                 <span class="input-group-btn">
-                                    <button id="startDateButton" type="button" class="btn btn-default" ng-click="openStartDatePicker($event)">
+                                    <button id="startDateButton" type="button" class="btn btn-default" data-ng-click="openStartDatePicker($event)">
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </button>
                                   </span>
@@ -29,11 +29,11 @@
                         <div class="col-md-3">
                             <label class="control-label">Expected Finish Date</label>
                             <p class="input-group">
-                                <input type="text" class="form-control" datepicker-popup="{{dateFormat}}" data-ng-model="job.expected_date"
+                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" data-ng-model="job.expected_date"
                                        min-date="start_date" show-button-bar="false" is-open="expectedDateOpened"
                                        data-ng-required="true" />
                                 <span class="input-group-btn">
-                                    <button id="expectedDateButton" type="button" class="btn btn-default" ng-click="openExpectedDatePicker($event)">
+                                    <button id="expectedDateButton" type="button" class="btn btn-default" data-ng-click="openExpectedDatePicker($event)">
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </button>
                                   </span>
@@ -43,11 +43,11 @@
                         <div class="col-md-3" data-ng-show="(job.status.name === 'Completed' || job.status.name === 'Abandoned')">
                             <label class="control-label">Finish Date</label>
                             <p class="input-group">
-                                <input type="text" class="form-control" datepicker-popup="{{dateFormat}}" data-ng-model="job.finish_date"
+                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" data-ng-model="job.finish_date"
                                        min-date="start_date" show-button-bar="false" is-open="finishDateOpened"
                                        data-ng-required="true" />
                                 <span class="input-group-btn">
-                                    <button id="finishDateButton" type="button" class="btn btn-default" ng-click="openFinishDatePicker($event)">
+                                    <button id="finishDateButton" type="button" class="btn btn-default" data-ng-click="openFinishDatePicker($event)">
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </button>
                                   </span>
@@ -57,11 +57,11 @@
                         <div class="pull-right">
                             <div class="col-md-3">
                                 <label class="control-label">Status</label><br>
-                                <div class="btn-group" dropdown>
-                                    <button type="button" class="btn btn-default dropdown-toggle">
+                                <div class="btn-group" uib-dropdown>
+                                    <button type="button" class="btn btn-default" uib-dropdown-toggle>
                                         {{job.status.name}} <span class="caret"></span>
                                     </button>
-                                    <ul class="dropdown-menu" role="menu">
+                                    <ul class="uib-dropdown-menu" role="menu">
                                         <li data-ng-repeat="status in jobstatus">
                                             <a class="dropdown-item" data-ng-click="changeStatus(status)">{{status.name}}</a>
                                         </li>
@@ -75,7 +75,7 @@
                     <label class="control-label" for="name">Service Supplier</label>
                     <div class="controls">
                         <input type="text" data-ng-model="job.service_supplier" class="form-control"
-                               typeahead="servicesupplier as servicesupplier.display_name for servicesupplier in servicesuppliers | filter:$viewValue | limitTo:8">
+                               uib-typeahead="servicesupplier as servicesupplier.display_name for servicesupplier in servicesuppliers | filter:$viewValue | limitTo:8">
                     </div>
 
                     <label class="control-label" for="name">Name</label>
@@ -102,8 +102,8 @@
             Are you sure you want to update this job?
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
+            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancel</button>
         </div>
     </script>
 

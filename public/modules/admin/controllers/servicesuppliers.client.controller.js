@@ -2,7 +2,7 @@
 
 // ServiceSuppliers controller
 angular.module('admin').controller('ServiceSuppliersController',
-    function($scope, $stateParams, $state, $location, Authentication, ServiceSuppliersAdmin, ServiceSubcategories, $modal, Alerts) {
+    function($scope, $stateParams, $state, $location, Authentication, ServiceSuppliersAdmin, ServiceSubcategories, $uibModal, Alerts) {
         $scope.authentication = Authentication;
         $scope.alerts = Alerts;
 
@@ -11,7 +11,7 @@ angular.module('admin').controller('ServiceSuppliersController',
 
         $scope.createModalInstance = function (templateUrl) {
 
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 templateUrl: templateUrl,
                 controller: 'ServiceSupplierModalInstanceCtrl'
             });
@@ -171,13 +171,13 @@ angular.module('admin').controller('ServiceSuppliersController',
     });
 
 angular.module('admin').controller('ServiceSupplierModalInstanceCtrl',
-    function ($scope, $modalInstance) {
+    function ($scope, $uibModalInstance) {
 
         $scope.ok = function () {
-            $modalInstance.close();
+            $uibModalInstance.close();
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     });

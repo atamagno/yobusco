@@ -28,7 +28,7 @@
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
     "reviewCount" : NumberInt(1),
-    "jobCount" : NumberInt(0)
+    "jobCount" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("56269852477f11b0b2a6dd99"), 
@@ -60,7 +60,7 @@
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(5), 
     "reviewCount" : NumberInt(1),
-    "jobCount" : NumberInt(1)
+    "jobCount" : NumberInt(2)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3072"), 
@@ -76,11 +76,11 @@
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
     "reviewCount" : NumberInt(0),
-    "jobCount" : NumberInt(0)
+    "jobCount" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3069"), 
-    "description" : "Soy el mas grande de la construcción", 
+    "description" : "El mejor pintor de la zona",
     "display_name" : "Alberto Juarez", 
     "email" : "elmasgrande@hotmail.com", 
     "phone_number" : "02245-555669", 
@@ -92,7 +92,7 @@
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
     "reviewCount" : NumberInt(0),
-    "jobCount" : NumberInt(0)
+    "jobCount" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("562e3d3c477f0817f38d3070"), 
@@ -204,7 +204,7 @@
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(2), 
     "reviewCount" : NumberInt(2),
-    "jobCount" : NumberInt(5)
+    "jobCount" : NumberInt(4)
 }
 { 
     "_id" : ObjectId("56269584477f24b0b2a6dd91"), 
@@ -284,7 +284,7 @@
     "user_id" : ObjectId("563a49e31dc525f01916d92c"), 
     "__v" : NumberInt(1), 
     "reviewCount" : NumberInt(0),
-    "jobCount" : NumberInt(0)
+    "jobCount" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("56269584477f11bdd2a6dd91"), 

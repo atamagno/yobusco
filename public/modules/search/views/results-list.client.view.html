@@ -1,6 +1,6 @@
 <div data-ng-controller="SuppliersResultsController" data-ng-init="getResults()">
 
-    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+    <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
 
     <div data-ng-show="totalItems !== 0 && !showList" class="loading-container">
         <img class="loading-img" src="/modules/core/img/loaders/loader.gif"/>
@@ -14,7 +14,7 @@
         <div class="list-group">
             <a data-ng-repeat="servicesupplier in servicesuppliers" ui-sref="servicesupplier.detail({ servicesupplierId: servicesupplier._id })" class="list-group-item">
                 <div class="search-result-container">
-                    <img src="http://placehold.it/140x100" alt="">
+                    <img src="http://placehold.it/140x100" alt="" height="100" width="140">
 
                     <div class="search-result-details">
                         <strong class="pull-right">
@@ -38,7 +38,7 @@
                                 </ng-pluralize>
                             </div>
                             <div>
-                                <rating ng-model="servicesupplier.overall_rating" max="5" readonly="true"></rating>
+                                <uib-rating data-ng-model="servicesupplier.overall_rating" max="5" readonly="true"></uib-rating>
                             </div>
                         </div>
                     </div>
@@ -47,9 +47,9 @@
         </div>
 
         <div class="pagination-container" data-ng-hide="totalItems <= itemsPerPage">
-            <pagination boundary-links="true" total-items="totalItems" data-ng-model="currentPage" class="pagination-sm" max-size="maxPages"
+            <uib-pagination boundary-links="true" total-items="totalItems" data-ng-model="currentPage" class="pagination-sm" max-size="maxPages"
                         items-per-page="itemsPerPage" data-ng-change="navigateToResults()"
-                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></uib-pagination>
         </div>
     </div>
 
