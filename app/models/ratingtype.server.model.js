@@ -13,13 +13,13 @@ var RatingTypeSchema = new Schema({
 	name: {
 		type: String,
 		default: '',
-		required: 'Please fill in a name',
+		required: 'Por favor ingrese un nombre',
 		trim: true
 	},
 	description: {
 		type: String,
 		default: '',
-		required: 'Please fill in a description',
+		required: 'Por favor ingrese una descripci\u00f3n',
 		trim: true
 	}
 });

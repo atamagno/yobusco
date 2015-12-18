@@ -20,5 +20,9 @@ angular.module('servicesuppliers').config(
 			state('servicesupplier.reviews', {
 				url: '/reviews/:servicesupplierId',
 				templateUrl: 'modules/servicesuppliers/views/servicesupplier-reviews.client.view.html',
+			}).
+			state('servicesupplier.viewJobDetail', {
+				url: '/:servicesupplierId/job-detail/:jobId',
+				templateUrl: 'modules/jobs/views/job-detail.client.view.html'
 			});
 	});

@@ -1,6 +1,6 @@
 <section data-ng-controller="JobStatusController" data-ng-init="findOne()">
     <div class="admin-page-header">
-        <h1>Edit Job Status</h1>
+        <h1>Editar Estado de trabajo</h1>
     </div>
 
     <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
@@ -9,13 +9,13 @@
         <form class="form-horizontal" data-ng-submit="openEditModal()" novalidate>
             <fieldset>
                 <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
+                    <label class="control-label" for="name">Nombre</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="jobstatus.name" id="name" class="form-control" placeholder="Name">
+                        <input type="text" data-ng-model="jobstatus.name" id="name" class="form-control" placeholder="Nombre">
                     </div>
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-default">
+                    <input type="submit" value="Actualizar" class="btn btn-default">
                 </div>
             </fieldset>
         </form>
@@ -23,14 +23,14 @@
 
     <script type="text/ng-template" id="editJobStatusModal">
         <div class="modal-header">
-            <h3 class="modal-title">Edit Job Status</h3>
+            <h3 class="modal-title">Editar Estado de trabajo</h3>
         </div>
         <div class="modal-body">
-            Are you sure you want to update this job status?
+            Est&#225;s seguro de que quieres actualizar el estado de trabajo?
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
-            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancel</button>
+            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
         </div>
     </script>
 

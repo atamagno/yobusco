@@ -1,20 +1,20 @@
 {
     "_id": ObjectId("44269183477f11b662a6dd88"),
-    "name": "Quality of service",
-    "description": "Quality of service description"
+    "name": "Calidad de servicio",
+    "description": "Descripción de calidad de servicio"
 }
 {
     "_id": ObjectId("75269183455f11b0b2a6dd88"),
-    "name": "Quality to price relationship",
-    "description": "Quality to price relationship description"
+    "name": "Relación precio/calidad",
+    "description": "Descripción Relación precio/calidad"
 }
 {
     "_id": ObjectId("22264483477f11b0b2a6dd88"),
-    "name": "Commitment",
-    "description": "Commitment description"
+    "name": "Compromiso",
+    "description": "Descripción Compromiso"
 }
 {
     "_id": ObjectId("56269183477f11b0b2a99d88"),
-    "name": "Delivery on time",
-    "description": "Delivery on time description"
+    "name": "Cumplimiento de plazos",
+    "description": "Descripción Cumplimiento de plazos"
 }

@@ -100,7 +100,7 @@ exports.list = function(req, res) {
 exports.servicesubcategoryByID = function(req, res, next, id) {
     ServiceSubcategory.findById(id).exec(function(err, servicesubcategory) {
         if (err) return next(err);
-        if (! servicesubcategory) return next(new Error('Failed to load Servicesubcategory ' + id));
+        if (! servicesubcategory) return next(new Error('Error al cargar subcategor\u00eda de servicio ' + id));
         req.servicesubcategory = servicesubcategory ;
         next();
     });

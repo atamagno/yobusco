@@ -45,7 +45,7 @@ angular.module('admin').controller('RatingTypesController',
 
 			// Redirect after save
 			ratingtype.$save(function(response) {
-				Alerts.show('success','Rating type successfully created');
+				Alerts.show('success','Tipo de rating creado exitosamente');
 				$state.go('admin.viewRatingType', { ratingtypeId: response._id});
 
 				// Clear form fields
@@ -60,7 +60,7 @@ angular.module('admin').controller('RatingTypesController',
 		// Remove existing RatingType
 		$scope.remove = function() {
 			$scope.ratingtype.$remove(function() {
-				Alerts.show('success','Rating type successfully deleted');
+				Alerts.show('success','Tipo de rating eliminado exitosamente');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
 			}, function(errorResponse) {
@@ -74,7 +74,7 @@ angular.module('admin').controller('RatingTypesController',
 			var ratingtype = $scope.ratingtype;
 
 			ratingtype.$update(function() {
-				Alerts.show('success','Rating type successfully updated');
+				Alerts.show('success','Tipo de rating actualizado exitosamente');
 				$state.go('admin.viewRatingType', { ratingtypeId: ratingtype._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;

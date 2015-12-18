@@ -17,19 +17,19 @@ var ServiceSupplierSchema = new Schema({
     display_name: {
         type: String,
         trim: true,
-        required: 'Please fill in a display name'
+        required: 'Por favor ingrese un nombre'
     },
     phone_number: {
         type: String,
         trim: true,
-        required: 'Please fill in a phone number'
+        required: 'Por favor ingrese un tel\u00e9fono'
         // match: [/.+\@.+\..+/, 'Please fill a valid email address'] TODO: add regex for phone number here?
     },
     email: {
         type: String,
         trim: true,
-        required: 'Please fill in an email address',
-        match: [/.+\@.+\..+/, 'Please fill a valid email address']
+        required: 'Por favor ingrese una direcci\u00f3n de email',
+        match: [/.+\@.+\..+/, 'Por favor ingrese una direcci\u00f3n de email v\u00e1lida']
     },
     registration_date: {
         type: Date,
@@ -44,7 +44,7 @@ var ServiceSupplierSchema = new Schema({
             type: Schema.ObjectId,
             ref: 'ServiceSubcategory'
         }],
-        required: 'At least one service subcategory is required'
+        required: 'Al menos una subcategor\u00eda de servicio es requerida'
     },
     reviewCount: {
         type: Number,

@@ -44,7 +44,7 @@ angular.module('admin').controller('JobStatusController',
 
 			// Redirect after save
 			jobstatus.$save(function(response) {
-				Alerts.show('success','Job status successfully created');
+				Alerts.show('success','Estado de trabajo creado exitosamente');
 				$state.go('admin.viewJobStatus', { jobstatusId: response._id});
 
 				// Clear form fields
@@ -58,7 +58,7 @@ angular.module('admin').controller('JobStatusController',
 		// Remove existing JobStatus
 		$scope.remove = function() {
 			$scope.jobstatus.$remove(function() {
-				Alerts.show('success','Job status successfully deleted');
+				Alerts.show('success','Estado de trabajo eliminado exitosamente');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
 			}, function(errorResponse) {
@@ -72,7 +72,7 @@ angular.module('admin').controller('JobStatusController',
 			var jobstatus = $scope.jobstatus;
 
 			jobstatus.$update(function() {
-				Alerts.show('success','Job status successfully updated');
+				Alerts.show('success','Estado de trabajo actualizado exitosamente');
 				$state.go('admin.viewJobStatus', { jobstatusId: jobstatus._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;

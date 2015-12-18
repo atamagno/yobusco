@@ -55,23 +55,38 @@
     display: flex;
 }
 
+.search-result-img {
+    width: 20%;
+}
+
 .search-result-details {
-    width: 100%;
     padding-left: 10px;
     position: relative;
+    width: 80%;
+}
+
+.search-results-details-header {
+    padding-bottom: 5px;
+}
+
+.search-results-details-body {
+    padding-bottom: 10px;
+}
+
+.search-results-supplier-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-results-details-footer {
+    color: #d17581;
 }
 
 .search-result-display-name {
     display: flex;
     position: relative;
     color: midnightblue;
-}
-
-.search-result-rating-details {
-    color: #d17581;
-    position: absolute;
-    bottom: 0;
-    width: 99%;
 }
 
 .pagination-container {

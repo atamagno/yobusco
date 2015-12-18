@@ -90,7 +90,7 @@ exports.list = function(req, res) {
 exports.servicesupplierByID = function(req, res, next, id) {
     ServiceSupplier.findById(id).populate('user', 'displayName').populate('services').exec(function(err, servicesupplier) {
         if (err) return next(err);
-        if (!servicesupplier) return next(new Error('Failed to load Servicesupplier ' + id));
+        if (!servicesupplier) return next(new Error('Error al cargar prestador de servicios ' + id));
         req.servicesupplier = servicesupplier ;
         next();
     });
@@ -118,7 +118,7 @@ exports.listByPage = function(req, res) {
         });
 
     } else {
-        return buildErrorResponse(res, err, 400, 'Something went wrong');
+        return buildErrorResponse(res, err, 400, 'Algo sali\u00f3 mal');
     }
 };
 

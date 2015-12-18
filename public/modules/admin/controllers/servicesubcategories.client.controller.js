@@ -48,7 +48,7 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 
 			// Redirect after save
 			servicesubcategory.$save(function(response) {
-				Alerts.show('success','Service subcategory successfully created');
+				Alerts.show('success','Subcategor\u00eda de servicio creada exitosamente');
 				$state.go('admin.viewServiceSubcategory', { servicesubcategoryId: response._id});
 
 				// Clear form fields
@@ -65,7 +65,7 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 		// Remove existing ServiceSubcategory
 		$scope.remove = function(servicesubcategory) {
 			$scope.servicesubcategory.$remove(function() {
-				Alerts.show('success','Service subcategory successfully deleted');
+				Alerts.show('success','Subcategor\u00eda de servicio eliminada exitosamente');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
 			}, function(errorResponse) {
@@ -79,7 +79,7 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 			var servicesubcategory = $scope.servicesubcategory;
 
 			servicesubcategory.$update(function() {
-				Alerts.show('success','Service subcategory successfully updated');
+				Alerts.show('success','Subcategor\u00eda de servicio actualizada exitosamente');
 				$state.go('admin.viewServiceSubcategory', { servicesubcategoryId: servicesubcategory._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;

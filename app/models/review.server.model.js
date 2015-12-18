@@ -8,13 +8,13 @@ var Ratings = new Schema({
 	type: {
 		type: Schema.ObjectId,
 		ref: 'RatingType',
-		required: 'Please select a rating type'
+		required: 'Por favor seleccione un tipo de rating'
 	},
 	rate: {
 		type: Number,
 		min: 0,
 		max: 5,
-		default: 0,
+		default: 3,
 	}
 });
 
@@ -30,7 +30,7 @@ var ReviewSchema = new Schema({
 	service_supplier: {
 		type: Schema.ObjectId,
 		ref: 'ServiceSupplier',
-		required: 'Please select a service supplier'
+		required: 'Por favor seleccione un prestador de servicios'
 	},
 	services: [{
 		type: Schema.ObjectId,
@@ -40,7 +40,7 @@ var ReviewSchema = new Schema({
 		type: String,
 		default: '',
 		trim: true,
-		required: 'Please fill in a comment'
+		required: 'Por favor ingrese un comentario'
 	},
 	ratings: [Ratings],
 	created: {

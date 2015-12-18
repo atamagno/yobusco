@@ -127,7 +127,7 @@ exports.list = function(req, res) {
 exports.findJobByID = function(req, res, next, id) {
 	Job.findById(id).populate('service_supplier', 'display_name').populate('status', 'name').exec(function(err, job) {
 		if (err) return next(err);
-		if (!job) return next(new Error('Failed to load Job ' + id));
+		if (!job) return next(new Error('Error al cargar trabajo ' + id));
 		req.job = job ;
 		next();
 	});
@@ -189,9 +189,9 @@ exports.listByUser = function(req, res, next, jobUserId) {
 		} else {
 			var status = req.params.status, statusquery;
 			if (status === 'finished') {
-				statusquery = ['Completed', 'Abandoned'];
+				statusquery = ['Completado', 'Abandonado'];
 			} else if (status === 'active') {
-				statusquery = ['In Progress', 'Paused', 'Delayed'];
+				statusquery = ['En Progreso', 'Pausado', 'Demorado'];
 			}
 
 			var filteredJobs = [];

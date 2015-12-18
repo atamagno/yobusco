@@ -5,12 +5,12 @@
     <div class="row">
         <div class="col-lg-12">
             <h1>
-                Job Detail
+                Detalle de trabajo
                 <small>{{job.name}}</small>
                 <a data-ng-show="showLeaveReviewButton && authentication.user"
-                   data-ng-click="openReviewModal()" class="btn btn-success pull-right">Leave a Review</a>
+                   data-ng-click="openReviewModal()" class="btn btn-success pull-right">Deja un comentario</a>
                 <a data-ng-show="!showLeaveReviewButton && authentication.user"
-                   ui-sref="jobs.edit({ jobId: job._id })" class="btn btn-success pull-right">Update job</a>
+                   ui-sref="jobs.edit({ jobId: job._id })" class="btn btn-success pull-right">Actualizar trabajo</a>
             </h1>
         </div>
     </div>
@@ -27,15 +27,15 @@
         </div>
 
         <div class="col-md-4">
-            <h3>Description</h3>
+            <h3>Descripci&#243;n</h3>
             <p>{{job.description}}</p>
-            <h3>Details</h3>
+            <h3>Detalles</h3>
             <ul class="job-detail-list-container">
-                <li><strong>Start Date: </strong>{{job.start_date | date: 'shortDate'}}</li>
-                <li><strong>Expected Date: </strong>{{job.expected_date | date: 'shortDate'}}</li>
-                <li><strong>Finish Date: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
-                <li><strong>Status: </strong>{{job.status.name}}</li>
-                <li><strong>Service Supplier: </strong>{{job.service_supplier.display_name}}</li>
+                <li><strong>Fecha de inicio: </strong>{{job.start_date | date: 'shortDate'}}</li>
+                <li><strong>Fecha estimada: </strong>{{job.expected_date | date: 'shortDate'}}</li>
+                <li><strong>Fecha de finalizaci&#243;n: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
+                <li><strong>Estado: </strong>{{job.status.name}}</li>
+                <li><strong>Prestador de servicios: </strong><a ui-sref="servicesupplier.detail({ servicesupplierId: job.service_supplier._id })">{{job.service_supplier.display_name}}</a></li>
             </ul>
         </div>
 
@@ -44,11 +44,17 @@
     <div class="row">
 
         <div class="col-lg-12">
-            <button data-ng-click="openUploadImagesModal()" data-ng-show="authentication.user" type="button" class="btn btn-primary btn-upload-image pull-right">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add images
-            </button>
+            <br>
+            <div class="upload-image-header-container">
+                <div class="pull-right btn-upload-image">
+                    <button data-ng-click="openUploadImagesModal()" data-ng-show="authentication.user" type="button" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar im&#225;genes
+                    </button>
+                </div>
 
-            <h3 class="page-header">Job Images</h3>
+                <div class="job-images-label-container">Im&#225;genes del trabajo</div>
+            </div>
+            <br>
         </div>
 
         <div data-ng-repeat="picture in job.pictures" class="col-sm-3 col-xs-6 job-thumbnail">
@@ -59,19 +65,19 @@
 
     </div>
 
-    <div class="well" data-ng-hide="job.pictures.length">No pictures</div>
+    <div class="well" data-ng-hide="job.pictures.length">No hay im&#225;genes</div>
 
     <script type="text/ng-template" id="addReviewModal">
         <div class="modal-header">
-            <h3 class="modal-title">Add Review</h3>
+            <h3 class="modal-title">Agrega un comentario</h3>
         </div>
         <div class="modal-body">
 
-            <h4 class="review-services-title">Services</h4>
+            <h4 class="review-services-title">Servicios</h4>
 
             <input type="text" data-ng-model="selected" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
                    uib-typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
-                   placeholder="Select a service.">
+                   placeholder="Selecciona un servicio.">
 
             <div data-ng-show="selectedservices.length" class="review-selected-services">
                 <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default review-selected-service"
@@ -89,23 +95,23 @@
                 </div>
             </div>
 
-            <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Leave a comment here."></textarea>
+            <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
-            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancel</button>
+            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
         </div>
     </script>
 
     <script type="text/ng-template" id="addJobImagesModal">
         <div class="modal-header">
-            <h3 class="modal-title">Add Images</h3>
+            <h3 class="modal-title">Agregar im&#225;genes</h3>
         </div>
         <div class="modal-body">
 
             <div ngf-drop ngf-select data-ng-model="files" class="drop-box" ngf-model-invalid="errFiles"
                  ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
-                 accept="image/*" ngf-max-size="4MB" ngf-pattern="'image/*'">Drop images here or click to upload</div>
+                 accept="image/*" ngf-max-size="4MB" ngf-pattern="'image/*'">Arrastra im&#225;genes aqui o haz click para cargar</div>
 
             <div class="job-img-upload-detail-container">
                 <div data-ng-repeat="f in files" class="job-img-progres-container">
@@ -121,16 +127,15 @@
             </div>
 
             <ul class="upload-requirements-container">
-                <li>Image types allowed: JPG, PNG.</li>
-                <li>Image size must be less than 4 MB.</li>
-                <li>For best results, upload a photo with a 4:3 ratio.</li>
-                <li>Using script blockers may prevent image uploads from working.</li>
+                <li>Tipos de im&#225;genes permitidas: JPG, PNG.</li>
+                <li>El tama&#241;o debe ser menor a 4 MB.</li>
+                <li>Usar bloqueadores de scripts puede hacer que falle la carga.</li>
             </ul>
 
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="button" data-ng-click="uploadFiles(files)">Upload</button>
-            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancel</button>
+            <button class="btn btn-primary" type="button" data-ng-click="uploadFiles(files)">Cargar</button>
+            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
         </div>
     </script>
 
@@ -139,8 +144,8 @@
             <img class="img-responsive opened-img" data-ng-src="{{image}}" alt="">
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="button" data-ng-click="delete()">Delete</button>
-            <button class="btn btn-default" type="button" data-ng-click="close()">Close</button>
+            <button class="btn btn-primary" type="button" data-ng-click="delete()">Eliminar</button>
+            <button class="btn btn-default" type="button" data-ng-click="close()">Cerrar</button>
         </div>
     </script>
 

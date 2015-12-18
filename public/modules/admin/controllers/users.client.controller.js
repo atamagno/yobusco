@@ -51,7 +51,7 @@ angular.module('admin').controller('UsersAdminController',
 
 			// Redirect after save
 			user.$save(function(response) {
-				Alerts.show('success','User successfully created');
+				Alerts.show('success','Usuario creado exitosamente');
 				$state.go('admin.viewUser', { userId: response._id});
 
 				// Clear form fields
@@ -70,7 +70,7 @@ angular.module('admin').controller('UsersAdminController',
 		// Remove existing User
 		$scope.remove = function(user) {
 			$scope.userInfo.$remove(function() {
-				Alerts.show('success','User successfully deleted');
+				Alerts.show('success','Usuario eliminado exitosamente');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
 			}, function(errorResponse) {
@@ -86,7 +86,7 @@ angular.module('admin').controller('UsersAdminController',
 			userInfo.password = $scope.password;
 
 			userInfo.$update(function() {
-				Alerts.show('success','User successfully updated');
+				Alerts.show('success','Usuario eliminado exitosamente');
 				$state.go('admin.viewUser', { userId: userInfo._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
