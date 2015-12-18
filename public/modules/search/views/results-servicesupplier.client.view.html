@@ -2,7 +2,7 @@
 
     <div class="col-md-3">
         <div class="well">
-            <h4 class="no-margin-top">Services</h4>
+            <h4 class="no-margin-top">Servicios</h4>
             <div data-ng-repeat="servicesubcategory in serviceSubcategories">
                 <label class="service-filter-label">
                     <input type="checkbox" data-ng-model="servicesubcategory.checked"> {{servicesubcategory.name}}
@@ -12,9 +12,9 @@
 
             <div class="filter-divider"></div>
 
-            <h4>Jobs</h4>
+            <h4>Trabajos</h4>
             <div class="flex-display">
-                <span class="job-count-filter-label">At least</span>
+                <span class="job-count-filter-label">Al menos</span>
                 <input type="number" class="form-control job-count-filter-input" min="0" data-ng-model="jobAmount" data-ng-keypress="$event.keyCode == 13 && applyFilters()">
             </div>
 
@@ -30,7 +30,7 @@
 
             <div class="filter-divider"></div>
 
-            <h4>Search Supplier</h4>
+            <h4>B&uacute;squeda por nombre</h4>
             <div class="input-group">
                 <input type="text" class="form-control" data-ng-model="supplierName" data-ng-keypress="$event.keyCode == 13 && applyFilters()">
                 <span class="input-group-btn">
@@ -42,8 +42,8 @@
 
             <br>
 
-            <a class="btn btn-default" data-ng-click="resetFilters()">Reset Filters</a>
-            <a class="btn btn-primary" data-ng-click="applyFilters()">Apply Filters</a>
+            <a class="btn btn-default" data-ng-click="resetFilters()">Limpiar Filtros</a>
+            <a class="btn btn-primary" data-ng-click="applyFilters()">Aplicar</a>
         </div>
     </div>
     <div class="col-md-9">

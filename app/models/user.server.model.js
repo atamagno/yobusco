@@ -29,13 +29,13 @@ var UserSchema = new Schema({
 		type: String,
 		trim: true,
 		default: '',
-		validate: [validateLocalStrategyProperty, 'Please fill in your first name']
+		validate: [validateLocalStrategyProperty, 'Por favor ingrese un nombre']
 	},
 	lastName: {
 		type: String,
 		trim: true,
 		default: '',
-		validate: [validateLocalStrategyProperty, 'Please fill in your last name']
+		validate: [validateLocalStrategyProperty, 'Por favor ingrese un apellido']
 	},
 	displayName: {
 		type: String,
@@ -45,14 +45,14 @@ var UserSchema = new Schema({
 		type: String,
 		trim: true,
 		default: '',
-		unique: 'testing error message',
-		validate: [validateLocalStrategyProperty, 'Please fill in your email'],
-		match: [/.+\@.+\..+/, 'Please fill a valid email address']
+		unique: 'La direcci\u00f3n de email ya existe',
+		validate: [validateLocalStrategyProperty, 'Por favor ingrese una direcci\u00f3n de email'],
+		match: [/.+\@.+\..+/, 'Por favor ingrese una direcci\u00f3n de email v\u00e1lida']
 	},
 	username: {
 		type: String,
-		unique: 'testing error message',
-		required: 'Please fill in a username',
+		unique: 'El nombre de usuario ya existe',
+		required: 'Por favor ingrese un nombre de usuario',
 		trim: true
 	},
 	profile_picture: {
@@ -61,14 +61,14 @@ var UserSchema = new Schema({
 	password: {
 		type: String,
 		default: '',
-		validate: [validateLocalStrategyPassword, 'Password should be longer']
+		validate: [validateLocalStrategyPassword, 'La contrase\u00F1a debe ser mas larga']
 	},
 	salt: {
 		type: String
 	},
 	provider: {
 		type: String,
-		required: 'Provider is required'
+		required: 'Provider es requerido'
 	},
 	providerData: {},
 	additionalProvidersData: {},

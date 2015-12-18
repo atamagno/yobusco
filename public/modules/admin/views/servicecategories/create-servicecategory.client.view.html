@@ -1,6 +1,6 @@
 <section data-ng-controller="ServiceCategoriesController">
     <div class="admin-page-header">
-        <h1>New Service Category</h1>
+        <h1>Nueva Categor&#237;a de servicio</h1>
     </div>
 
     <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
@@ -9,13 +9,13 @@
         <form class="form-horizontal" data-ng-submit="create()" novalidate>
             <fieldset>
                 <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
+                    <label class="control-label" for="name">Nombre</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="name" id="name" class="form-control" placeholder="Name" required>
+                        <input type="text" data-ng-model="name" id="name" class="form-control" placeholder="Nombre" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <input type="submit" class="btn btn-default">
+                    <input type="submit" value="Crear" class="btn btn-default">
                 </div>
             </fieldset>
         </form>

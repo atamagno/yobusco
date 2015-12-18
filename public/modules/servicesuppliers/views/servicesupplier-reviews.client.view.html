@@ -1,13 +1,13 @@
-<div class="reviews-header-container">
-    <div class="pull-right review-button-container">
-        <a data-ng-click="openReviewModal()" class="btn btn-success">Leave a Review</a>
+<div class="service-supplier-header-container">
+    <div class="pull-right leave-review-button-container">
+        <a data-ng-click="openReviewModal()" class="btn btn-success">Deja un comentario</a>
     </div>
-    <h1>Reviews</h1>
+    <h1>Comentarios</h1>
 </div>
 <br>
 <div class="well">
 
-    <div data-ng-hide="reviews.length">No reviews</div>
+    <div data-ng-hide="reviews.length">No hay comentarios</div>
 
     <div class="row" data-ng-repeat="review in reviews">
         <div class="col-md-12">
@@ -17,7 +17,7 @@
             <span class="glyphicon glyphicon-star"></span>
             <span class="glyphicon glyphicon-star"></span>
             <span class="glyphicon glyphicon-star-empty"></span>
-            Anonymous
+            An&#243;nimo
             <span class="pull-right">{{ review.created | date: 'medium' }}</span>
             <p>{{review.comment}}</p>
         </div>

@@ -89,7 +89,7 @@ exports.list = function(req, res) {
 exports.ratingtypeByID = function(req, res, next, id) {
 	RatingType.findById(id).exec(function(err, ratingtype) {
 		if (err) return next(err);
-		if (!ratingtype) return next(new Error('Failed to load RatingType ' + id));
+		if (!ratingtype) return next(new Error('Error al cargar tipo de rating ' + id));
 		req.ratingtype = ratingtype;
 		next();
 	});

@@ -1,6 +1,6 @@
 <section data-ng-controller="ServiceSubcategoriesController" data-ng-init="findOne()">
     <div class="admin-page-header">
-        <h1>Edit Service Subcategory</h1>
+        <h1>Editar Subcategor&#237;a de servicio</h1>
     </div>
 
     <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
@@ -9,26 +9,26 @@
         <form class="form-horizontal" data-ng-submit="openEditModal()" novalidate>
             <fieldset>
                 <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
+                    <label class="control-label" for="name">Nombre</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="servicesubcategory.name" id="name" class="form-control" placeholder="Name" required>
+                        <input type="text" data-ng-model="servicesubcategory.name" id="name" class="form-control" placeholder="Nombre" required>
                     </div>
-                    <label class="control-label" for="abbr">Abbreviation</label>
+                    <label class="control-label" for="abbr">Abreviaci&#243;n</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="servicesubcategory.abbr" id="abbr" class="form-control" placeholder="Abbreviation" required>
+                        <input type="text" data-ng-model="servicesubcategory.abbr" id="abbr" class="form-control" placeholder="Abreviaci&#243;n" required>
                     </div>
-                    <label class="control-label" for="keywords">Keywords</label>
-                    <span>(Comma separated values)</span>
+                    <label class="control-label" for="keywords">Palabras clave</label>
+                    <span>(Valores separados por comas)</span>
                     <div class="controls">
-                        <textarea name="keywords" data-ng-model="servicesubcategory.keywords" id="keywords" class="form-control" cols="30" rows="5" placeholder="Keywords" required></textarea>
+                        <textarea name="keywords" data-ng-model="servicesubcategory.keywords" id="keywords" class="form-control" cols="30" rows="5" placeholder="Palabras clave" required></textarea>
                     </div>
-                    <label class="control-label">Service Category</label>
+                    <label class="control-label">Categor&#237;a de servicio</label>
                     <div data-ng-repeat="servicecategory in servicecategories">
                         <input type="radio" data-ng-model="$parent.servicesubcategory.service_category_id" data-ng-value="servicecategory._id">{{servicecategory.name}}<br>
                     </div>
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-default">
+                    <input type="submit" value="Actualizar" class="btn btn-default">
                 </div>
             </fieldset>
         </form>
@@ -36,14 +36,14 @@
 
     <script type="text/ng-template" id="editServiceSubcategoryModal">
         <div class="modal-header">
-            <h3 class="modal-title">Edit Service Subcategory</h3>
+            <h3 class="modal-title">Editar Subcategor&#237;a de servicio</h3>
         </div>
         <div class="modal-body">
-            Are you sure you want to update this service subcategory?
+            Est&#225;s seguro de que quieres actualizar la subcategor&#237;a de servicio?
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
-            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancel</button>
+            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
         </div>
     </script>
 

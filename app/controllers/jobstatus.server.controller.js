@@ -89,7 +89,7 @@ exports.list = function(req, res) {
 exports.jobstatusByID = function(req, res, next, id) {
 	JobStatus.findById(id).exec(function(err, jobstatus) {
 		if (err) return next(err);
-		if (!jobstatus) return next(new Error('Failed to load JobStatus ' + id));
+		if (!jobstatus) return next(new Error('Error al cargar estado de trabajo ' + id));
 		req.jobstatus = jobstatus ;
 		next();
 	});

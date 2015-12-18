@@ -4,18 +4,18 @@
 	</div>
 	<nav class="collapse navbar-collapse" role="navigation">
 		<ul class="nav navbar-nav">
-			<li><a ui-sref="jobs.list({ status: 'all' })" data-ng-if="menu.shouldRender(authentication.user);">My Jobs</a></li>
+			<li><a ui-sref="jobs.list({ status: 'all' })" data-ng-if="menu.shouldRender(authentication.user);">Mis Trabajos</a></li>
 		</ul>
 		<ul class="nav navbar-nav" data-ng-if="menu.renderIfAdmin(authentication.user);">
 			<li><a ui-sref="admin.listUsers({ currentPage: 1, itemsPerPage: 5 })">Admin</a></li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right" data-ng-hide="authentication.user">
 			<li ui-route="/signup" data-ng-class="{active: $uiRoute}">
-				<a href="/#!/signup">Sign Up</a>
+				<a href="/#!/signup">Registrarte</a>
 			</li>
 			<li class="divider-vertical"></li>
 			<li ui-route="/signin" data-ng-class="{active: $uiRoute}">
-				<a href="/#!/signin">Sign In</a>
+				<a href="/#!/signin">Ingresar</a>
 			</li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
@@ -26,14 +26,14 @@
 				</a>
 				<ul class="uib-dropdown-menu">
 					<li>
-						<a href="/#!/settings/profile">Edit Profile</a>
+						<a href="/#!/settings/profile">Editar Perfil</a>
 					</li>
 					<li data-ng-show="authentication.user.provider === 'local'">
-						<a href="/#!/settings/password">Change Password</a>
+						<a href="/#!/settings/password">Cambiar Contrase&#241;a</a>
 					</li>
 					<li class="divider"></li>
 					<li>
-						<a href="/auth/signout">Signout</a>
+						<a href="/auth/signout">Salir</a>
 					</li>
 				</ul>
 			</li>

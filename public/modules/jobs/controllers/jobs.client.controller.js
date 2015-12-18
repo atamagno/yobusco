@@ -8,7 +8,7 @@ angular.module('jobs').controller('UserJobsController',
 
 		JobStatus.query().$promise.then(function (statuses) {
 			for (var i = 0; i < statuses.length; i++) {
-				if (statuses[i].name === 'In Progress') {
+				if (statuses[i].name === 'En Progreso') {
 					$scope.defaultStatus = statuses[i];
 					break;
 				}
@@ -47,8 +47,7 @@ angular.module('jobs').controller('UserJobsController',
 
 				// Redirect after save
 				job.$save(function (response) {
-					//Alerts.show('success','Job successfully created');
-					$state.go('jobs.list', { jobId: response._id, status: 'all' });
+					$state.go('jobs.viewDetail', { jobId: response._id});
 
 					// Clear form fields
 					$scope.name = '';
@@ -61,7 +60,7 @@ angular.module('jobs').controller('UserJobsController',
 				});
 
 			} else {
-				Alerts.show('danger','You must select a valid service supplier');
+				Alerts.show('danger','Debes seleccionar un prestador de servicios');
 			}
 		};
 
@@ -71,7 +70,7 @@ angular.module('jobs').controller('UserJobsController',
 				jobId: $stateParams.jobId
 			}).$promise.then(function(job) {
 					$scope.job = job;
-					if (['Completed', 'Abandoned'].indexOf(job.status.name) !== -1) {
+					if (['Completado', 'Abandonado'].indexOf(job.status.name) !== -1) {
 						$scope.showLeaveReviewButton = true;
 					}
 				});
@@ -106,6 +105,19 @@ angular.module('jobs').controller('UserJobsController',
 		$scope.getAllJobs = function() {
 
 			$scope.jobstatus = $stateParams.status;
+			$scope.jobListTitle = 'Todos los trabajos';
+			$scope.jobStatusLabel = '.';
+			switch ($scope.jobstatus) {
+				case 'active':
+					$scope.jobListTitle = 'Trabajos activos';
+					$scope.jobStatusLabel = ' activo.';
+					break;
+				case 'finished':
+					$scope.jobListTitle = 'Trabajos terminados';
+					$scope.jobStatusLabel = ' terminado.';
+					break;
+			}
+
 			JobSearch.query({
 				jobUserId: $scope.authentication.user._id,
 				status: $scope.jobstatus
@@ -146,7 +158,7 @@ angular.module('jobs').controller('UserJobsController',
 
 			// Redirect after save
 			review.$save(function (response) {
-				Alerts.show('success','Review successfully created');
+				Alerts.show('success','Rese\u00f1a creada exitosamente');
 			}, function (errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger', $scope.error);
@@ -163,8 +175,8 @@ angular.module('jobs').controller('UserJobsController',
 
 			if (job.service_supplier && job.service_supplier._id) {
 
-				if ((['Completed', 'Abandoned'].indexOf(job.status.name) !== -1) && !job.finish_date) {
-					Alerts.show('danger','You must select a finish date');
+				if ((['Completado', 'Abandonado'].indexOf(job.status.name) !== -1) && !job.finish_date) {
+					Alerts.show('danger','Debes seleccionar una fecha de finalizaci\u00f3n');
 				} else {
 					job.$update(function() {
 						$state.go('jobs.viewDetail', { jobId: job._id});
@@ -175,7 +187,7 @@ angular.module('jobs').controller('UserJobsController',
 				}
 
 			} else {
-				Alerts.show('danger','You must select a valid service supplier');
+				Alerts.show('danger','Debes seleccionar un prestador de servicios');
 			}
 		};
 
@@ -189,7 +201,7 @@ angular.module('jobs').controller('UserJobsController',
 			}
 
 			job.$update(function() {
-				Alerts.show('success','Job successfully updated');
+				Alerts.show('success','Trabajo actualizado exitosamente');
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger',$scope.error);
@@ -204,7 +216,7 @@ angular.module('jobs').controller('UserJobsController',
 			}
 
 			job.$update(function() {
-				Alerts.show('success','Job successfully updated');
+				Alerts.show('success','Imagen eliminada exitosamente');
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger',$scope.error);
@@ -276,7 +288,7 @@ angular.module('jobs').controller('ReviewModalInstanceCtrl',
 		$scope.ratings = [];
 		RatingTypes.query().$promise.then(function (types) {
 			for (var i = 0; i < types.length; i++) {
-				$scope.ratings.push({ _id: types[i]._id, name: types[i].name, description: types[i].description, rate: 0 });
+				$scope.ratings.push({ _id: types[i]._id, name: types[i].name, description: types[i].description, rate: 3 });
 			}
 		});
 		$scope.servicesubcategories = ServiceSubcategories.query();
@@ -375,7 +387,7 @@ angular.module('jobs').controller('AddJobImagesModalInstanceCtrl',
 		$scope.cancel = function () {
 
 			angular.forEach($scope.files, function(file) {
-				if (file.progress !== 100) {
+				if (file.upload && file.progress !== 100) {
 					file.upload.abort();
 				}
 			});

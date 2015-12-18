@@ -33,11 +33,11 @@ exports.forgot = function(req, res, next) {
 				}, '-salt -password', function(err, user) {
 					if (!user) {
 						return res.status(400).send({
-							message: 'No account with that username has been found'
+							message: 'No se encontr\u00f3 ninguna cuenta con ese nombre de usuario'
 						});
 					} else if (user.provider !== 'local') {
 						return res.status(400).send({
-							message: 'It seems like you signed up using your ' + user.provider + ' account'
+							message: 'Parece que te registraste usando la cuenta ' + user.provider
 						});
 					} else {
 						user.resetPasswordToken = token;
@@ -50,7 +50,7 @@ exports.forgot = function(req, res, next) {
 				});
 			} else {
 				return res.status(400).send({
-					message: 'Username field must not be blank'
+					message: 'El campo nombre de usuario no debe estar vac\u00edo'
 				});
 			}
 		},
@@ -69,13 +69,13 @@ exports.forgot = function(req, res, next) {
 			var mailOptions = {
 				to: user.email,
 				from: config.mailer.from,
-				subject: 'Password Reset',
+				subject: 'Recupero de contrase\u00F1a',
 				html: emailHTML
 			};
 			smtpTransport.sendMail(mailOptions, function(err) {
 				if (!err) {
 					res.send({
-						message: 'An email has been sent to ' + user.email + ' with further instructions.'
+						message: 'Se ha enviado un email  ' + user.email + ' con m\u00e1s instrucciones.'
 					});
 				}
 
@@ -147,12 +147,12 @@ exports.reset = function(req, res, next) {
 						});
 					} else {
 						return res.status(400).send({
-							message: 'Passwords do not match'
+							message: 'Las contrase\u00F1as no coinciden'
 						});
 					}
 				} else {
 					return res.status(400).send({
-						message: 'Password reset token is invalid or has expired.'
+						message: 'El token de recupero de contrase\u00F1a es inv\u00e1lido o esta vencido.'
 					});
 				}
 			});
@@ -171,7 +171,7 @@ exports.reset = function(req, res, next) {
 			var mailOptions = {
 				to: user.email,
 				from: config.mailer.from,
-				subject: 'Your password has been changed',
+				subject: 'Tu contrase\u00F1a ha cambiado',
 				html: emailHTML
 			};
 
@@ -210,7 +210,7 @@ exports.changePassword = function(req, res) {
 											res.status(400).send(err);
 										} else {
 											res.send({
-												message: 'Password changed successfully'
+												message: 'Contrase\u00F1a modificada exitosamente'
 											});
 										}
 									});
@@ -218,28 +218,28 @@ exports.changePassword = function(req, res) {
 							});
 						} else {
 							res.status(400).send({
-								message: 'Passwords do not match'
+								message: 'Las contrase\u00F1as no coinciden'
 							});
 						}
 					} else {
 						res.status(400).send({
-							message: 'Current password is incorrect'
+							message: 'La contrase\u00F1a actual es incorrecta'
 						});
 					}
 				} else {
 					res.status(400).send({
-						message: 'User is not found'
+						message: 'No se encontr\u00f3 el usuario'
 					});
 				}
 			});
 		} else {
 			res.status(400).send({
-				message: 'Please provide a new password'
+				message: 'Por favor, ingrese la nueva contrase\u00F1a'
 			});
 		}
 	} else {
 		res.status(400).send({
-			message: 'User is not signed in'
+			message: 'El usuario no esta logueado'
 		});
 	}
 };

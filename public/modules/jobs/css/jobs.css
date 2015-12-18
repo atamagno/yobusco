@@ -44,9 +44,14 @@
     cursor: pointer;
 }
 
-.btn-upload-image {
+.upload-image-header-container {
+    border-bottom: 1px solid #eee;
+    height: 50px;
     position: relative;
-    top: 34px;
+}
+
+.btn-upload-image {
+    padding-top: 5px;
 }
 
 .thumb {
@@ -80,6 +85,10 @@
     padding-bottom: 5px;
 }
 
+.status-label {
+    padding-left: 10px;
+}
+
 .job-img-upload-detail-container {
     width: 80%;
     margin: 0 auto;
@@ -105,4 +114,14 @@
 
 .opened-img {
     margin: 0 auto;
+}
+
+.job-details-header-container {
+    border-bottom: 1px solid #eee;
+}
+
+.job-images-label-container {
+    font-size: 20px;
+    position: absolute;
+    top: 15px;
 }

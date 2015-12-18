@@ -13,22 +13,22 @@ var ServiceSubcategorySchema = new Schema({
     service_category_id: {
         type: Schema.Types.ObjectId,
         trim: true,
-        required: 'Please select a service category'
+        required: 'Por favor seleccione una categor\u00eda de servicio'
     },
     name: {
         type: String,
         trim: true,
-        required: 'Please fill in a name',
+        required: 'Por favor ingrese un nombre',
     },
     abbr: {
         type: String,
         trim: true,
-        required: 'Please fill in an abbreviation',
+        required: 'Por favor ingrese una abreviaci\u00f3n',
     },
     keywords: {
         type: [String],
         trim: true,
-        required: 'Please fill in at least one keyword',
+        required: 'Por favor ingrese al menos una palabra clave',
     }
 
 });

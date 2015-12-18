@@ -89,7 +89,7 @@ exports.list = function(req, res) {
 exports.servicecategoryByID = function(req, res, next, id) {
 	ServiceCategory.findById(id).exec(function(err, servicecategory) {
 		if (err) return next(err);
-		if (! servicecategory) return next(new Error('Failed to load ServiceCategory ' + id));
+		if (! servicecategory) return next(new Error('Error al categor\u00eda de servicio ' + id));
 		req.servicecategory = servicecategory ;
 		next();
 	});

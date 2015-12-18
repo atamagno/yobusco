@@ -11,7 +11,7 @@ angular.module('admin').controller('JobsController',
 
 		JobStatus.query().$promise.then(function (statuses) {
 			for (var i = 0; i < statuses.length; i++) {
-				if (statuses[i].name === 'In Progress') {
+				if (statuses[i].name === 'En Progreso') {
 					$scope.defaultStatus = statuses[i];
 					break;
 				}
@@ -96,7 +96,7 @@ angular.module('admin').controller('JobsController',
 
 				// Redirect after save
 				job.$save(function (response) {
-					Alerts.show('success','Job successfully created');
+					Alerts.show('success','Trabajo creado exitosamente');
 					$state.go('admin.viewJob', { jobId: response._id});
 
 					// Clear form fields
@@ -110,14 +110,14 @@ angular.module('admin').controller('JobsController',
 				});
 
 			} else {
-				Alerts.show('danger','You must select a valid service supplier');
+				Alerts.show('danger','Debes seleccionar un prestador de servicios v\u00e1lido');
 			}
 		};
 
 		// Remove existing Job
 		$scope.remove = function() {
 			$scope.job.$remove(function() {
-				Alerts.show('success','Job successfully deleted');
+				Alerts.show('success','Trabajo eliminado exitosamente');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
 			}, function(errorResponse) {
@@ -133,7 +133,7 @@ angular.module('admin').controller('JobsController',
 			if (job.service_supplier && job.service_supplier._id) {
 
 				job.$update(function() {
-					Alerts.show('success','Job successfully updated');
+					Alerts.show('success','Trabajo actualizado exitosamente');
 					$state.go('admin.viewJob', { jobId: job._id});
 				}, function(errorResponse) {
 					$scope.error = errorResponse.data.message;
@@ -141,7 +141,7 @@ angular.module('admin').controller('JobsController',
 				});
 
 			} else {
-				Alerts.show('danger','You must select a valid service supplier');
+				Alerts.show('danger','Debes seleccionar un prestador de servicios v\u00e1lido');
 			}
 		};
 

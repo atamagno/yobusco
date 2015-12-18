@@ -179,11 +179,11 @@ exports.reviewByID = function(req, res, next, id) {
 						.populate('services').exec(function(err, review) {
 
 		if (err) return next(err);
-		if (!review) return next(new Error('Failed to load Review ' + id));
+		if (!review) return next(new Error('Error al cargar comentario ' + id));
 		if (review.job) {
 			Job.populate(review.job, {path: 'service_supplier', select: 'display_name'}, function(err, job){
 				if (err) return next(err);
-				if (!job) return next(new Error('Failed to load Job'));
+				if (!job) return next(new Error('Error al cargar trabajo'));
 				req.review = review;
 				next();
 			});
