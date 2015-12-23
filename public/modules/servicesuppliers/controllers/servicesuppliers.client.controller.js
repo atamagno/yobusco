@@ -47,7 +47,7 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
                     jobs: function () {
                         var finishedJobs = [];
                         for (var i = 0; i < $scope.jobs.length; i++) {
-                            if (['Completado', 'Abandonado'].indexOf($scope.jobs[i].status.name) !== -1) {
+                            if ($scope.jobs[i].status.finished) {
                                 finishedJobs.push($scope.jobs[i]);
                             }
                         }

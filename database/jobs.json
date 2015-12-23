@@ -38,7 +38,7 @@
     "name" : "Trabajo de plomería",
     "__v": NumberInt(0), 
     "pictures": [],
-    "reviewCount" : NumberInt(2)
+    "reviewCount" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("564f58f4a8dff4343db478c7"), 
@@ -56,7 +56,7 @@
         'https://s3-sa-east-1.amazonaws.com/yobusco-bucket/job_pictures/564f58f4a8dff4343db478c7/1',
         'https://s3-sa-east-1.amazonaws.com/yobusco-bucket/job_pictures/564f58f4a8dff4343db478c7/2'
     ],
-    "reviewCount" : NumberInt(0)
+    "reviewCount" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("564f58f4a855543c1d0178c7"), 

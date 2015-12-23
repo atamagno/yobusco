@@ -21,6 +21,6 @@ module.exports = function(app) {
 
 	// Reviews routes
 	app.route('/reviews').post(users.requiresLogin, reviews.create);
-	app.route('/reviews-by-servicesupplier/:serviceSupplierId').get(reviews.search);
-	app.param('serviceSupplierId', reviews.listByServiceSupplier);
+	app.route('/reviews-by-servicesupplier/:serviceSupplierId').get(reviews.listByServiceSupplier);
+	app.route('/reviews-by-job/:jobId').get(reviews.listByJob);
 };

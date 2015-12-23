@@ -3,11 +3,14 @@
 }
 
 .job-name-container {
-    min-height: 38px;
+    min-height: 40px;
 }
 
 .job-description-container {
     min-height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .job-detail-list-container {

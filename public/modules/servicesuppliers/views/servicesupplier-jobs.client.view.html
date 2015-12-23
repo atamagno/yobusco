@@ -1,5 +1,5 @@
 <div class="service-supplier-header-container">
-    <div class="pull-right create-job-button-container">
+    <div class="pull-right create-job-button-container" data-ng-show="authentication.user">
         <a ui-sref="jobs.create({ servicesupplierId: servicesupplier._id })" class="btn btn-primary">Crear trabajo</a>
     </div>
     <h1>Trabajos</h1>

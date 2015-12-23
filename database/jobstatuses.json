@@ -1,20 +1,30 @@
 {
     "_id": ObjectId("56269183477f11b662a6dd88"),
-    "name": "En Progreso"
+    "name": "En Progreso",
+    finished: false,
+    default: true
 }
 {
     "_id": ObjectId("56269183455f11b0b2a6dd88"),
-    "name": "Pausado"
+    "name": "Pausado",
+    finished: false,
+    default: false
 }
 {
     "_id": ObjectId("56264483477f11b0b2a6dd88"),
-    "name": "Completado"
+    "name": "Completado",
+    finished: true,
+    default: false
 }
 {
     "_id": ObjectId("56269183477f11b0b2a99d88"),
-    "name": "Demorado"
+    "name": "Demorado",
+    finished: false,
+    default: false
 }
 {
     "_id": ObjectId("56263383477f11b0b2a6dd88"),
-    "name": "Abandonado"
+    "name": "Abandonado",
+    finished: true,
+    default: false
 }

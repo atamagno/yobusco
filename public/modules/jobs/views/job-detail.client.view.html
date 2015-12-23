@@ -7,9 +7,7 @@
             <h1>
                 Detalle de trabajo
                 <small>{{job.name}}</small>
-                <a data-ng-show="showLeaveReviewButton && authentication.user"
-                   data-ng-click="openReviewModal()" class="btn btn-success pull-right">Deja un comentario</a>
-                <a data-ng-show="!showLeaveReviewButton && authentication.user"
+                <a data-ng-show="!job.status.finished && authentication.user && (authentication.user.username === job.user.username)"
                    ui-sref="jobs.edit({ jobId: job._id })" class="btn btn-success pull-right">Actualizar trabajo</a>
             </h1>
         </div>
@@ -47,7 +45,7 @@
             <br>
             <div class="upload-image-header-container">
                 <div class="pull-right btn-upload-image">
-                    <button data-ng-click="openUploadImagesModal()" data-ng-show="authentication.user" type="button" class="btn btn-primary">
+                    <button data-ng-click="openUploadImagesModal()" data-ng-show="authentication.user && (authentication.user.username === job.user.username)" type="button" class="btn btn-primary">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar im&#225;genes
                     </button>
                 </div>
@@ -66,6 +64,40 @@
     </div>
 
     <div class="well" data-ng-hide="job.pictures.length">No hay im&#225;genes</div>
+
+    <div class="row">
+
+        <div class="col-lg-12">
+            <br>
+            <div class="service-supplier-header-container">
+                <div class="pull-right leave-review-button-container" data-ng-show="job.status.finished && authentication.user && (authentication.user.username === job.user.username)">
+                    <a data-ng-click="openReviewModal()" class="btn btn-success">Deja un comentario</a>
+                </div>
+                <div class="reviews-label-container">Comentarios recientes</div>
+            </div>
+            <br>
+        </div>
+
+    </div>
+
+    <div class="well">
+
+        <div data-ng-hide="reviews.length">No hay comentarios</div>
+
+        <div class="row" data-ng-repeat="review in reviews">
+            <div class="col-md-12">
+                <br>
+                <span class="glyphicon glyphicon-star"></span>
+                <span class="glyphicon glyphicon-star"></span>
+                <span class="glyphicon glyphicon-star"></span>
+                <span class="glyphicon glyphicon-star"></span>
+                <span class="glyphicon glyphicon-star-empty"></span>
+                An&#243;nimo
+                <span class="pull-right">{{ review.created | date: 'medium' }}</span>
+                <p>{{review.comment}}</p>
+            </div>
+        </div>
+    </div>
 
     <script type="text/ng-template" id="addReviewModal">
         <div class="modal-header">
@@ -90,7 +122,7 @@
                 <div data-ng-repeat="rating in ratings">
                     {{rating.name}} <a uib-tooltip="{{rating.description}}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
                     <div class="pull-right">
-                        <uib-rating data-ng-model="rating.rate" max="5" class="review-rating-selector"></uib-rating>{{rating.rate}} Stars
+                        <uib-rating data-ng-model="rating.rate" max="5" class="review-rating-selector"></uib-rating>{{rating.rate}} Estrellas
                     </div>
                 </div>
             </div>
