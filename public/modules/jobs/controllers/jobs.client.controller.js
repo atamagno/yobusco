@@ -2,13 +2,13 @@
 
 // UserJobs controller
 angular.module('jobs').controller('UserJobsController',
-	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobStatus, ServiceSuppliers, Reviews, $uibModal, Alerts, AmazonS3) {
+	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobStatus, ServiceSuppliers, Reviews, $uibModal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
 		JobStatus.query().$promise.then(function (statuses) {
 			for (var i = 0; i < statuses.length; i++) {
-				if (statuses[i].name === 'En Progreso') {
+				if (statuses[i].default) {
 					$scope.defaultStatus = statuses[i];
 					break;
 				}
@@ -69,11 +69,13 @@ angular.module('jobs').controller('UserJobsController',
 			Jobs.get({
 				jobId: $stateParams.jobId
 			}).$promise.then(function(job) {
-					$scope.job = job;
-					if (['Completado', 'Abandonado'].indexOf(job.status.name) !== -1) {
-						$scope.showLeaveReviewButton = true;
-					}
+				$scope.job = job;
+				JobSearch.reviews.query({
+					jobId: $stateParams.jobId
+				}).$promise.then(function (response) {
+					$scope.reviews = response;
 				});
+			});
 		};
 
 		$scope.dateFormats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
@@ -118,7 +120,7 @@ angular.module('jobs').controller('UserJobsController',
 					break;
 			}
 
-			JobSearch.query({
+			JobSearch.jobs.query({
 				jobUserId: $scope.authentication.user._id,
 				status: $scope.jobstatus
 			}).$promise.then(function (response) {
@@ -158,6 +160,7 @@ angular.module('jobs').controller('UserJobsController',
 
 			// Redirect after save
 			review.$save(function (response) {
+				$scope.reviews.push(response);
 				Alerts.show('success','Rese\u00f1a creada exitosamente');
 			}, function (errorResponse) {
 				$scope.error = errorResponse.data.message;
@@ -175,8 +178,8 @@ angular.module('jobs').controller('UserJobsController',
 
 			if (job.service_supplier && job.service_supplier._id) {
 
-				if ((['Completado', 'Abandonado'].indexOf(job.status.name) !== -1) && !job.finish_date) {
-					Alerts.show('danger','Debes seleccionar una fecha de finalizaci\u00f3n');
+				if (job.status.finished && !job.finish_date) {
+					Alerts.show('danger', 'Debes seleccionar una fecha de finalizaci\u00f3n');
 				} else {
 					job.$update(function() {
 						$state.go('jobs.viewDetail', { jobId: job._id});

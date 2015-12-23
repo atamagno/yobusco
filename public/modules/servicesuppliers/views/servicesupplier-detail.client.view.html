@@ -1,5 +1,5 @@
 <div class="service-supplier-header-container">
-    <div class="pull-right create-job-button-container">
+    <div class="pull-right create-job-button-container" data-ng-show="authentication.user">
         <a ui-sref="jobs.create({ servicesupplierId: servicesupplier._id })" class="btn btn-primary">Crear trabajo</a>
     </div>
     <h1>Detalles</h1>
@@ -8,7 +8,7 @@
 <div class="thumbnail flex-display">
 
     <div class="service-supplier-img">
-        <img src="http://placehold.it/260x280" alt="">
+        <img src="http://placehold.it/280x320" alt="">
     </div>
     <div class="service-supplier-details-container">
         <div class="caption-full">
@@ -53,7 +53,7 @@
 </div>
 
 <div class="service-supplier-header-container">
-    <div class="pull-right leave-review-button-container">
+    <div class="pull-right leave-review-button-container" data-ng-show="authentication.user">
         <a data-ng-click="openReviewModal()" class="btn btn-success">Deja un comentario</a>
     </div>
     <div class="reviews-label-container">Comentarios recientes</div>

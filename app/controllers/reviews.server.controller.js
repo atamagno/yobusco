@@ -235,13 +235,24 @@ exports.listByPage = function(req, res) {
 	}
 };
 
-exports.search = function(req, res) {
-	res.json(req.reviews);
+exports.listByServiceSupplier = function(req, res) {
+
+	var serviceSupplierId = req.params.serviceSupplierId;
+	Review.find({service_supplier: serviceSupplierId}).exec(function(err, reviews) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(reviews);
+		}
+	});
 };
 
-exports.listByServiceSupplier = function(req, res, next, serviceSupplierId) {
+exports.listByJob = function(req, res) {
 
-	Review.find({service_supplier: serviceSupplierId}).exec(function(err, reviews) {
+	var jobId = req.params.jobId;
+	Review.find({job: jobId}).exec(function(err, reviews) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

@@ -11,7 +11,7 @@ angular.module('admin').controller('JobsController',
 
 		JobStatus.query().$promise.then(function (statuses) {
 			for (var i = 0; i < statuses.length; i++) {
-				if (statuses[i].name === 'En Progreso') {
+				if (statuses[i].default) {
 					$scope.defaultStatus = statuses[i];
 					break;
 				}

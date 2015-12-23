@@ -22,11 +22,8 @@ module.exports = function(app) {
 	app.route('/jobs').post(users.requiresLogin, jobs.create);
 	app.route('/jobs/:jobId')
 		.get(jobs.read)
-		.put(users.requiresLogin, jobs.update);
+		.put(users.requiresLogin, jobs.canUpdate, jobs.update);
 
-	app.route('/jobs-by-user/:jobUserId/:status').get(jobs.search);
-	app.param('jobUserId', jobs.listByUser);
-
-	app.route('/jobs-by-servicesupplier/:servicesSupplierId').get(jobs.search);
-	app.param('servicesSupplierId', jobs.listByServiceSupplier);
+	app.route('/jobs-by-user/:jobUserId/:status').get(jobs.listByUser);
+	app.route('/jobs-by-servicesupplier/:serviceSupplierId').get(jobs.listByServiceSupplier);
 };

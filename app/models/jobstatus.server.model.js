@@ -15,6 +15,16 @@ var JobStatusSchema = new Schema({
 		default: '',
 		required: 'Por favor ingrese un nombre',
 		trim: true
+	},
+	finished: {
+		type: Boolean,
+		default: false,
+		required: true,
+	},
+	default: {
+		type: Boolean,
+		default: false,
+		required: true,
 	}
 });
 
