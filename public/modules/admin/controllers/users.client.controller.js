@@ -1,12 +1,23 @@
 'use strict';
 
-// ServiceCategories controller
+// TODO: pass parameters to controllers (all) in array mode to allow minification...
+// UsersAdmin controller
 angular.module('admin').controller('UsersAdminController',
-	function($scope, $stateParams, $state, Authentication, UsersAdmin, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, UsersAdminSearch, UsersAdminUser, $modal, Alerts) {
+
+		// Initializing scope variables
+		$scope.searchParameter = 'username';
+
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 		$scope.roles = [];
 		$scope.password = '';
+
+		$scope.currentPage = 1;
+		$scope.itemsPerPage = 5;
+		$scope.maxPages = 5;
+		$scope.showList = false;
+
 
 		// If user is not signed in then redirect back home
 		if (!$scope.authentication.user || ($scope.authentication.user.roles.indexOf('admin') === -1)) $state.go('home');
@@ -40,7 +51,7 @@ angular.module('admin').controller('UsersAdminController',
 		// Create new User
 		$scope.create = function() {
 			// Create new User object
-			var user = new UsersAdmin ({
+			var user = new UsersAdminUser ({
 				firstName: this.firstName,
 				lastName: this.lastName,
 				email: this.email,
@@ -94,33 +105,54 @@ angular.module('admin').controller('UsersAdminController',
 			});
 		};
 
-		$scope.itemsPerPage = 5;
-		$scope.maxPages = 5;
-		$scope.showList = false;
-
-		$scope.navigateToPage = function() {
-			$state.go('admin.listUsers', {
-				currentPage: $scope.currentPage,
-				itemsPerPage: $scope.itemsPerPage
-			});
-		};
-
-		// Find a list of Users
+		// Find users using different parameters...
 		$scope.find = function() {
-			$scope.users = UsersAdmin.query({
-				currentPage: $stateParams.currentPage,
-				itemsPerPage: $stateParams.itemsPerPage
-			}).$promise.then(function (response) {
-					$scope.currentPage = $stateParams.currentPage;
-					$scope.totalItems = response.totalItems;
-					$scope.users = response.users;
-					$scope.showList = $scope.totalItems > 0;
+
+			var userSearchParameters = {currentPage: $scope.currentPage,
+										itemsPerPage: $scope.itemsPerPage}
+
+			// Only adding username parameter if the username option has been selected and a value has been entered.
+			// Is the controller being reinitialized on state reload?
+			if($scope.searchParameter == 'username' && $scope.searchParameterUsername){
+				userSearchParameters.username = $scope.searchParameterUsername;
+			}
+			else
+			{		userSearchParameters.firstname = $scope.searchParameterFirstName,
+					userSearchParameters.lastname = $scope.searchParameterLastName,
+					userSearchParameters.email = $scope.searchParameterEmail,
+					userSearchParameters.city = $scope.searchParameterCity
+			}
+
+
+			$scope.users = UsersAdminSearch.query(userSearchParameters).$promise.then(function (response) {
+
+					if(response.users.length == 0)
+					{
+						$scope.error = 'No results found';
+						Alerts.show('danger',$scope.error);
+					}
+					else
+					{
+						$scope.currentPage = 1;
+						$scope.users = response.users;
+						$scope.totalItems = $scope.users.length;
+						$scope.showList = $scope.totalItems > 0;
+					}
+
+				},function(errorResponse) {
+
+					$scope.users = '';
+					$scope.totalItems = '';
+					$scope.showList = false;
+					$scope.error = errorResponse.data.message;
+					Alerts.show('danger',$scope.error);
 				});
-		};
+
+		}
 
 		// Find existing User
 		$scope.findOne = function() {
-			UsersAdmin.get({
+			UsersAdminUser.get({
 				userId: $stateParams.userId
 			}).$promise.then(function(user) {
 				$scope.userInfo = user;
@@ -128,6 +160,7 @@ angular.module('admin').controller('UsersAdminController',
 			});
 		};
 	});
+
 
 angular.module('admin').controller('UserModalInstanceCtrl',
 	function ($scope, $modalInstance) {

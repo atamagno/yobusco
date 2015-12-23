@@ -87,6 +87,32 @@ exports.list = function(req, res) {
 	});
 };
 
+// NOTE: not exporting this one at this time, since it's only consumed internally by this
+// module, when calling the route that includes the username parameter...
+// TODO: add username as index to the users collection? It may work faster with the index and if we use findOne.
+function userForAdminByUsername (req, res, username)
+{
+	// TODO: check what's faster / best
+	// Pass a callback like here vs. returning a Query object and using exec (see userForAdminByID)
+	// Reference here: http://mongoosejs.com/docs/queries.html
+	// Also, check if findOne is faster, since username should be unique
+	User.find({username: username}, '-salt -password', function(err, user) {
+		if (err)
+			return res.status(400).send({message: errorHandler.getErrorMessage(err)});
+		if (!user)
+			return res.status(400).send({message: 'Failed to load User "' + username + '"'});
+
+		if (user.length == 0)
+			return res.status(400).send({message: 'User "' + username + '" does not exist'});
+
+		var response = {};
+		// Setting response count to 1 since username should be unique
+		response.users = user;
+		res.jsonp(response);
+
+	});
+}
+
 /**
  * User middleware
  */
@@ -99,42 +125,44 @@ exports.userForAdminByID = function(req, res, next, id) {
 	});
 };
 
+
 exports.listByPage = function(req, res) {
 
-	var currentPage = req.params.currentPage;
-	var itemsPerPage = req.params.itemsPerPage;
+	var username = req.query.username;
 
-	// TODO: add more validation to query string parameters here.
-	if (currentPage && itemsPerPage) {
-		currentPage = parseInt(currentPage);
-		itemsPerPage = parseInt(itemsPerPage);
-		var startIndex = (currentPage - 1) * itemsPerPage;
-
-		var response = {};
-		User.count({}, function (err, count) {
-			if (err) {
-				return res.status(400).send({
-					message: errorHandler.getErrorMessage(err)
-				});
-			} else {
-
-				response.totalItems = count;
-				User.find({}, {}, { skip: startIndex, limit: itemsPerPage }, function(err, users) {
-					if (err) {
-						return res.status(400).send({
-							message: errorHandler.getErrorMessage(err)
-						});
-					} else {
-						response.users = users;
-						res.jsonp(response);
-					}
-				});
-			}
-		});
-
-	} else {
-		return res.status(400).send({
-			message: errorHandler.getErrorMessage(err)
-		});
+	if (username)
+	{
+		userForAdminByUsername(req, res, username);
 	}
+	else
+	{
+			var query = buildSearchQuery(req.query);
+			User.find(query, '-salt -password', function(err, users) {
+						if (err) {
+							return res.status(400).send({
+								message: errorHandler.getErrorMessage(err)
+							});
+						} else {
+
+							var response = {};
+							response.users = users;
+							res.jsonp(response);
+
+						}
+					});
+
+	}
+
 };
+
+function buildSearchQuery(reqParams)
+{
+	var query = {};
+	if(reqParams.firstname) query.firstName = { $regex: reqParams.firstname, $options: 'i' };
+	if(reqParams.lastname) query.lastName = { $regex: reqParams.lastname, $options: 'i' };
+	if(reqParams.email) query.email = reqParams.email;
+	if(reqParams.city)	query.city = reqParams.city;
+
+	return query;
+
+}

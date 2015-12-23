@@ -4,7 +4,7 @@
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
 	var applicationModuleName = 'ManoDeObra';
-	var applicationModuleVendorDependencies = ['ngResource', 'ui.router', 'ngAnimate', 'ui.bootstrap', 'ngFileUpload'];
+	var applicationModuleVendorDependencies = ['ngResource', 'ui.router', 'ngAnimate', 'ui.bootstrap', 'ngFileUpload', 'angularUtils.directives.dirPagination'];
 
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

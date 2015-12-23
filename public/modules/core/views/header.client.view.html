@@ -7,7 +7,7 @@
 			<li><a ui-sref="jobs.list({ status: 'all' })" data-ng-if="menu.shouldRender(authentication.user);">My Jobs</a></li>
 		</ul>
 		<ul class="nav navbar-nav" data-ng-if="menu.renderIfAdmin(authentication.user);">
-			<li><a ui-sref="admin.listUsers({ currentPage: 1, itemsPerPage: 5 })">Admin</a></li>
+			<li><a ui-sref="admin.searchUsers">Admin</a></li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right" data-ng-hide="authentication.user">
 			<li ui-route="/signup" ng-class="{active: $uiRoute}">

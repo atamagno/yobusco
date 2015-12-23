@@ -5,9 +5,9 @@ angular.module('admin').config(['$stateProvider',
 	function($stateProvider) {
 		// Users state routing
 		$stateProvider.
-			state('admin.listUsers', {
-				url: '/users/list/:currentPage/:itemsPerPage',
-				templateUrl: 'modules/admin/views/users/list-users.client.view.html'
+			state('admin.searchUsers', {
+				url: '/users/search',
+				templateUrl: 'modules/admin/views/users/search-users.client.view.html'
 			}).
 			state('admin.createUser', {
 				url: '/users/create',
