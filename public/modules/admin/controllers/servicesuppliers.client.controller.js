@@ -2,7 +2,7 @@
 
 // ServiceSuppliers controller
 angular.module('admin').controller('ServiceSuppliersController',
-    function($scope, $stateParams, $state, $location, Authentication, ServiceSuppliersAdmin, ServiceSubcategories, $modal, Alerts) {
+    function($scope, $stateParams, $state, $location, Authentication, ServiceSuppliersAdmin, ServiceSubcategories, $uibModal, Alerts) {
         $scope.authentication = Authentication;
         $scope.alerts = Alerts;
 
@@ -11,7 +11,7 @@ angular.module('admin').controller('ServiceSuppliersController',
 
         $scope.createModalInstance = function (templateUrl) {
 
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 templateUrl: templateUrl,
                 controller: 'ServiceSupplierModalInstanceCtrl'
             });
@@ -68,7 +68,7 @@ angular.module('admin').controller('ServiceSuppliersController',
 
             // Redirect after save
             servicesupplier.$save(function(response) {
-                Alerts.show('success','Service supplier successfully created');
+                Alerts.show('success','Prestador de servicios creado exitosamente');
                 $state.go('admin.viewServiceSupplier', { servicesupplierId: response._id});
 
                 // Clear form fields
@@ -85,7 +85,7 @@ angular.module('admin').controller('ServiceSuppliersController',
         // Remove existing ServiceSupplier
         $scope.remove = function(servicesupplier) {
             $scope.servicesupplier.$remove(function() {
-                Alerts.show('success','Service supplier successfully deleted');
+                Alerts.show('success','Prestador de servicios eliminado exitosamente');
                 $scope.currentPage = 1;
                 $scope.navigateToPage();
             }, function(errorResponse) {
@@ -106,7 +106,7 @@ angular.module('admin').controller('ServiceSuppliersController',
             });
 
             servicesupplier.$update(function() {
-                Alerts.show('success','Service supplier successfully updated');
+                Alerts.show('success','Prestador de servicios actualizado exitosamente');
                 $state.go('admin.viewServiceSupplier', { servicesupplierId: servicesupplier._id});
             }, function(errorResponse) {
                 $scope.error = errorResponse.data.message;
@@ -171,13 +171,13 @@ angular.module('admin').controller('ServiceSuppliersController',
     });
 
 angular.module('admin').controller('ServiceSupplierModalInstanceCtrl',
-    function ($scope, $modalInstance) {
+    function ($scope, $uibModalInstance) {
 
         $scope.ok = function () {
-            $modalInstance.close();
+            $uibModalInstance.close();
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
     });

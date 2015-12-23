@@ -1,21 +1,21 @@
 <section data-ng-controller="ServiceSuppliersController" data-ng-init="find()">
     <div class="admin-page-header">
-        <h1>Service Suppliers</h1>
+        <h1>Prestadores de servicio</h1>
     </div>
     <div class="alert alert-warning text-center">
-        <a ui-sref="admin.createServiceSupplier">Create Service Supplier</a>
+        <a ui-sref="admin.createServiceSupplier">Crear Prestador de servicios</a>
     </div>
 
-    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+    <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
 
     <div id="resultsContainer" data-ng-show="showList">
         <div>
-            Items: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + servicesuppliers.length}} of {{totalItems}}
+            Items: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + servicesuppliers.length}} de {{totalItems}}
         </div>
         <div class="list-group">
             <a data-ng-repeat="servicesupplier in servicesuppliers" ui-sref="admin.viewServiceSupplier({ servicesupplierId: servicesupplier._id })" class="list-group-item">
                 <small class="list-group-item-text">
-                    Registered on
+                    Registrado el
                     <span data-ng-bind="servicesupplier.registration_date | date:'medium'"></span>
                 </small>
                 <h4 data-ng-bind="servicesupplier.display_name"></h4>
@@ -23,9 +23,9 @@
         </div>
 
         <div class="pagination-container" data-ng-hide="totalItems <= itemsPerPage">
-            <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" max-size="maxPages"
-                        items-per-page="itemsPerPage" ng-change="navigateToPage()"
-                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+            <uib-pagination boundary-links="true" total-items="totalItems" data-ng-model="currentPage" class="pagination-sm" max-size="maxPages"
+                        items-per-page="itemsPerPage" data-ng-change="navigateToPage()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></uib-pagination>
         </div>
     </div>
 </section>

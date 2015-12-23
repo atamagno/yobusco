@@ -125,9 +125,9 @@ exports.list = function(req, res) {
  * Job middleware
  */
 exports.findJobByID = function(req, res, next, id) {
-	Job.findById(id).populate('service_supplier', 'display_name').populate('status', 'name').exec(function(err, job) {
+	Job.findById(id).populate('service_supplier', 'display_name').populate('user').populate('status').exec(function(err, job) {
 		if (err) return next(err);
-		if (!job) return next(new Error('Failed to load Job ' + id));
+		if (!job) return next(new Error('Error al cargar trabajo ' + id));
 		req.job = job ;
 		next();
 	});
@@ -173,31 +173,25 @@ exports.listByPage = function(req, res) {
 	}
 };
 
-exports.search = function(req, res) {
-	res.json(req.jobs);
-};
+exports.listByUser = function(req, res) {
 
-exports.listByUser = function(req, res, next, jobUserId) {
-
-	Job.find({user: jobUserId}).populate('service_supplier', 'display_name')
-							.populate('status')
-		.exec(function(err, jobs) {
+	var jobUserId = req.params.jobUserId;
+	Job.find({user: jobUserId}).populate('service_supplier', 'display_name').populate('status').exec(function(err, jobs) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			var status = req.params.status, statusquery;
-			if (status === 'finished') {
-				statusquery = ['Completed', 'Abandoned'];
-			} else if (status === 'active') {
-				statusquery = ['In Progress', 'Paused', 'Delayed'];
-			}
+			var status = req.params.status, finished = false;
+			if (status === 'finished' || status === 'active') {
 
-			var filteredJobs = [];
-			if (jobs.length && statusquery) {
+				if (status === 'finished') {
+					finished = true;
+				}
+
+				var filteredJobs = [];
 				for (var i = 0; i < jobs.length; i++) {
-					if (statusquery.indexOf(jobs[i].status.name) !== -1) {
+					if (jobs[i].status.finished === finished) {
 						filteredJobs.push(jobs[i]);
 					}
 				}
@@ -210,10 +204,11 @@ exports.listByUser = function(req, res, next, jobUserId) {
 	});
 };
 
-exports.listByServiceSupplier = function(req, res, next, serviceSupplierId) {
+exports.listByServiceSupplier = function(req, res) {
 
+	var serviceSupplierId = req.params.serviceSupplierId;
 	Job.find({service_supplier: serviceSupplierId}).populate('service_supplier', 'display_name')
-												   .populate('status', 'name').exec(function(err, jobs) {
+												   .populate('status').exec(function(err, jobs) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -222,4 +217,15 @@ exports.listByServiceSupplier = function(req, res, next, serviceSupplierId) {
 			res.jsonp(jobs);
 		}
 	});
+};
+
+exports.canUpdate = function(req, res, next) {
+	var job = req.job, user = req.user;
+	if (job.user.username !== user.username) {
+		return res.status(401).send({
+			message: 'El usuario no est\u00e1 autorizado'
+		});
+	}
+
+	next();
 };

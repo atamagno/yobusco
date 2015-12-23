@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('servicesuppliers').controller('ServiceSuppliersDetailController',
-    function($scope, $stateParams, Authentication, ServiceSuppliers, ServiceSuppliersDetails, Reviews, Alerts, $modal) {
+    function($scope, $state, $stateParams, Authentication, ServiceSuppliers, ServiceSuppliersDetails, Reviews, Alerts, $uibModal) {
         $scope.authentication = Authentication;
 
         ServiceSuppliers.get({
@@ -22,6 +22,14 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
                     });
             });
 
+        $scope.navigateToJobDetails = function(jobId) {
+            if ($scope.authentication.user) {
+                $state.go('servicesupplier.viewJobDetail', { servicesupplierId: $stateParams.servicesupplierId, jobId: jobId });
+            } else {
+                $state.go('viewJobDetail', { jobId: jobId});
+            }
+        };
+
         $scope.rate = 3;
         $scope.max = 5;
 
@@ -32,14 +40,14 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
 
         $scope.openReviewModal = function () {
 
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 templateUrl: 'addSupplierReviewModal',
                 controller: 'SupplierReviewModalInstanceCtrl',
                 resolve: {
                     jobs: function () {
                         var finishedJobs = [];
                         for (var i = 0; i < $scope.jobs.length; i++) {
-                            if (['Completed', 'Abandoned'].indexOf($scope.jobs[i].status.name) !== -1) {
+                            if ($scope.jobs[i].status.finished) {
                                 finishedJobs.push($scope.jobs[i]);
                             }
                         }
@@ -78,7 +86,7 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
             // Redirect after save
             review.$save(function (response) {
                 $scope.reviews.push(response);
-                Alerts.show('success','Review successfully created');
+                Alerts.show('success','Comentario agregado exitosamente');
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
                 Alerts.show('danger', $scope.error);
@@ -88,7 +96,7 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
     });
 
 angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
-    function ($scope, $modalInstance, ServiceSubcategories, RatingTypes, Alerts, jobs) {
+    function ($scope, $uibModalInstance, ServiceSubcategories, RatingTypes, Alerts, jobs) {
 
         $scope.alerts = Alerts;
 
@@ -96,7 +104,7 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
         $scope.ratings = [];
         RatingTypes.query().$promise.then(function (types) {
             for (var i = 0; i < types.length; i++) {
-                $scope.ratings.push({ _id: types[i]._id, name: types[i].name, description: types[i].description, rate: 0 });
+                $scope.ratings.push({ _id: types[i]._id, name: types[i].name, description: types[i].description, rate: 3 });
             }
         });
         $scope.servicesubcategories = ServiceSubcategories.query();
@@ -115,18 +123,18 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                         ratings: $scope.ratings
                     };
 
-                    $modalInstance.close(reviewInfo);
+                    $uibModalInstance.close(reviewInfo);
 
                 } else {
-                    Alerts.show('danger', 'You must fill in a comment');
+                    Alerts.show('danger', 'Debes dejar un comentario');
                 }
             } else {
-                Alerts.show('danger','You must select at least one service');
+                Alerts.show('danger','Debes seleccionar al menos un servicio');
             }
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
 
         $scope.selectService = function ($item) {

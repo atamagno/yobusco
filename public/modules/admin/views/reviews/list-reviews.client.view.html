@@ -1,30 +1,30 @@
 <section data-ng-controller="ReviewsController" data-ng-init="find()">
     <div class="admin-page-header">
-        <h1>Reviews</h1>
+        <h1>Rese&#241;as</h1>
     </div>
     <div class="alert alert-warning text-center">
-        <a ui-sref="admin.createReview">Create Review</a>
+        <a ui-sref="admin.createReview">Crear Rese&#241;a</a>
     </div>
 
-    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+    <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
 
     <div id="resultsContainer" data-ng-show="showList">
         <div>
-            Items: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + reviews.length}} of {{totalItems}}
+            Items: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + reviews.length}} de {{totalItems}}
         </div>
         <div class="list-group">
             <a data-ng-repeat="review in reviews" ui-sref="admin.viewReview({ reviewId: review._id })" class="list-group-item">
                 <small class="list-group-item-text">
-                    Posted on
+                    Publicado el
                     <span data-ng-bind="review.created | date:'medium'"></span>
                 </small>
                 <h4 data-ng-bind="review.comment"></h4>
             </a>
         </div>
         <div class="pagination-container" data-ng-hide="totalItems <= itemsPerPage">
-            <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" max-size="maxPages"
-                        items-per-page="itemsPerPage" ng-change="navigateToPage()"
-                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+            <uib-pagination boundary-links="true" total-items="totalItems" data-ng-model="currentPage" class="pagination-sm" max-size="maxPages"
+                        items-per-page="itemsPerPage" data-ng-change="navigateToPage()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></uib-pagination>
         </div>
     </div>
 </section>

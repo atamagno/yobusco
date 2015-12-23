@@ -3,11 +3,11 @@
 // TODO: pass parameters to controllers (all) in array mode to allow minification...
 // UsersAdmin controller
 angular.module('admin').controller('UsersAdminController',
-	function($scope, $stateParams, $state, Authentication, UsersAdminSearch, UsersAdminUser, $modal, Alerts) {
+
+    function($scope, $stateParams, $state, Authentication, UsersAdminSearch, UsersAdminUser, $uibModal, Alerts) {
 
 		// Initializing scope variables
 		$scope.searchParameter = 'username';
-
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 		$scope.roles = [];
@@ -24,7 +24,7 @@ angular.module('admin').controller('UsersAdminController',
 
 		$scope.createModalInstance = function (templateUrl) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: templateUrl,
 				controller: 'UserModalInstanceCtrl'
 			});
@@ -62,7 +62,7 @@ angular.module('admin').controller('UsersAdminController',
 
 			// Redirect after save
 			user.$save(function(response) {
-				Alerts.show('success','User successfully created');
+				Alerts.show('success','Usuario creado exitosamente');
 				$state.go('admin.viewUser', { userId: response._id});
 
 				// Clear form fields
@@ -81,7 +81,7 @@ angular.module('admin').controller('UsersAdminController',
 		// Remove existing User
 		$scope.remove = function(user) {
 			$scope.userInfo.$remove(function() {
-				Alerts.show('success','User successfully deleted');
+				Alerts.show('success','Usuario eliminado exitosamente');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
 			}, function(errorResponse) {
@@ -97,7 +97,7 @@ angular.module('admin').controller('UsersAdminController',
 			userInfo.password = $scope.password;
 
 			userInfo.$update(function() {
-				Alerts.show('success','User successfully updated');
+				Alerts.show('success','Usuario eliminado exitosamente');
 				$state.go('admin.viewUser', { userId: userInfo._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
@@ -108,8 +108,7 @@ angular.module('admin').controller('UsersAdminController',
 		// Find users using different parameters...
 		$scope.find = function() {
 
-			var userSearchParameters = {currentPage: $scope.currentPage,
-										itemsPerPage: $scope.itemsPerPage}
+			var userSearchParameters = {};
 
 			// Only adding username parameter if the username option has been selected and a value has been entered.
 			// Is the controller being reinitialized on state reload?
@@ -128,7 +127,7 @@ angular.module('admin').controller('UsersAdminController',
 
 					if(response.users.length == 0)
 					{
-						$scope.error = 'No results found';
+						$scope.error = 'No se encontraron resultados.';
 						Alerts.show('danger',$scope.error);
 					}
 					else
@@ -163,13 +162,13 @@ angular.module('admin').controller('UsersAdminController',
 
 
 angular.module('admin').controller('UserModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 		$scope.ok = function () {
-			$modalInstance.close();
+			$uibModalInstance.close();
 		};
 
 		$scope.cancel = function () {
-			$modalInstance.dismiss('cancel');
+			$uibModalInstance.dismiss('cancel');
 		};
 	});

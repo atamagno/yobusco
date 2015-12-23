@@ -1,5 +1,7 @@
 <section data-ng-controller="UsersAdminController" data-ng-init="findOne()">
-	<alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+
+	<uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
+
 	<div class="admin-page-header">
 		<h1 data-ng-bind="userInfo.displayName"></h1>
 	</div>
@@ -20,14 +22,14 @@
 
 	<script type="text/ng-template" id="deleteUserModal">
 		<div class="modal-header">
-			<h3 class="modal-title">Delete User</h3>
+			<h3 class="modal-title">Eliminar Usuario</h3>
 		</div>
 		<div class="modal-body">
-			Are you sure you want to delete this user?
+			Est&#225;s seguro de que quieres eliminar el usuario?
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-			<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+			<button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
+			<button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
 		</div>
 	</script>
 

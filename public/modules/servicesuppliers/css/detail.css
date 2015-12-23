@@ -14,13 +14,13 @@
     width: 100%;
 }
 
-.reviews-header-container {
+.service-supplier-header-container {
     border-bottom: 1px solid #eee;
     height: 50px;
     position: relative;
 }
 
-.review-button-container {
+.create-job-button-container, .leave-review-button-container {
     padding-top: 5px;
 }
 

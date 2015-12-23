@@ -15,7 +15,7 @@ exports.userByID = function(req, res, next, id) {
 		_id: id
 	}).exec(function(err, user) {
 		if (err) return next(err);
-		if (!user) return next(new Error('Failed to load User ' + id));
+		if (!user) return next(new Error('Error al cargar usuario ' + id));
 		req.profile = user;
 		next();
 	});
@@ -27,7 +27,7 @@ exports.userByID = function(req, res, next, id) {
 exports.requiresLogin = function(req, res, next) {
 	if (!req.isAuthenticated()) {
 		return res.status(401).send({
-			message: 'User is not logged in'
+			message: 'El usuario no est\u00e1 logueado'
 		});
 	}
 
@@ -40,7 +40,7 @@ exports.requiresLogin = function(req, res, next) {
 exports.isAdmin = function(req, res, next) {
 	if (!_.intersection(req.user.roles, ['admin']).length) {
 		return res.status(403).send({
-			message: 'User is not authorized'
+			message: 'El usuario no est\u00e1 autorizado'
 		});
 	}
 	next();
@@ -58,7 +58,7 @@ exports.hasAuthorization = function(roles) {
 				return next();
 			} else {
 				return res.status(403).send({
-					message: 'User is not authorized'
+					message: 'El usuario no est\u00e1 autorizado'
 				});
 			}
 		});

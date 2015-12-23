@@ -2,38 +2,38 @@
 	<div class="navbar-header">
 		<a href="/#!/" class="navbar-brand">Mano de Obra</a>
 	</div>
-	<nav class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation">
+	<nav class="collapse navbar-collapse" role="navigation">
 		<ul class="nav navbar-nav">
-			<li><a ui-sref="jobs.list({ status: 'all' })" data-ng-if="menu.shouldRender(authentication.user);">My Jobs</a></li>
+			<li><a ui-sref="jobs.list({ status: 'all' })" data-ng-if="menu.shouldRender(authentication.user);">Mis Trabajos</a></li>
 		</ul>
 		<ul class="nav navbar-nav" data-ng-if="menu.renderIfAdmin(authentication.user);">
 			<li><a ui-sref="admin.searchUsers">Admin</a></li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right" data-ng-hide="authentication.user">
-			<li ui-route="/signup" ng-class="{active: $uiRoute}">
-				<a href="/#!/signup">Sign Up</a>
+			<li ui-route="/signup" data-ng-class="{active: $uiRoute}">
+				<a href="/#!/signup">Registrarte</a>
 			</li>
 			<li class="divider-vertical"></li>
-			<li ui-route="/signin" ng-class="{active: $uiRoute}">
-				<a href="/#!/signin">Sign In</a>
+			<li ui-route="/signin" data-ng-class="{active: $uiRoute}">
+				<a href="/#!/signin">Ingresar</a>
 			</li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
-			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+			<li class="dropdown" uib-dropdown>
+				<a href="#" uib-dropdown-toggle>
 					<img class="logged-user-profile-img" data-ng-src="{{authentication.user.profile_picture}}">
 					<span data-ng-bind="authentication.user.displayName"></span> <b class="caret"></b>
 				</a>
-				<ul class="dropdown-menu">
+				<ul class="uib-dropdown-menu">
 					<li>
-						<a href="/#!/settings/profile">Edit Profile</a>
+						<a href="/#!/settings/profile">Editar Perfil</a>
 					</li>
 					<li data-ng-show="authentication.user.provider === 'local'">
-						<a href="/#!/settings/password">Change Password</a>
+						<a href="/#!/settings/password">Cambiar Contrase&#241;a</a>
 					</li>
 					<li class="divider"></li>
 					<li>
-						<a href="/auth/signout">Signout</a>
+						<a href="/auth/signout">Salir</a>
 					</li>
 				</ul>
 			</li>

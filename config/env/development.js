@@ -3,7 +3,7 @@
 module.exports = {
 
 	app: {
-		title: 'Yo Busco - Development Environment',
+		title: 'Yo Busco',
 		port: process.env.OPENSHIFT_NODEJS_PORT || 8002,
 		server: process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
 	},

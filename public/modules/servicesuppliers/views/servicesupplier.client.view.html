@@ -2,11 +2,11 @@
     <div class="row">
         <div class="col-md-3">
 
-            <p class="lead">Service Supplier</p>
+            <p class="lead">Prestador de Servicios</p>
             <div class="list-group">
-                <a ui-sref=".detail({ servicesupplierId: servicesupplier._id })" class="list-group-item">Details</a>
-                <a ui-sref=".jobs({ servicesupplierId: servicesupplier._id })" class="list-group-item">Jobs</a>
-                <a ui-sref=".reviews({ servicesupplierId: servicesupplier._id })" class="list-group-item">Reviews</a>
+                <a ui-sref=".detail({ servicesupplierId: servicesupplier._id })" class="list-group-item">Detalles</a>
+                <a ui-sref=".jobs({ servicesupplierId: servicesupplier._id })" class="list-group-item">Trabajos</a>
+                <a ui-sref=".reviews({ servicesupplierId: servicesupplier._id })" class="list-group-item">Comentarios</a>
             </div>
 
         </div>
@@ -18,34 +18,34 @@
 
 <script type="text/ng-template" id="jobTypeaheadTemplate.html">
     <a>
-        <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
+        <span data-ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
         <span>, {{match.model.start_date | date: 'shortDate'}} - {{match.model.finish_date | date: 'shortDate'}}</span>
     </a>
 </script>
 
 <script type="text/ng-template" id="addSupplierReviewModal">
     <div class="modal-header">
-        <h3 class="modal-title">Add Review</h3>
+        <h3 class="modal-title">Agregar Comentario</h3>
     </div>
     <div class="modal-body">
 
-        <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible">{{alerts.msg}}</alert>
+        <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible">{{alerts.msg}}</uib-alert>
 
         <div class="alert alert-warning text-center" data-ng-show="!jobs.length">
-            You don't have finished jobs with this service supplier.
+            No tienes ning&#250;n trabajo terminado con este prestador de servicios.
         </div>
 
         <div data-ng-show="jobs.length">
-            <h4 class="review-services-title">Jobs</h4>
+            <h4 class="review-services-title">Trabajos</h4>
             <input type="text" data-ng-model="selectedJob" class="form-control"
-                   typeahead="job as job.name  for job in jobs | filter:$viewValue | limitTo:8"
-                   placeholder="Select a Job." typeahead-template-url="jobTypeaheadTemplate.html">
+                   uib-typeahead="job as job.name  for job in jobs | filter:$viewValue | limitTo:8"
+                   placeholder="Selecciona un trabajo." typeahead-template-url="jobTypeaheadTemplate.html">
         </div>
         <br>
-        <h4 class="review-services-title">Services</h4>
+        <h4 class="review-services-title">Servicios</h4>
         <input type="text" data-ng-model="selected" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
-               typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
-               placeholder="Select a service.">
+               uib-typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
+               placeholder="Selecciona un servicio.">
 
         <div data-ng-show="selectedservices.length" class="review-selected-services">
             <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default review-selected-service"
@@ -56,18 +56,18 @@
         <h4 class="review-ratings-title">Ratings</h4>
         <div class="review-ratings-container">
             <div data-ng-repeat="rating in ratings">
-                {{rating.name}} <a tooltip="{{rating.description}}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
+                {{rating.name}} <a uib-tooltip="{{rating.description}}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
                 <div class="pull-right">
-                    <rating ng-model="rating.rate" max="5" class="review-rating-selector"></rating>{{rating.rate}} Stars
+                    <uib-rating data-ng-model="rating.rate" max="5" class="review-rating-selector"></uib-rating>{{rating.rate}} Estrellas
                 </div>
             </div>
         </div>
 
 
-        <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Leave a comment here."></textarea>
+        <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-        <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+        <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
+        <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
     </div>
 </script>

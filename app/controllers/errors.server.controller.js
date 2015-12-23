@@ -7,11 +7,11 @@ var getUniqueErrorMessage = function(err) {
 	var output;
 
 	try {
-		var fieldName = err.err.substring(err.err.lastIndexOf('.$') + 2, err.err.lastIndexOf('_1'));
-		output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ' already exists';
+		var fieldValue = err.err.substring(err.err.lastIndexOf('{') + 5, err.err.lastIndexOf('" }'));
+		output = fieldValue + ' ya existe';
 
 	} catch (ex) {
-		output = 'Unique field already exists';
+		output = 'El campo \u00fanico ya existe';
 	}
 
 	return output;
@@ -21,7 +21,7 @@ var getUniqueErrorMessage = function(err) {
  * Get the error message from error object
  */
 exports.getErrorMessage = function(err) {
-	var message = 'Something went wrong';
+	var message = 'Algo sali\u00f3 mal';
 
 	if (err.code) {
 		switch (err.code) {
@@ -30,7 +30,7 @@ exports.getErrorMessage = function(err) {
 				message = getUniqueErrorMessage(err);
 				break;
 			default:
-				message = 'Something went wrong';
+				message = 'Algo sali\u00f3 mal';
 		}
 	} else if (err.errors) {
 		for (var errName in err.errors) {

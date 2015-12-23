@@ -2,7 +2,7 @@
 
 // ServiceSubcategories controller
 angular.module('admin').controller('ServiceSubcategoriesController',
-	function($scope, $stateParams, $state, Authentication, ServiceSubcategoriesAdmin, ServiceCategories, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, ServiceSubcategoriesAdmin, ServiceCategories, $uibModal, Alerts) {
 		$scope.authentication = Authentication;
         $scope.servicecategories = ServiceCategories.query();
 		$scope.alerts = Alerts;
@@ -12,7 +12,7 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 
 		$scope.createModalInstance = function (templateUrl) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: templateUrl,
 				controller: 'ServiceSubcategoryModalInstanceCtrl'
 			});
@@ -48,7 +48,7 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 
 			// Redirect after save
 			servicesubcategory.$save(function(response) {
-				Alerts.show('success','Service subcategory successfully created');
+				Alerts.show('success','Subcategor\u00eda de servicio creada exitosamente');
 				$state.go('admin.viewServiceSubcategory', { servicesubcategoryId: response._id});
 
 				// Clear form fields
@@ -65,7 +65,7 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 		// Remove existing ServiceSubcategory
 		$scope.remove = function(servicesubcategory) {
 			$scope.servicesubcategory.$remove(function() {
-				Alerts.show('success','Service subcategory successfully deleted');
+				Alerts.show('success','Subcategor\u00eda de servicio eliminada exitosamente');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
 			}, function(errorResponse) {
@@ -79,7 +79,7 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 			var servicesubcategory = $scope.servicesubcategory;
 
 			servicesubcategory.$update(function() {
-				Alerts.show('success','Service subcategory successfully updated');
+				Alerts.show('success','Subcategor\u00eda de servicio actualizada exitosamente');
 				$state.go('admin.viewServiceSubcategory', { servicesubcategoryId: servicesubcategory._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
@@ -120,13 +120,13 @@ angular.module('admin').controller('ServiceSubcategoriesController',
 	});
 
 angular.module('admin').controller('ServiceSubcategoryModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 		$scope.ok = function () {
-			$modalInstance.close();
+			$uibModalInstance.close();
 		};
 
 		$scope.cancel = function () {
-			$modalInstance.dismiss('cancel');
+			$uibModalInstance.dismiss('cancel');
 		};
 	});

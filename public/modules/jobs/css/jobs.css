@@ -3,11 +3,14 @@
 }
 
 .job-name-container {
-    min-height: 38px;
+    min-height: 40px;
 }
 
 .job-description-container {
     min-height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .job-detail-list-container {
@@ -42,4 +45,86 @@
 
 .review-rating-selector {
     cursor: pointer;
+}
+
+.upload-image-header-container {
+    border-bottom: 1px solid #eee;
+    height: 50px;
+    position: relative;
+}
+
+.btn-upload-image {
+    padding-top: 5px;
+}
+
+.thumb {
+    width: 24px;
+    height: 24px;
+}
+
+.progress {
+    margin-bottom: 5px !important;
+}
+
+.drop-box {
+    background: #F8F8F8;
+    border: 5px dashed #DDD !important;
+    width: 300px;
+    text-align: center;
+    padding: 25px;
+    margin: 0 auto 10px auto;
+}
+
+.dragover {
+    border: 5px dashed #808080 !important;
+}
+
+.slide-container {
+    margin: 0 auto;
+}
+
+.job-thumbnail {
+    height: 180px;
+    padding-bottom: 5px;
+}
+
+.status-label {
+    padding-left: 10px;
+}
+
+.job-img-upload-detail-container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.job-img-progres-container {
+    font-size: smaller;
+    padding-top: 5px;
+}
+
+.img-upload-error {
+    color: red;
+    font-size: smaller;
+}
+
+.job-img-upload-thumbnail {
+    padding-bottom: 5px;
+}
+
+.upload-requirements-container {
+    padding-top: 10px;
+}
+
+.opened-img {
+    margin: 0 auto;
+}
+
+.job-details-header-container {
+    border-bottom: 1px solid #eee;
+}
+
+.job-images-label-container {
+    font-size: 20px;
+    position: absolute;
+    top: 15px;
 }

@@ -1,28 +1,28 @@
 <section data-ng-controller="UsersAdminController">
     <div class="admin-page-header">
-        <h1>Users</h1>
+        <h1>Usuarios</h1>
     </div>
     <div class="alert alert-warning text-center">
-        <a ui-sref="admin.createUser">Create User</a>
+        <a ui-sref="admin.createUser">Crear Usuario</a>
     </div>
 
     <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
 
      <div class="well well-sm">
-            <h4>Search parameters</h4>
-            <input type="radio" data-ng-model="searchParameter" value="username">Username</input>
-            <input type="radio" data-ng-model="searchParameter" value="others">Other parameters</input>
+            <h4>Parametros de busqueda</h4>
+            <input type="radio" data-ng-model="searchParameter" value="username">Nombre de usuario</input>
+            <input type="radio" data-ng-model="searchParameter" value="others">Otros parametros</input>
             <form role="form">
                     <div class="form-group" data-ng-show="searchParameter=='username'">
                         <input class="form-control" type="text" placeholder="Username" data-ng-model="searchParameterUsername"/>
                     </div>
                     <div data-ng-show="searchParameter!='username'">
                         <div class="form-group">
-                            <label class="control-label" for="firstname">First Name</label>
+                            <label class="control-label" for="firstname">Nombre</label>
                             <input class="form-control" type="text" placeholder="First Name" id="firstname" data-ng-model="searchParameterFirstName"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label" for="lastname">Last Name</label>
+                            <label class="control-label" for="lastname">Apellido</label>
                             <input class="form-control" type="text" placeholder="Last Name" id="lastname" data-ng-model="searchParameterLastName"/>
                         </div>
                         <div class="form-group">
@@ -30,11 +30,11 @@
                             <input class="form-control" type="text" placeholder="Email" id="email" data-ng-model="searchParameterEmail"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label" for="city">City</label>
+                            <label class="control-label" for="city">Ciudad</label>
                             <input class="form-control" type="text" placeholder="City" id="city" data-ng-model="searchParameterCity"/>
                         </div>
                     </div>
-                    <button class="btn btn-large btn-primary" data-ng-click="find()">Search</button>
+                    <button class="btn btn-large btn-primary" data-ng-click="find()">Buscar</button>
             </form>
 
      </div>
@@ -50,7 +50,7 @@
              in order to paginate the results -->
             <a dir-paginate="user in users | itemsPerPage : itemsPerPage" current-page="currentPage" ui-sref="admin.viewUser({ userId: user._id })" class="list-group-item">
                 <small class="list-group-item-text">
-                    Registered on
+                    Registrado el
                     <span data-ng-bind="user.created | date:'medium'"></span>
                 </small>
                 <h4 data-ng-bind="user.displayName"></h4>

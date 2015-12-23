@@ -13,7 +13,7 @@ var ServiceCategorySchema = new Schema({
 	name: {
 		type: String,
 		default: '',
-		required: 'Please fill in a name',
+		required: 'Por favor ingrese un nombre',
 		trim: true
 	}
 });

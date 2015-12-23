@@ -1,14 +1,14 @@
 <section data-ng-controller="UserJobsController" data-ng-init="findOne()">
 
+    <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
+
     <div class="row">
         <div class="col-lg-12">
             <h1>
-                Job Detail
+                Detalle de trabajo
                 <small>{{job.name}}</small>
-                <a data-ng-show="showLeaveReviewButton"
-                   data-ng-click="openReviewModal()" class="btn btn-success pull-right">Leave a Review</a>
-                <a data-ng-show="!showLeaveReviewButton"
-                   ui-sref="jobs.edit({ jobId: job._id })" class="btn btn-success pull-right">Update job</a>
+                <a data-ng-show="!job.status.finished && authentication.user && (authentication.user.username === job.user.username)"
+                   ui-sref="jobs.edit({ jobId: job._id })" class="btn btn-success pull-right">Actualizar trabajo</a>
             </h1>
         </div>
     </div>
@@ -16,19 +16,24 @@
     <div class="row">
 
         <div class="col-md-8">
-            <img class="img-responsive" src="http://placehold.it/750x500" alt="">
+            <img data-ng-show="!job.pictures.length" class="img-responsive" src="http://placehold.it/750x500" alt="">
+            <uib-carousel data-ng-show="job.pictures.length" interval="3000" no-wrap="false">
+                <uib-slide data-ng-repeat="slide in job.pictures">
+                    <img data-ng-src="{{slide}}" class="slide-container">
+                </uib-slide>
+            </uib-carousel>
         </div>
 
         <div class="col-md-4">
-            <h3>Description</h3>
+            <h3>Descripci&#243;n</h3>
             <p>{{job.description}}</p>
-            <h3>Details</h3>
+            <h3>Detalles</h3>
             <ul class="job-detail-list-container">
-                <li><strong>Start Date: </strong>{{job.start_date | date: 'shortDate'}}</li>
-                <li><strong>Expected Date: </strong>{{job.expected_date | date: 'shortDate'}}</li>
-                <li><strong>Finish Date: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
-                <li><strong>Status: </strong>{{job.status.name}}</li>
-                <li><strong>Service Supplier: </strong>{{job.service_supplier.display_name}}</li>
+                <li><strong>Fecha de inicio: </strong>{{job.start_date | date: 'shortDate'}}</li>
+                <li><strong>Fecha estimada: </strong>{{job.expected_date | date: 'shortDate'}}</li>
+                <li><strong>Fecha de finalizaci&#243;n: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
+                <li><strong>Estado: </strong>{{job.status.name}}</li>
+                <li><strong>Prestador de servicios: </strong><a ui-sref="servicesupplier.detail({ servicesupplierId: job.service_supplier._id })">{{job.service_supplier.display_name}}</a></li>
             </ul>
         </div>
 
@@ -37,45 +42,74 @@
     <div class="row">
 
         <div class="col-lg-12">
-            <h3 class="page-header">Job Images</h3>
+            <br>
+            <div class="upload-image-header-container">
+                <div class="pull-right btn-upload-image">
+                    <button data-ng-click="openUploadImagesModal()" data-ng-show="authentication.user && (authentication.user.username === job.user.username)" type="button" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar im&#225;genes
+                    </button>
+                </div>
+
+                <div class="job-images-label-container">Im&#225;genes del trabajo</div>
+            </div>
+            <br>
         </div>
 
-        <div class="col-sm-3 col-xs-6">
-            <a href="#">
-                <img class="img-responsive portfolio-item" src="http://placehold.it/500x300" alt="">
+        <div data-ng-repeat="picture in job.pictures" class="col-sm-3 col-xs-6 job-thumbnail">
+            <a href="" data-ng-click="openImageModal(picture)">
+                <img class="img-responsive" data-ng-src="{{picture}}" alt="">
             </a>
         </div>
 
-        <div class="col-sm-3 col-xs-6">
-            <a href="#">
-                <img class="img-responsive portfolio-item" src="http://placehold.it/500x300" alt="">
-            </a>
+    </div>
+
+    <div class="well" data-ng-hide="job.pictures.length">No hay im&#225;genes</div>
+
+    <div class="row">
+
+        <div class="col-lg-12">
+            <br>
+            <div class="service-supplier-header-container">
+                <div class="pull-right leave-review-button-container" data-ng-show="job.status.finished && authentication.user && (authentication.user.username === job.user.username)">
+                    <a data-ng-click="openReviewModal()" class="btn btn-success">Deja un comentario</a>
+                </div>
+                <div class="reviews-label-container">Comentarios recientes</div>
+            </div>
+            <br>
         </div>
 
-        <div class="col-sm-3 col-xs-6">
-            <a href="#">
-                <img class="img-responsive portfolio-item" src="http://placehold.it/500x300" alt="">
-            </a>
-        </div>
+    </div>
 
-        <div class="col-sm-3 col-xs-6">
-            <a href="#">
-                <img class="img-responsive portfolio-item" src="http://placehold.it/500x300" alt="">
-            </a>
+    <div class="well">
+
+        <div data-ng-hide="reviews.length">No hay comentarios</div>
+
+        <div class="row" data-ng-repeat="review in reviews">
+            <div class="col-md-12">
+                <br>
+                <span class="glyphicon glyphicon-star"></span>
+                <span class="glyphicon glyphicon-star"></span>
+                <span class="glyphicon glyphicon-star"></span>
+                <span class="glyphicon glyphicon-star"></span>
+                <span class="glyphicon glyphicon-star-empty"></span>
+                An&#243;nimo
+                <span class="pull-right">{{ review.created | date: 'medium' }}</span>
+                <p>{{review.comment}}</p>
+            </div>
         </div>
     </div>
 
     <script type="text/ng-template" id="addReviewModal">
         <div class="modal-header">
-            <h3 class="modal-title">Add Review</h3>
+            <h3 class="modal-title">Agrega un comentario</h3>
         </div>
         <div class="modal-body">
 
-            <h4 class="review-services-title">Services</h4>
+            <h4 class="review-services-title">Servicios</h4>
 
             <input type="text" data-ng-model="selected" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
-                   typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
-                   placeholder="Select a service.">
+                   uib-typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
+                   placeholder="Selecciona un servicio.">
 
             <div data-ng-show="selectedservices.length" class="review-selected-services">
                 <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default review-selected-service"
@@ -83,23 +117,67 @@
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{selectedservice.name}}</button>
             </div>
 
-
             <h4 class="review-ratings-title">Ratings</h4>
             <div class="review-ratings-container">
                 <div data-ng-repeat="rating in ratings">
-                    {{rating.name}} <a tooltip="{{rating.description}}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
+                    {{rating.name}} <a uib-tooltip="{{rating.description}}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
                     <div class="pull-right">
-                        <rating ng-model="rating.rate" max="5" class="review-rating-selector"></rating>{{rating.rate}} Stars
+                        <uib-rating data-ng-model="rating.rate" max="5" class="review-rating-selector"></uib-rating>{{rating.rate}} Estrellas
                     </div>
                 </div>
             </div>
 
-
-            <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Leave a comment here."></textarea>
+            <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
+            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="addJobImagesModal">
+        <div class="modal-header">
+            <h3 class="modal-title">Agregar im&#225;genes</h3>
+        </div>
+        <div class="modal-body">
+
+            <div ngf-drop ngf-select data-ng-model="files" class="drop-box" ngf-model-invalid="errFiles"
+                 ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
+                 accept="image/*" ngf-max-size="4MB" ngf-pattern="'image/*'">Arrastra im&#225;genes aqui o haz click para cargar</div>
+
+            <div class="job-img-upload-detail-container">
+                <div data-ng-repeat="f in files" class="job-img-progres-container">
+                    <div class="job-img-upload-thumbnail">
+                        <img ngf-thumbnail="f" class="thumb"> {{f.name}}
+                    </div>
+                    <uib-progressbar class="progress-striped active" value="f.progress" type="warning" data-ng-show="f.progress >= 0">
+                        <i data-ng-show="f.progress">{{f.progress}}%</i>
+                    </uib-progressbar>
+                </div>
+                <li data-ng-repeat="f in errFiles" class="img-upload-error">{{f.name}} {{f.$error}} {{f.$errorParam}}
+                </li>
+            </div>
+
+            <ul class="upload-requirements-container">
+                <li>Tipos de im&#225;genes permitidas: JPG, PNG.</li>
+                <li>El tama&#241;o debe ser menor a 4 MB.</li>
+                <li>Usar bloqueadores de scripts puede hacer que falle la carga.</li>
+            </ul>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" data-ng-click="uploadFiles(files)">Cargar</button>
+            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="openImageModal">
+        <div class="modal-body">
+            <img class="img-responsive opened-img" data-ng-src="{{image}}" alt="">
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" data-ng-click="delete()">Eliminar</button>
+            <button class="btn btn-default" type="button" data-ng-click="close()">Cerrar</button>
         </div>
     </script>
 

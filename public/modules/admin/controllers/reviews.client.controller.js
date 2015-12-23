@@ -2,7 +2,7 @@
 
 // Review controller
 angular.module('admin').controller('ReviewsController',
-	function($scope, $stateParams, $state, Authentication, ReviewsAdmin, RatingTypes, ServiceSuppliers, ServiceSubcategories, Users, ServiceSuppliersDetails, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, ReviewsAdmin, RatingTypes, ServiceSuppliers, ServiceSubcategories, Users, ServiceSuppliersDetails, $uibModal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
@@ -63,7 +63,7 @@ angular.module('admin').controller('ReviewsController',
 
 		$scope.createModalInstance = function (templateUrl) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: templateUrl,
 				controller: 'ReviewModalInstanceCtrl'
 			});
@@ -116,24 +116,24 @@ angular.module('admin').controller('ReviewsController',
 
 					// Redirect after save
 					review.$save(function (response) {
-						Alerts.show('success','Review successfully created');
+						Alerts.show('success','Rese\u00f1a creada exitosamente');
 						$state.go('admin.viewReview', { reviewId: response._id});
 					}, function (errorResponse) {
 						$scope.error = errorResponse.data.message;
 						Alerts.show('danger', $scope.error);
 					});
 				} else {
-					Alerts.show('danger','You must select a valid service supplier');
+					Alerts.show('danger','Debes seleccionar un prestador de servicios v\u00e1lido');
 				}
 			} else {
-				Alerts.show('danger','You must select a valid user');
+				Alerts.show('danger','Debes seleccionar un usuario v\u00e1lido');
 			}
 		};
 
 		// Remove existing Review
 		$scope.remove = function() {
 			$scope.review.$remove(function() {
-				Alerts.show('success','Review successfully deleted');
+				Alerts.show('success','Rese\u00f1a eliminada exitosamente');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
 			}, function(errorResponse) {
@@ -148,7 +148,7 @@ angular.module('admin').controller('ReviewsController',
 			review.job = review.job && review.job._id ? review.job._id : null;
 
 			review.$update(function() {
-				Alerts.show('success','Review successfully updated');
+				Alerts.show('success','Rese\u00f1a actualizada exitosamente');
 				$state.go('admin.viewReview', { reviewId: review._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
@@ -189,13 +189,13 @@ angular.module('admin').controller('ReviewsController',
 	});
 
 angular.module('admin').controller('ReviewModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 	$scope.ok = function () {
-		$modalInstance.close();
+		$uibModalInstance.close();
 	};
 
 	$scope.cancel = function () {
-		$modalInstance.dismiss('cancel');
+		$uibModalInstance.dismiss('cancel');
 	};
 });

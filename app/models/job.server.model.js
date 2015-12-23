@@ -17,7 +17,7 @@ var JobSchema = new Schema({
 	name: {
 		type: String,
 		default: '',
-		required: 'Please fill in a name',
+		required: 'Por favor ingrese un nombre',
 		trim: true
 	},
 	description: {
@@ -28,12 +28,12 @@ var JobSchema = new Schema({
 	service_supplier: {
 		type: Schema.ObjectId,
 		ref: 'ServiceSupplier',
-		required: 'Please select a service supplier'
+		required: 'Por favor seleccione un prestador de servicios'
 	},
 	status: {
 		type: Schema.ObjectId,
 		ref: 'JobStatus',
-		required: 'Please select a status'
+		required: 'Por favor seleccione un estado de trabajo'
 	},
 	reviewCount: {
 		type: Number,
@@ -42,15 +42,19 @@ var JobSchema = new Schema({
 	start_date: {
 		type: Date,
 		default: Date.now,
-		required: 'Please fill in a start date',
+		required: 'Por favor ingrese una fecha de inicio',
 	},
 	expected_date: {
 		type: Date,
-		required: 'Please fill in a expected finish date',
+		required: 'Por favor ingrese una fecha estimada',
 	},
 	finish_date: {
 		type: Date
-	}
+	},
+	pictures: [{
+		type: String,
+		default: []
+	}],
 });
 
 mongoose.model('Job', JobSchema);

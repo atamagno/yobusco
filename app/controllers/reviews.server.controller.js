@@ -179,11 +179,11 @@ exports.reviewByID = function(req, res, next, id) {
 						.populate('services').exec(function(err, review) {
 
 		if (err) return next(err);
-		if (!review) return next(new Error('Failed to load Review ' + id));
+		if (!review) return next(new Error('Error al cargar comentario ' + id));
 		if (review.job) {
 			Job.populate(review.job, {path: 'service_supplier', select: 'display_name'}, function(err, job){
 				if (err) return next(err);
-				if (!job) return next(new Error('Failed to load Job'));
+				if (!job) return next(new Error('Error al cargar trabajo'));
 				req.review = review;
 				next();
 			});
@@ -235,13 +235,24 @@ exports.listByPage = function(req, res) {
 	}
 };
 
-exports.search = function(req, res) {
-	res.json(req.reviews);
+exports.listByServiceSupplier = function(req, res) {
+
+	var serviceSupplierId = req.params.serviceSupplierId;
+	Review.find({service_supplier: serviceSupplierId}).exec(function(err, reviews) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(reviews);
+		}
+	});
 };
 
-exports.listByServiceSupplier = function(req, res, next, serviceSupplierId) {
+exports.listByJob = function(req, res) {
 
-	Review.find({service_supplier: serviceSupplierId}).exec(function(err, reviews) {
+	var jobId = req.params.jobId;
+	Review.find({job: jobId}).exec(function(err, reviews) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

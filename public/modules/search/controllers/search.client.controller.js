@@ -7,8 +7,8 @@ angular.module('search').controller('SuppliersSearchController',
         $scope.serviceSubcategoriesKeywords = ServiceSubcategoriesKeywords.query();
         $scope.serviceCategories = ServiceCategories.query();
         $scope.dropDownDisabled = true;
-        $scope.selectedCategory = 'Service Categories';
-        $scope.selectedSubCategoryName = 'Services';
+        $scope.selectedCategory = 'Categorias de Servicios';
+        $scope.selectedSubCategoryName = 'Servicios';
 
         $scope.currentPage = 1;
         $scope.itemsPerPage = 5;

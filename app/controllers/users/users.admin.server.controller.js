@@ -119,7 +119,7 @@ function userForAdminByUsername (req, res, username)
 exports.userForAdminByID = function(req, res, next, id) {
 	User.findById(id).exec(function(err, user) {
 		if (err) return next(err);
-		if (!user) return next(new Error('Failed to load User ' + id));
+		if (!user) return next(new Error('Error al cargar usuario ' + id));
 		req.userInfo = user;
 		next();
 	});

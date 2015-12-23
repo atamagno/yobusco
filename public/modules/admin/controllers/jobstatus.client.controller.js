@@ -2,7 +2,7 @@
 
 // JobStatus controller
 angular.module('admin').controller('JobStatusController',
-	function($scope, $stateParams, $state, Authentication, JobStatusAdmin, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, JobStatusAdmin, $uibModal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
@@ -11,7 +11,7 @@ angular.module('admin').controller('JobStatusController',
 
 		$scope.createModalInstance = function (templateUrl) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: templateUrl,
 				controller: 'JobStatusModalInstanceCtrl'
 			});
@@ -44,7 +44,7 @@ angular.module('admin').controller('JobStatusController',
 
 			// Redirect after save
 			jobstatus.$save(function(response) {
-				Alerts.show('success','Job status successfully created');
+				Alerts.show('success','Estado de trabajo creado exitosamente');
 				$state.go('admin.viewJobStatus', { jobstatusId: response._id});
 
 				// Clear form fields
@@ -58,7 +58,7 @@ angular.module('admin').controller('JobStatusController',
 		// Remove existing JobStatus
 		$scope.remove = function() {
 			$scope.jobstatus.$remove(function() {
-				Alerts.show('success','Job status successfully deleted');
+				Alerts.show('success','Estado de trabajo eliminado exitosamente');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
 			}, function(errorResponse) {
@@ -72,7 +72,7 @@ angular.module('admin').controller('JobStatusController',
 			var jobstatus = $scope.jobstatus;
 
 			jobstatus.$update(function() {
-				Alerts.show('success','Job status successfully updated');
+				Alerts.show('success','Estado de trabajo actualizado exitosamente');
 				$state.go('admin.viewJobStatus', { jobstatusId: jobstatus._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
@@ -113,13 +113,13 @@ angular.module('admin').controller('JobStatusController',
 	});
 
 angular.module('admin').controller('JobStatusModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 	$scope.ok = function () {
-		$modalInstance.close();
+		$uibModalInstance.close();
 	};
 
 	$scope.cancel = function () {
-		$modalInstance.dismiss('cancel');
+		$uibModalInstance.dismiss('cancel');
 	};
 });

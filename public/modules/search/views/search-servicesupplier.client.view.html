@@ -2,43 +2,43 @@
     <h1 class="text-center">Mano de Obra</h1>
     <img src="/modules/search/img/logo.jpg" class="img-responsive center-block home-logo" />
     <br>
-    <p class="text-center">Conectando consumidores y proveedores de servicios en construccion</p>
+    <p class="text-center">Conectando consumidores y proveedores de servicios en construcci&#243;n</p>
     <form role="form">
         <div class="form-group search-input">
             <input type="text" class="form-control center-block" data-ng-model="selectedKeyword"
                    data-ng-keypress="$event.keyCode == 13 && navigateToResultsFromKeywordSearch()"
-                   typeahead="serviceSubcategoryKeyword as serviceSubcategoryKeyword.keyword for serviceSubcategoryKeyword in serviceSubcategoriesKeywords | filter:$viewValue"
+                   uib-typeahead="serviceSubcategoryKeyword as serviceSubcategoryKeyword.keyword for serviceSubcategoryKeyword in serviceSubcategoriesKeywords | filter:$viewValue"
                    placeholder="Ingresa el rubro que buscas." />
             <div class="advanced-search-link-container">
-                <a class="advanced-search-link" ng-click="isCollapsed = !isCollapsed">advanced search</a>
+                <a class="advanced-search-link" data-ng-click="isCollapsed = !isCollapsed">b&uacute;squeda avanzada</a>
             </div>
         </div>
 
-        <div collapse="!isCollapsed">
+        <div uib-collapse="!isCollapsed">
             <div class="well well-lg filters-container">
-                <div class="btn-group" dropdown>
-                    <button type="button" class="btn btn-default dropdown-toggle">
+                <div class="btn-group" uib-dropdown>
+                    <button type="button" class="btn btn-default" uib-dropdown-toggle>
                         {{selectedCategory}} <span class="caret"></span>
                     </button>
-                    <ul class="dropdown-menu" role="menu">
+                    <ul class="uib-dropdown-menu" role="menu">
                         <li data-ng-repeat="serviceCategory in serviceCategories">
                             <a data-ng-click="selectCategory(serviceCategory)" class="dropdown-item">{{serviceCategory.name}}</a>
                         </li>
                     </ul>
                 </div>
 
-                <div class="btn-group" dropdown>
-                    <button type="button" class="btn btn-default dropdown-toggle" ng-disabled="dropDownDisabled">
+                <div class="btn-group" uib-dropdown>
+                    <button type="button" class="btn btn-default" uib-dropdown-toggle data-ng-disabled="dropDownDisabled">
                         {{selectedSubCategoryName}} <span class="caret"></span>
                     </button>
-                    <ul class="dropdown-menu" role="menu">
+                    <ul class="uib-dropdown-menu" role="menu">
                         <li data-ng-repeat="servicesubcategory in serviceSubcategories">
                             <a data-ng-click="selectSubCategory(servicesubcategory)" class="dropdown-item">{{servicesubcategory.name}}</a>
                         </li>
                     </ul>
                 </div>
 
-                <button class="btn btn-large btn-primary search-button" data-ng-click="navigateToResultsFromAdvancedSearch()">Search</button>
+                <button class="btn btn-large btn-primary search-button" data-ng-click="navigateToResultsFromAdvancedSearch()">Buscar</button>
             </div>
         </div>
     </form>

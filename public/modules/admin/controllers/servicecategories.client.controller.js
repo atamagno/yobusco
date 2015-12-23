@@ -2,7 +2,7 @@
 
 // ServiceCategories controller
 angular.module('admin').controller('ServiceCategoriesController',
-	function($scope, $stateParams, $state, Authentication, ServiceCategoriesAdmin, $modal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, ServiceCategoriesAdmin, $uibModal, Alerts) {
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 
@@ -11,7 +11,7 @@ angular.module('admin').controller('ServiceCategoriesController',
 
 		$scope.createModalInstance = function (templateUrl) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: templateUrl,
 				controller: 'ServiceCategoryModalInstanceCtrl'
 			});
@@ -44,7 +44,7 @@ angular.module('admin').controller('ServiceCategoriesController',
 
 			// Redirect after save
 			servicecategory.$save(function(response) {
-				Alerts.show('success','Service category successfully created');
+				Alerts.show('success','Categor\u00eda de servicio creada exitosamente');
 				$state.go('admin.viewServiceCategory', { servicecategoryId: response._id});
 
 				// Clear form fields
@@ -58,7 +58,7 @@ angular.module('admin').controller('ServiceCategoriesController',
 		// Remove existing ServiceCategory
 		$scope.remove = function() {
 			$scope.servicecategory.$remove(function() {
-				Alerts.show('success','Service category successfully deleted');
+				Alerts.show('success','Categor\u00eda de servicio eliminada exitosamente');
 				$scope.currentPage = 1;
 				$scope.navigateToPage();
 			}, function(errorResponse) {
@@ -72,7 +72,7 @@ angular.module('admin').controller('ServiceCategoriesController',
 			var servicecategory = $scope.servicecategory;
 
 			servicecategory.$update(function() {
-				Alerts.show('success','Service category successfully updated');
+				Alerts.show('success','Categor\u00eda de servicio actualizada exitosamente');
 				$state.go('admin.viewServiceCategory', { servicecategoryId: servicecategory._id});
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
@@ -113,13 +113,13 @@ angular.module('admin').controller('ServiceCategoriesController',
 	});
 
 angular.module('admin').controller('ServiceCategoryModalInstanceCtrl',
-	function ($scope, $modalInstance) {
+	function ($scope, $uibModalInstance) {
 
 	$scope.ok = function () {
-		$modalInstance.close();
+		$uibModalInstance.close();
 	};
 
 	$scope.cancel = function () {
-		$modalInstance.dismiss('cancel');
+		$uibModalInstance.dismiss('cancel');
 	};
 });
