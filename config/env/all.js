@@ -25,7 +25,8 @@ module.exports = {
 				'public/libs/angular-bootstrap/ui-bootstrap-tpls.js',
 				'public/libs/angular-i18n/angular-locale_es-ar.js',
 				'public/libs/ng-file-upload/ng-file-upload-shim.min.js',
-				'public/libs/ng-file-upload/ng-file-upload.min.js'
+				'public/libs/ng-file-upload/ng-file-upload.min.js',
+				'public/libs/angular-utils-pagination/dirPagination.js'
 			]
 		},
 		css: [

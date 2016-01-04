@@ -8,14 +8,15 @@ module.exports = function(app) {
 		.get(users.list)
 		.post(users.requiresLogin, users.isAdmin, users.create);
 
-	app.route('/users-admin/:userId')
+	app.route('/users-admin/user/:userId')
 		.get(users.read)
 		.put(users.requiresLogin, users.isAdmin, users.updateForAdmin)
 		.delete(users.requiresLogin, users.isAdmin, users.delete);
 
+
 	app.param('userId', users.userForAdminByID);
-	
-	app.route('/users-admin/:currentPage/:itemsPerPage').get(users.listByPage);
+
+	app.route('/users-admin/search').get(users.requiresLogin, users.isAdmin, users.find);
 
 	// Setting up the users profile api
 	app.route('/users/me').get(users.me);

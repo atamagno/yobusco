@@ -4,7 +4,8 @@
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
 	var applicationModuleName = 'ManoDeObra';
-	var applicationModuleVendorDependencies = ['ngResource', 'ui.router', 'ngAnimate', 'ui.bootstrap', 'ngFileUpload'];
+	
+	var applicationModuleVendorDependencies = ['ngResource', 'ui.router', 'ngAnimate', 'ui.bootstrap', 'ngFileUpload', 'angularUtils.directives.dirPagination'];
 	var amazonS3Config = {
 		url: 'https://yobusco-bucket.s3.amazonaws.com/', // S3 upload url including bucket name
 		bucketUrl: 'https://s3-sa-east-1.amazonaws.com/yobusco-bucket/',

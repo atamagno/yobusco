@@ -1,0 +1,68 @@
+<section data-ng-controller="UsersAdminController">
+    <div class="admin-page-header">
+        <h1>Usuarios</h1>
+    </div>
+    <div class="alert alert-warning text-center">
+        <a ui-sref="admin.createUser">Crear Usuario</a>
+    </div>
+
+    <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
+
+     <div class="well well-sm">
+            <h4>Par&#225;metros de b&#250;squeda</h4>
+            <input type="radio" data-ng-model="searchParameter" value="username">Nombre de usuario</input>
+            <input type="radio" data-ng-model="searchParameter" value="others">Otros par&#225;metros</input>
+            <div data-ng-show="searchParameter=='username'">
+                <form role="form" name="usernameForm" data-ng-submit="find()" novalidate >
+                    <div class="form-group">
+                        <input class="form-control" type="text" placeholder="Nombre de usuario" id="username" data-ng-model="searchParameterUsername" required />
+                    </div>
+                    <button class="btn btn-large btn-primary" type="submit" data-ng-disabled="usernameForm.$invalid">Buscar</button>
+                </form>
+            </div>
+            <div data-ng-show="searchParameter!='username'">
+                <form role="form" name="otherParametersForm" data-ng-submit="find()" novalidate >
+                    <div class="form-group">
+                        <label class="control-label" for="firstname">Nombre</label>
+                        <input class="form-control" type="text" placeholder="Nombre" id="firstname" data-ng-model="searchParameterFirstName"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="lastname">Apellido</label>
+                        <input class="form-control" type="text" placeholder="Apellido" id="lastname" data-ng-model="searchParameterLastName"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="email">Email</label>
+                        <input class="form-control" type="email" placeholder="Email" id="email" data-ng-model="searchParameterEmail"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="city">Ciudad</label>
+                        <input class="form-control" type="text" placeholder="Ciudad" id="city" data-ng-model="searchParameterCity"/>
+                    </div>
+                    <button class="btn btn-large btn-primary" type="submit"
+                            data-ng-disabled="!searchParameterFirstName && !searchParameterLastName &&
+                                              !searchParameterEmail && !searchParameterCity">Buscar</button>
+                </form>
+            </div>
+     </div>
+
+
+    <div id="resultsContainer" data-ng-show="showList">
+        <div>
+            Items: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (itemsPerPage*currentPage <= totalItems) ? itemsPerPage*currentPage : totalItems }} of {{totalItems}}
+        </div>
+        <div class="list-group">
+            <!-- Updated to paginate results locally and using dir-paginate directive
+             This directive does not require anything (e.g.: monitoring clicks on the page numbers) on the controller
+             in order to paginate the results -->
+            <a dir-paginate="user in users | itemsPerPage : itemsPerPage" current-page="currentPage" ui-sref="admin.viewUser({ userId: user._id })" class="list-group-item">
+                <small class="list-group-item-text">
+                    Registrado el
+                    <span data-ng-bind="user.created | date:'medium'"></span>
+                </small>
+                <h4 data-ng-bind="user.displayName"></h4>
+            </a>
+        </div>
+        <dir-pagination-controls boundary-links="true"></dir-pagination-controls>
+    </div>
+
+</section>
