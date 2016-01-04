@@ -9,34 +9,40 @@
     <alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</alert>
 
      <div class="well well-sm">
-            <h4>Parametros de busqueda</h4>
+            <h4>Par&#225;metros de b&#250;squeda</h4>
             <input type="radio" data-ng-model="searchParameter" value="username">Nombre de usuario</input>
-            <input type="radio" data-ng-model="searchParameter" value="others">Otros parametros</input>
-            <form role="form">
-                    <div class="form-group" data-ng-show="searchParameter=='username'">
-                        <input class="form-control" type="text" placeholder="Username" data-ng-model="searchParameterUsername"/>
+            <input type="radio" data-ng-model="searchParameter" value="others">Otros par&#225;metros</input>
+            <div data-ng-show="searchParameter=='username'">
+                <form role="form" name="usernameForm" data-ng-submit="find()" novalidate >
+                    <div class="form-group">
+                        <input class="form-control" type="text" placeholder="Nombre de usuario" id="username" data-ng-model="searchParameterUsername" required />
                     </div>
-                    <div data-ng-show="searchParameter!='username'">
-                        <div class="form-group">
-                            <label class="control-label" for="firstname">Nombre</label>
-                            <input class="form-control" type="text" placeholder="First Name" id="firstname" data-ng-model="searchParameterFirstName"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="lastname">Apellido</label>
-                            <input class="form-control" type="text" placeholder="Last Name" id="lastname" data-ng-model="searchParameterLastName"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="email">Email</label>
-                            <input class="form-control" type="text" placeholder="Email" id="email" data-ng-model="searchParameterEmail"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="city">Ciudad</label>
-                            <input class="form-control" type="text" placeholder="City" id="city" data-ng-model="searchParameterCity"/>
-                        </div>
+                    <button class="btn btn-large btn-primary" type="submit" data-ng-disabled="usernameForm.$invalid">Buscar</button>
+                </form>
+            </div>
+            <div data-ng-show="searchParameter!='username'">
+                <form role="form" name="otherParametersForm" data-ng-submit="find()" novalidate >
+                    <div class="form-group">
+                        <label class="control-label" for="firstname">Nombre</label>
+                        <input class="form-control" type="text" placeholder="Nombre" id="firstname" data-ng-model="searchParameterFirstName"/>
                     </div>
-                    <button class="btn btn-large btn-primary" data-ng-click="find()">Buscar</button>
-            </form>
-
+                    <div class="form-group">
+                        <label class="control-label" for="lastname">Apellido</label>
+                        <input class="form-control" type="text" placeholder="Apellido" id="lastname" data-ng-model="searchParameterLastName"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="email">Email</label>
+                        <input class="form-control" type="email" placeholder="Email" id="email" data-ng-model="searchParameterEmail"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="city">Ciudad</label>
+                        <input class="form-control" type="text" placeholder="Ciudad" id="city" data-ng-model="searchParameterCity"/>
+                    </div>
+                    <button class="btn btn-large btn-primary" type="submit"
+                            data-ng-disabled="!searchParameterFirstName && !searchParameterLastName &&
+                                              !searchParameterEmail && !searchParameterCity">Buscar</button>
+                </form>
+            </div>
      </div>
 
 

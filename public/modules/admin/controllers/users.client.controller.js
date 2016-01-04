@@ -108,6 +108,10 @@ angular.module('admin').controller('UsersAdminController',
 		// Find users using different parameters...
 		$scope.find = function() {
 
+			$scope.users = undefined;
+			$scope.totalItems = undefined;
+			$scope.showList = false;
+
 			var userSearchParameters = {};
 
 			// Only adding username parameter if the username option has been selected and a value has been entered.
@@ -140,9 +144,6 @@ angular.module('admin').controller('UsersAdminController',
 
 				},function(errorResponse) {
 
-					$scope.users = '';
-					$scope.totalItems = '';
-					$scope.showList = false;
 					$scope.error = errorResponse.data.message;
 					Alerts.show('danger',$scope.error);
 				});
