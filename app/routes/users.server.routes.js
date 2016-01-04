@@ -16,7 +16,7 @@ module.exports = function(app) {
 
 	app.param('userId', users.userForAdminByID);
 
-	app.route('/users-admin/search').get(users.listByPage);
+	app.route('/users-admin/search').get(users.requiresLogin, users.isAdmin, users.find);
 
 	// Setting up the users profile api
 	app.route('/users/me').get(users.me);

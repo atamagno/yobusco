@@ -126,7 +126,7 @@ exports.userForAdminByID = function(req, res, next, id) {
 };
 
 
-exports.listByPage = function(req, res) {
+exports.find = function(req, res) {
 
 	var username = req.query.username;
 
