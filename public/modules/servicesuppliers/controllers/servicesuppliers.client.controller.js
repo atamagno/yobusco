@@ -9,14 +9,18 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
         }).$promise.then(function(servicesupplier) {
                 $scope.servicesupplier = servicesupplier;
 
+                // TODO: we should probably paginate the reviews and jobs
+                // Or maybe display just the most recent xxx on the details view,
+                // and provide a 'More' option and redirect to the reviews view, with paginated
+                // results.
                 ServiceSuppliersDetails.reviews.query({
-                    serviceSupplierId: $scope.servicesupplier._id,
+                    serviceSupplierId: $scope.servicesupplier._id
                 }).$promise.then(function (response) {
                         $scope.reviews = response;
                     });
 
                 ServiceSuppliersDetails.jobs.query({
-                    serviceSupplierId: $scope.servicesupplier._id,
+                    serviceSupplierId: $scope.servicesupplier._id
                 }).$promise.then(function (response) {
                         $scope.jobs = response;
                     });
@@ -84,8 +88,10 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
             });
 
             // Redirect after save
-            review.$save(function (response) {
-                $scope.reviews.push(response);
+            review.$save(function (review) {
+                review.user.displayName = $scope.authentication.user.displayName;
+                $scope.reviews.splice(0, 0, review);
+                $scope.servicesupplier.overall_rating = $scope.updateOverallRating();
                 Alerts.show('success','Comentario agregado exitosamente');
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
@@ -93,6 +99,15 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
             });
 
         };
+
+        $scope.updateOverallRating = function() {
+
+            var ratingsAvgSum = 0;
+            $scope.reviews.forEach(function(review) {
+                    ratingsAvgSum+= parseFloat(review.ratingsAvg);
+            })
+            return (ratingsAvgSum / $scope.reviews.length).toFixed(2);
+        }
     });
 
 angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',

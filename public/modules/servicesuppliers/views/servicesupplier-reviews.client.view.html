@@ -5,22 +5,23 @@
     <h1>Comentarios</h1>
 </div>
 <br>
-<div class="well">
+<div class="well" ng-cloak>
 
     <div data-ng-hide="reviews.length">No hay comentarios</div>
 
-    <div class="row" data-ng-repeat="review in reviews">
+    <div class="row service-supplier-review-list" data-ng-repeat="review in reviews">
         <div class="col-md-12">
             <br>
-            <span class="glyphicon glyphicon-star"></span>
-            <span class="glyphicon glyphicon-star"></span>
-            <span class="glyphicon glyphicon-star"></span>
-            <span class="glyphicon glyphicon-star"></span>
-            <span class="glyphicon glyphicon-star-empty"></span>
-            An&#243;nimo
-            <span class="pull-right">{{ review.created | date: 'medium' }}</span>
+            <p>{{review.user.displayName}}
+                <span class="pull-right">{{ review.created | date: 'medium' }}</span>
+            </p>
+            <p>
+                <uib-rating data-ng-model="review.ratingsAvg" max="max" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
+                <span>({{review.ratingsAvg}})</span>
+            </p>
             <p>{{review.comment}}</p>
         </div>
+        <hr>
     </div>
 
 </div>
