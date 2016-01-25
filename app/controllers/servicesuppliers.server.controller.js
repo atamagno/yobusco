@@ -13,6 +13,8 @@ var mongoose = require('mongoose'),
  */
 exports.create = function(req, res) {
     var servicesupplier = new ServiceSupplier(req.body);
+    // TODO: we should create a different user for the supplier rather than setting it to the one creating the supplier.
+
     servicesupplier.user = req.user;
 
     servicesupplier.save(function(err) {
@@ -88,7 +90,11 @@ exports.list = function(req, res) {
  * ServiceSupplier middleware
  */
 exports.servicesupplierByID = function(req, res, next, id) {
-    ServiceSupplier.findById(id).populate('user', 'displayName').populate('services').exec(function(err, servicesupplier) {
+
+    // Looks like we're using the display_name field from the supplier on the client side,
+    // so no need to populate the associated user...
+    ServiceSupplier.findById(id).populate('services').exec(function(err, servicesupplier){
+    // ServiceSupplier.findById(id).populate('user', 'displayName').populate('services').exec(function(err, servicesupplier) {
         if (err) return next(err);
         if (!servicesupplier) return next(new Error('Error al cargar prestador de servicios ' + id));
         req.servicesupplier = servicesupplier ;

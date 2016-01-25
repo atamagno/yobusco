@@ -44,7 +44,7 @@
         <br>
         <h4 class="review-services-title">Servicios</h4>
         <input type="text" data-ng-model="selected" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
-               uib-typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
+               uib-typeahead="servicesubcategory.name for servicesubcategory in servicesubcategories | filter:{name: $viewValue} | limitTo:8"
                placeholder="Selecciona un servicio.">
 
         <div data-ng-show="selectedservices.length" class="review-selected-services">

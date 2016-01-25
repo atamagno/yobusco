@@ -103,6 +103,42 @@ ReviewSchema.post('save',function(review){
 
 });
 
+/** Pre save validation to verify if user is allowed to create a review for the specific supplier
+ *  and the service/s submitted
+ */
+ReviewSchema.pre('save', function(next){
+
+	// TODO: make limit configurable?
+	var recentReviewLimitDate = new Date();
+	recentReviewLimitDate.setMonth(recentReviewLimitDate.getMonth() - 1); // setting limit to a month ago..
+
+	this.constructor.find(
+		{user: this.user.toString(),
+		 service_supplier: this.service_supplier.toString(),
+		 services: {$in: this.services},
+		 created: {$gt: recentReviewLimitDate}
+		}, function(err, reviews) {
+			if(err) {
+				// TODO: add logging here...
+				next(new Error()) // throwing an error with empty message will return the default message...
+			}
+			else{
+					if(reviews.length) {
+						next(new Error('No es posible agregar mas de un comentario para el mismo proveedor' +
+						' y los mismos servicios en el periodo de un mes.'));
+
+					}
+					else {
+						next();
+					}
+
+				}
+
+		});
+
+})
+
+
 /**
  * Returns the ratings average, considering all the reviews for a given supplier.
  * Using aggregation
