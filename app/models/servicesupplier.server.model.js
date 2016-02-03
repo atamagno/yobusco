@@ -4,7 +4,9 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    _ = require('lodash'),
+    config = require('../../config/config');
 
 /**
  * Service Supplier Schema
@@ -57,7 +59,28 @@ var ServiceSupplierSchema = new Schema({
     overall_rating: {
         type: Number,
         default: 0
+    },
+    points: {
+        type: Number,
+        default: null
+    },
+    category:{
+        type: Schema.ObjectId,
+        ref: 'ServiceSupplierCategory',
+        default: null
     }
 });
+
+ServiceSupplierSchema.statics.getServiceSupplierCategory = function(pointsValue)
+{
+    return _.find(config.staticdata.serviceSupplierCategories,function(category){
+        if(pointsValue>=0.0){
+            return category.min <= pointsValue && pointsValue  <= category.max
+        }
+        else{
+            return pointsValue <= category.min && pointsValue >= category.max
+        }
+    });
+}
 
 mongoose.model('ServiceSupplier', ServiceSupplierSchema);

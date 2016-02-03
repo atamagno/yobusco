@@ -1,7 +1,9 @@
 'use strict';
 
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+	Schema = mongoose.Schema,
+	_ = require('lodash'),
+	config = require('../../config/config');
 
 var Ratings = new Schema({
 	type: {
@@ -45,7 +47,12 @@ var ReviewSchema = new Schema({
 	created: {
 		type: Date,
 		default: Date.now
+	},
+	recommend: {
+		type: Boolean,
+		default: null
 	}
+
 });
 
 /** This allows the ratingsAvg virtual attribute (below) to be added to Review documents when using the ToJSON function.
@@ -58,17 +65,44 @@ ReviewSchema.set('toJSON', {virtuals: true});
  */
 ReviewSchema.virtual('ratingsAvg').get(function(){
 
+	return this.getRatingsAvg();
+
+});
+
+ReviewSchema.methods.getRatingsAvg = function()
+{
 	var ratingsTotal = 0;
 	this.ratings.forEach(function(rating){
 		ratingsTotal += rating.rate;
 	})
 	return (ratingsTotal / this.ratings.length).toFixed(2);
-});
 
+}
 
+ReviewSchema.methods.getReviewPointsFromRatingsAvg = function()
+{
+	var ratingsAvg = this.getRatingsAvg();
+	return _.find(config.staticdata.reviewRatingsAvgPointsRanges,function(reviewRatingsAvgPointsRange){
+		return reviewRatingsAvgPointsRange.min <= ratingsAvg && ratingsAvg  <= reviewRatingsAvgPointsRange.max
+
+	}).points;
+
+}
+
+ReviewSchema.methods.getReviewPointsFromRecommend = function()
+{
+	var points = 0;
+	if(this.recommend != null)
+	{
+		var recommendPoints =  _.find(config.staticdata.userSupplierActionPoints, _.matchesProperty('action_name','recommend'));
+		points = this.recommend ? recommendPoints.points.yes : recommendPoints.points.no;
+	}
+	return points;
+}
 
 /**
-  Updates supplier overall_rating and review count, considering the ratings in the review being added, and the existing ones.
+  Updates supplier overall_rating, review count, points and category
+  considering the ratings in the review being added, and the existing ones.
 */
 ReviewSchema.post('save',function(review){
 
@@ -89,6 +123,15 @@ ReviewSchema.post('save',function(review){
 					else{
 							review.service_supplier.overall_rating = ratingsAverage[0].ratingsAvg.toFixed(2);
 							review.service_supplier.reviewCount++;
+
+							var reviewPoints = review.getReviewPointsFromRatingsAvg() +
+								               review.getReviewPointsFromRecommend();
+
+							// TODO: check how points are stored on DB.
+						    // Seems it adds too many decimals and maybe not reflecting real points.
+							review.service_supplier.points+= reviewPoints;
+							var category = review.service_supplier.constructor.getServiceSupplierCategory(review.service_supplier.points)
+							review.service_supplier.category = category._id;
 							review.service_supplier.save(function(err){
 							if(err){
 								// TODO: add logging here too....
@@ -210,6 +253,7 @@ ReviewSchema.statics.listByServiceSupplierWithAverage = function (serviceSupplie
 		}
 	});
 }
+
 
 
 

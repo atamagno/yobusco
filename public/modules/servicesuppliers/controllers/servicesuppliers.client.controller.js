@@ -113,7 +113,8 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                         job: $scope.selectedJob && $scope.selectedJob._id ? $scope.selectedJob._id : null,
                         comment: $scope.comment,
                         selectedservices: $scope.selectedservices,
-                        ratings: $scope.ratings
+                        ratings: $scope.ratings,
+                        recommend: $scope.recommend
                     };
 
                     $scope.addReview(reviewInfo)
@@ -170,7 +171,8 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                 service_supplier: servicesupplier._id,
                 user: authentication.user._id,
                 services: services,
-                ratings: ratings
+                ratings: ratings,
+                recommend: reviewInfo.recommend
             });
 
             // Redirect after save
