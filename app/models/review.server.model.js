@@ -100,6 +100,23 @@ ReviewSchema.methods.getReviewPointsFromRecommend = function()
 	return points;
 }
 
+ReviewSchema.methods.updateSupplierPoints = function()
+{
+	var reviewPointsFromRatingsAvg = this.getReviewPointsFromRatingsAvg();
+	var reviewPointsFromRecommend = this.getReviewPointsFromRecommend();
+	var reviewPoints =  parseFloat((reviewPointsFromRatingsAvg + reviewPointsFromRecommend).toFixed(2));
+
+	this.service_supplier.points = parseFloat((this.service_supplier.points + reviewPoints).toFixed(2));
+
+}
+
+ReviewSchema.methods.updateSupplierCategory = function(){
+
+	var category = this.service_supplier.constructor.getServiceSupplierCategory(this.service_supplier.points)
+	this.service_supplier.category = category._id;
+
+}
+
 /**
   Updates supplier overall_rating, review count, points and category
   considering the ratings in the review being added, and the existing ones.
@@ -123,15 +140,8 @@ ReviewSchema.post('save',function(review){
 					else{
 							review.service_supplier.overall_rating = ratingsAverage[0].ratingsAvg.toFixed(2);
 							review.service_supplier.reviewCount++;
-
-							var reviewPoints = review.getReviewPointsFromRatingsAvg() +
-								               review.getReviewPointsFromRecommend();
-
-							// TODO: check how points are stored on DB.
-						    // Seems it adds too many decimals and maybe not reflecting real points.
-							review.service_supplier.points+= reviewPoints;
-							var category = review.service_supplier.constructor.getServiceSupplierCategory(review.service_supplier.points)
-							review.service_supplier.category = category._id;
+							review.updateSupplierPoints();
+							review.updateSupplierCategory();
 							review.service_supplier.save(function(err){
 							if(err){
 								// TODO: add logging here too....
