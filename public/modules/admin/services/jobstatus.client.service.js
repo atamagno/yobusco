@@ -3,7 +3,11 @@
 angular.module('admin')
 	.factory('JobStatus',
 		function($resource) {
-			return $resource('jobstatus');
+			return $resource('jobstatus', {},
+				{
+					query: {method: "GET", cache: true, isArray: true}
+				}
+			);
 		})
 	.factory('JobStatusAdmin',
 		function($resource) {

@@ -71,14 +71,29 @@ var ServiceSupplierSchema = new Schema({
     }
 });
 
-ServiceSupplierSchema.statics.getServiceSupplierCategory = function(pointsValue)
+ServiceSupplierSchema.methods.updatePoints = function(points)
+{
+    this.points += points;
+    this.points = parseFloat(this.points.toFixed(2)); // rounding...
+    this.updateCategory();
+
+}
+
+ServiceSupplierSchema.methods.updateCategory = function(){
+
+    this.category = this.constructor.getCategory(this.points)._id;
+
+}
+
+
+ServiceSupplierSchema.statics.getCategory = function(points)
 {
     return _.find(config.staticdata.serviceSupplierCategories,function(category){
-        if(pointsValue>=0.0){
-            return category.min <= pointsValue && pointsValue  <= category.max
+        if(points>=0.0){
+            return category.min <= points && points  <= category.max
         }
         else{
-            return pointsValue <= category.min && pointsValue >= category.max
+            return points <= category.min && points >= category.max
         }
     });
 }

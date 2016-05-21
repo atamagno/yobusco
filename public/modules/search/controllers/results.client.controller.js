@@ -35,6 +35,9 @@ angular.module('search')
                     $scope.currentPage = $stateParams.currentPage;
                     $scope.totalItems = response.totalItems;
                     $scope.servicesuppliers = response.servicesuppliers;
+                    // TODO: add points and category to search results-list.client.view
+                    // Potentially use ng-class to override the frame border color (list-group-item) + display category icon?
+                    // Override background-color too?
                     $scope.showList = $scope.totalItems > 0;
                 }, function(errorResponse) {
                     $scope.error = errorResponse.data.message;

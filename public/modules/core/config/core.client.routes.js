@@ -11,5 +11,6 @@ angular.module('core').config(
 		state('home', {
 			url: '/',
 			templateUrl: 'modules/search/views/search-servicesupplier.client.view.html'
+			// TODO: add resolve object with service subcategories, client ip address, etc...
 		});
 	});

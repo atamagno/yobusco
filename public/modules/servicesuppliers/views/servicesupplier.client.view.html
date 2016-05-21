@@ -31,27 +31,41 @@
 
         <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible">{{alerts.msg}}</uib-alert>
 
-        <div class="alert alert-warning text-center" data-ng-show="!jobs.length">
-            No tienes ning&#250;n trabajo terminado con este prestador de servicios.
-        </div>
-
         <div data-ng-show="jobs.length">
-            <h4 class="review-services-title">Trabajos</h4>
-            <input type="text" data-ng-model="selectedJob" class="form-control"
+            <h4 class="review-services-title">Calificar un trabajo existente</h4>
+            <input type="text" data-ng-model="selectedjob" class="form-control"
                    uib-typeahead="job as job.name  for job in jobs | filter:$viewValue | limitTo:8"
-                   placeholder="Selecciona un trabajo." typeahead-template-url="jobTypeaheadTemplate.html">
+                   placeholder="Selecciona un trabajo." typeahead-template-url="jobTypeaheadTemplate.html"
+                   typeahead-on-select="setJobServices()">
         </div>
         <br>
+
+
         <h4 class="review-services-title">Servicios</h4>
-        <input type="text" data-ng-model="selected" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
-               uib-typeahead="servicesubcategory.name for servicesubcategory in servicesubcategories | filter:{name: $viewValue} | limitTo:8"
-               placeholder="Selecciona un servicio.">
+        <input type="text" data-ng-model="selectedservice" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
+                   uib-typeahead="servicesubcategory.name for servicesubcategory in servicesubcategories | filter:{name: $viewValue} | limitTo:8"
+                   placeholder="Selecciona un servicio." data-ng-disabled="selectedjob">
 
         <div data-ng-show="selectedservices.length" class="review-selected-services">
             <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default review-selected-service"
-                    data-ng-repeat="selectedservice in selectedservices">
+                    data-ng-repeat="selectedservice in selectedservices" data-ng-disabled="selectedjob">
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{selectedservice.name}}</button>
         </div>
+
+
+
+        <h4 class="review-ratings-title">Resultado del trabajo</h4>
+        <div class="btn-group" uib-dropdown data-ng-disabled="selectedjob">
+                <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                    {{jobstatus.name}} <span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu">
+                    <li data-ng-repeat="status in jobstatuses">
+                        <a class="dropdown-item" data-ng-click="changeStatus(status)">{{status.name}}</a>
+                    </li>
+                </ul>
+        </div>
+
 
         <h4 class="review-ratings-title">Ratings</h4>
         <div class="review-ratings-container">

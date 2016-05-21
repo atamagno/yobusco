@@ -3,7 +3,10 @@
 angular.module('admin')
 	.factory('RatingTypes',
 		function($resource) {
-			return $resource('ratingtypes');
+			return $resource('ratingtypes', {},
+				{
+					query: {method: 'GET',cache:true, isArray:true}
+				});
 		})
 	.factory('RatingTypesAdmin',
 		function($resource) {

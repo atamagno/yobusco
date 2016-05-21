@@ -11,64 +11,131 @@ var mongoose = require('mongoose'),
 	_ = require('lodash');
 
 /**
- * Create a Review
+ * Create a Review either from:
+ * - A job that is updated to a completed status
+ * - Or from a newly created review (which also generates a job on the fly)
  */
 exports.create = function(req, res) {
-	var review = new Review(req.body);
 
-	review.save(function(err) {
+	var review = new Review(req.body);
+	resolveJob(review, req.body.jobDetails, function(err, job){
+		if(err){
+
+				// TODO: add logging stating that job could not be resolved...
+				// TODO: return error to the client??
+		}
+		else{
+			// TODO: if there's a job created recently for the same services, supplier and user,
+			// then the job won't save and we'll need to return the error....
+			job.save(function(err,job){
+				if(err){
+						  // TODO: add logging stating that job could not be updated/generated from review...
+					      // TODO: return error to the client (review could not be generated due to reviews
+					      // recently added for same supplier and services...??
+				}
+				else{
+
+					//if(!review.job){
+					review.job = job._id; // reassigning the job to the review (in case it was generated on the fly)
+					//}
+				  	review.save(function(err, review){
+						if(err){
+							// TODO: add logging stating that review could not be saved
+							// TODO: return error to the client??
+						}
+						else{
+
+							if(req.body.reviewPath == 'fromJob'){
+								res.jsonp(job);
+							}
+							else
+							{
+								res.jsonp(review.toJSON());
+							}
+
+						}
+					})
+
+				}
+
+			})
+		}
+	});
+
+
+
+	/*	review.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
+					// determine if existing job needs to be updated (coming from job completed update flow)
+					// or needs to be generated (review without job)...
+					resolveJob(review, new Job(req.body.jobDetails), function(err, job){
+					if(err){
+							// TODO: add logging stating that job could not be resolved...
+							// TODO: return error to the client??
+					}
+					else{
 
-			// Moved the logic to update the review count and the overall rating fields
-			// of the service supplier (associated to the review) from here, to the actual reviews model
-			// so we make sure that whenever a review is saved on the model side, we also consider the associated
-			// summary fields on the supplier.
-
-			// TODO: do we really need review count associated to a job?
-			// I'd expect only one review associated to a job
-			// (created by the user that is submitting the review and selected the associated job....)
-			if (review.job) {
-				Job.findById(review.job).exec(function (err, job) {
-					if (err) {
-						return res.status(400).send({
-							message: errorHandler.getErrorMessage(err)
-						});
-					} else {
-						job.reviewCount++;
-						job.save(function (err) {
+							job.save(function(err, job){
+							// TODO: need to distinguish here between job update and new review to return
+							// different response? (job vs. review?)
 							if (err) {
-								return res.status(400).send({
-									message: errorHandler.getErrorMessage(err)
-								});
-							} else {
-								res.jsonp(review);
+								// TODO: add logging stating that job could not be updated/generated from review...
+								// TODO: return error to the client??
+							}
+							else
+							{
+								res.jsonp(job);
 							}
 						});
 					}
+
 				});
-			} else {
-
-				Review.populate(review, {path: "user", select: "displayName"}, function(err, review){
-						if(err){
-						// TODO: add logging here stating that - user associated to the review could not
-						// be found. Would this be possible at all?
-						// TODO: Can we get the user on the client side to save this transaction?
-						}
-
-						res.jsonp(review.toJSON()); // this allows getting the virtual attributes of the document
-						// (e.g.: the calculated ratingsAvg).
-				})
-
-			}
 
 		}
 
-	});
+		});*/
 };
+
+
+function resolveJob(review, jobDetails, cb)
+{
+
+	var job = new Job(jobDetails);
+	// If job is selected for a review, update it, and add return reference to it.
+	if(review.job){
+			Job.findById(review.job, function(err, existingJob) {
+			if(err)
+			{
+				// TODO: add logging stating that job could not be found from review...
+				cb(err, null);
+			}
+			else{
+				 	existingJob.finish_date = job.finish_date;
+					existingJob.status = job.status;
+					existingJob.description = job.description;
+					existingJob.review = review._id;
+					cb(null, existingJob);
+			}
+		});
+	}
+	else{   // otherwise, generate job on the fly and associate to review
+			job.finish_date = job.start_date;
+			job.expected_date = job.start_date;
+			job.user = review.user;
+			job.name = 'AutoFromReview';
+			job.description = 'AutoFromReview';
+			job.service_supplier = review.service_supplier;
+			job.status = jobDetails.status;
+			job.services = jobDetails.services;
+		   	job.review = review._id;
+			cb(null, job);
+	}
+
+}
 
 /**
  * Show the current Review

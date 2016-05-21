@@ -22,25 +22,15 @@ exports.create = function(req, res) {
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			ServiceSupplier.findById(job.service_supplier).exec(function(err, servicesupplier) {
-				if (err) {
-					return res.status(400).send({
-						message: errorHandler.getErrorMessage(err)
-					});
-				} else {
-					servicesupplier.jobCount++;
-					servicesupplier.overall_rating++;
-					servicesupplier.save(function (err) {
-						if (err) {
-							return res.status(400).send({
-								message: errorHandler.getErrorMessage(err)
-							});
-						} else {
-							res.jsonp(job);
-						}
-					});
-				}
-			});
+			// Moved logic to job.server.model... (post hook middleware)
+			/*job.constructor.populate(job, [{path: 'service_supplier', select: 'display_name'},
+										   {path: 'user'},
+				                           {path: 'status'}],function(err,job){
+						res.jsonp(job);
+			})*/
+			// TODO: check if population above (now that was moved to post save hook) is done.
+			res.jsonp(job);
+
 		}
 	});
 };
@@ -56,7 +46,7 @@ exports.read = function(req, res) {
  * Update a Job
  */
 exports.update = function(req, res) {
-	var job = req.job ;
+	var job = req.job;
 
 	job = _.extend(job , req.body);
 
@@ -125,7 +115,10 @@ exports.list = function(req, res) {
  * Job middleware
  */
 exports.findJobByID = function(req, res, next, id) {
-	Job.findById(id).populate('service_supplier', 'display_name').populate('user').populate('status').exec(function(err, job) {
+	Job.findById(id).populate('service_supplier', 'display_name')
+					.populate('user')
+				    .populate('status')
+				    .populate('services').exec(function(err, job) {
 		if (err) return next(err);
 		if (!job) return next(new Error('Error al cargar trabajo ' + id));
 		req.job = job ;
@@ -229,3 +222,20 @@ exports.canUpdate = function(req, res, next) {
 
 	next();
 };
+
+exports.listForReview = function(req, res){
+
+	Job.getJobsForReview(req.params.serviceSupplierId, req.params.userId, function(err, jobs){
+		if(err)
+		{
+			// TODO: add logging here...?
+			res.jsonp([]);
+		}
+		else
+		{
+			res.jsonp(jobs);
+		}
+
+	});
+
+}

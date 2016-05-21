@@ -33,10 +33,6 @@ var ReviewSchema = new Schema({
 		ref: 'ServiceSupplier',
 		required: 'Por favor seleccione un prestador de servicios'
 	},
-	services: [{
-		type: Schema.ObjectId,
-		ref: 'ServiceSubcategory'
-	}],
 	comment: {
 		type: String,
 		default: '',
@@ -100,20 +96,12 @@ ReviewSchema.methods.getReviewPointsFromRecommend = function()
 	return points;
 }
 
-ReviewSchema.methods.updateSupplierPoints = function()
+ReviewSchema.methods.getReviewPoints = function()
 {
 	var reviewPointsFromRatingsAvg = this.getReviewPointsFromRatingsAvg();
 	var reviewPointsFromRecommend = this.getReviewPointsFromRecommend();
-	var reviewPoints =  parseFloat((reviewPointsFromRatingsAvg + reviewPointsFromRecommend).toFixed(2));
+	return  parseFloat((reviewPointsFromRatingsAvg + reviewPointsFromRecommend).toFixed(2));
 
-	this.service_supplier.points = parseFloat((this.service_supplier.points + reviewPoints).toFixed(2));
-
-}
-
-ReviewSchema.methods.updateSupplierCategory = function(){
-
-	var category = this.service_supplier.constructor.getServiceSupplierCategory(this.service_supplier.points)
-	this.service_supplier.category = category._id;
 
 }
 
@@ -140,8 +128,7 @@ ReviewSchema.post('save',function(review){
 					else{
 							review.service_supplier.overall_rating = ratingsAverage[0].ratingsAvg.toFixed(2);
 							review.service_supplier.reviewCount++;
-							review.updateSupplierPoints();
-							review.updateSupplierCategory();
+							review.service_supplier.updatePoints(review.getReviewPoints());
 							review.service_supplier.save(function(err){
 							if(err){
 								// TODO: add logging here too....
@@ -165,11 +152,14 @@ ReviewSchema.pre('save', function(next){
 	var recentReviewLimitDate = new Date();
 	recentReviewLimitDate.setMonth(recentReviewLimitDate.getMonth() - 1); // setting limit to a month ago..
 
+	// TODO: find patterns on users loading multiple reviews for different services on the same supplier
+	// and the close dates...astroturfing...
 	this.constructor.find(
 		{user: this.user.toString(),
 		 service_supplier: this.service_supplier.toString(),
-		 services: {$in: this.services},
-		 created: {$gt: recentReviewLimitDate}
+		 // services: {$in: this.services}, TODO: services have been moved to Job model,
+		 // 								find a way to check for services too...commenting for now
+		 created: {$gte: recentReviewLimitDate}
 		}, function(err, reviews) {
 			if(err) {
 				// TODO: add logging here...

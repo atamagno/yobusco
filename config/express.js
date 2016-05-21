@@ -22,7 +22,7 @@ module.exports = function(db) {
 
 
     // globbing model files with static data
-    // TODO: move more files to staticdata folder (e.g.: jobstatuses, etc), so they are retrieved
+    // TODO: move more files to staticdata folder (e.g.: jobstatuses, ratingtypes, etc), so they are retrieved
     // only once by the application.
     config.staticdata = [{}];
     config.getGlobbedFiles('./app/models/staticdata/*.js').forEach(function(modelPath) {

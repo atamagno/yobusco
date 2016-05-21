@@ -51,7 +51,7 @@ angular.module('admin').controller('ReviewsController',
 		$scope.selectServiceSupplier = function($item) {
 
 			ServiceSuppliersDetails.jobs.query({
-				serviceSupplierId: $item._id,
+				serviceSupplierId: $item._id
 			}).$promise.then(function (response) {
 				$scope.jobs = response;
 				if (!$scope.jobs.length) {

@@ -6,7 +6,8 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	JobStatus = mongoose.model('JobStatus'),
-	_ = require('lodash');
+	_ = require('lodash'),
+	config = require('../../config/config');
 
 /**
  * Create a JobStatus
@@ -72,7 +73,7 @@ exports.delete = function(req, res) {
  * List of JobStatus
  */
 exports.list = function(req, res) {
-	JobStatus.find().exec(function(err, status) {
+	/*JobStatus.find().exec(function(err, status) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -80,21 +81,31 @@ exports.list = function(req, res) {
 		} else {
 			res.jsonp(status);
 		}
-	});
+	});*/
+	res.jsonp(config.staticdata.jobStatuses);
 };
 
 /**
  * JobStatus middleware
  */
 exports.jobstatusByID = function(req, res, next, id) {
-	JobStatus.findById(id).exec(function(err, jobstatus) {
+
+	/*JobStatus.findById(id).exec(function(err, jobstatus) {
 		if (err) return next(err);
 		if (!jobstatus) return next(new Error('Error al cargar estado de trabajo ' + id));
 		req.jobstatus = jobstatus ;
 		next();
+	});*/
+	req.jobstatus = _.find(config.staticdata.jobStatuses, function(jobStatus){
+
+		return jobStatus._id == id;
 	});
+	next();
+
 };
 
+// TODO: adapt this function to use jobStatuses from config.staticdata.
+// Do we really need pagination on jobStatuses?
 exports.listByPage = function(req, res) {
 
 	var currentPage = req.params.currentPage;
