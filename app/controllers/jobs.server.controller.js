@@ -115,11 +115,13 @@ exports.list = function(req, res) {
  * Job middleware
  */
 exports.findJobByID = function(req, res, next, id) {
-	Job.findById(id).populate('service_supplier', 'display_name')
+	Job.findById(id).populate('service_supplier')
 					.populate('user')
 				    .populate('status')
+					.populate('review')
 				    .populate('services').exec(function(err, job) {
-		if (err) return next(err);
+		if (err) return next(err); // TODO: check here if job is not found, it seems there's no 'next'
+								   // handler capturing the error and this is breaking...
 		if (!job) return next(new Error('Error al cargar trabajo ' + id));
 		req.job = job ;
 		next();

@@ -106,14 +106,14 @@ ReviewSchema.methods.getReviewPoints = function()
 }
 
 /**
-  Updates supplier overall_rating, review count, points and category
+  Updates supplier overall_rating
   considering the ratings in the review being added, and the existing ones.
 */
 ReviewSchema.post('save',function(review){
 
-		// TODO: upgrade to mongoose 4.x and use promises to avoid callback hell...
 	    // .constructor allows accessing the Model associated to the document
-		review.constructor.populate(review, {path: "service_supplier"}, function(err, review) {
+		review.constructor.populate(review, [{path: "service_supplier", select: "overall_rating"},
+										     {path: "job", select: 'status'}], function(err, review) {
 			if(err){
 
 				// TODO: add logging here stating that - service supplier associated to the review could not
@@ -126,9 +126,7 @@ ReviewSchema.post('save',function(review){
 					  // TODO: same as above....
 					}
 					else{
-							review.service_supplier.overall_rating = ratingsAverage[0].ratingsAvg.toFixed(2);
-							review.service_supplier.reviewCount++;
-							review.service_supplier.updatePoints(review.getReviewPoints());
+							review.service_supplier.overall_rating = ratingsAverage.toFixed(2);
 							review.service_supplier.save(function(err){
 							if(err){
 								// TODO: add logging here too....
@@ -144,9 +142,9 @@ ReviewSchema.post('save',function(review){
 });
 
 /** Pre save validation to verify if user is allowed to create a review for the specific supplier
- *  and the service/s submitted
  */
-ReviewSchema.pre('save', function(next){
+
+/*ReviewSchema.pre('save', function(next){
 
 	// TODO: make limit configurable?
 	var recentReviewLimitDate = new Date();
@@ -176,10 +174,9 @@ ReviewSchema.pre('save', function(next){
 					}
 
 				}
-
 		});
 
-})
+})*/
 
 
 /**
@@ -204,7 +201,7 @@ ReviewSchema.statics.getServiceSupplierRatingsAverage = function (serviceSupplie
 			if (err)
 				callback(err, null)
 			else
-				callback(null, ratingsAverage)
+				callback(null, ratingsAverage[0].ratingsAvg)
 
 		});
 

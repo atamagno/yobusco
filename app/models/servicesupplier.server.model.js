@@ -8,6 +8,21 @@ var mongoose = require('mongoose'),
     _ = require('lodash'),
     config = require('../../config/config');
 
+var JobCount = new Schema({
+    jobstatus: {
+        type: Schema.ObjectId,
+        ref: 'JobStatus',
+        required: true
+    },
+    count: {
+        type: Number,
+        default: 0
+    }
+});
+
+
+
+
 /**
  * Service Supplier Schema
  */
@@ -48,13 +63,9 @@ var ServiceSupplierSchema = new Schema({
         }],
         required: 'Al menos una subcategor\u00eda de servicio es requerida'
     },
-    reviewCount: {
-        type: Number,
-        default: 0
-    },
-    jobCount: {
-        type: Number,
-        default: 0
+    jobCounts: {
+        type: [JobCount],
+        default: []
     },
     overall_rating: {
         type: Number,
@@ -82,6 +93,28 @@ ServiceSupplierSchema.methods.updatePoints = function(points)
 ServiceSupplierSchema.methods.updateCategory = function(){
 
     this.category = this.constructor.getCategory(this.points)._id;
+
+}
+
+ServiceSupplierSchema.methods.updateJobCounts = function(previousJobStatusId, jobStatusId)
+{
+    // TODO: this needs to consider decrementing the previous job status count,
+    // and incrementing the new one...probably to be called from pre save, with the previous status id...
+    // Probably there should be a difference between new and updated jobs.
+    if(previousJobStatusId){
+        var previousJobStatusJobCountIndex = _.findIndex(this.jobCounts, {jobstatus:previousJobStatusId});
+        this.jobCounts[previousJobStatusJobCountIndex].count--;
+
+    }
+
+
+    var jobStatusJobCountIndex = _.findIndex(this.jobCounts, {jobstatus:jobStatusId});
+    if(jobStatusJobCountIndex == -1){
+        this.jobCounts.push({jobstatus: jobStatusId, count: 1})
+    }
+    else{
+        this.jobCounts[jobStatusJobCountIndex].count++;
+    }
 
 }
 

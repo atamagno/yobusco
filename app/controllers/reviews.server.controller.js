@@ -8,96 +8,66 @@ var mongoose = require('mongoose'),
 	Review = mongoose.model('Review'),
 	Job = mongoose.model('Job'),
 	ServiceSupplier = mongoose.model('ServiceSupplier'),
-	_ = require('lodash');
+	_ = require('lodash'),
+	async = require('async');
 
 /**
  * Create a Review either from:
  * - A job that is updated to a completed status
  * - Or from a newly created review (which also generates a job on the fly)
+ * - Either the existing job being updated or the generated job on the fly is saved as well.
  */
 exports.create = function(req, res) {
 
 	var review = new Review(req.body);
-	resolveJob(review, req.body.jobDetails, function(err, job){
-		if(err){
+	resolveJob(review, req.body.jobDetails, function(err, job) {
 
-				// TODO: add logging stating that job could not be resolved...
-				// TODO: return error to the client??
+		if(err){
+			// TODO: return error to client here...
 		}
 		else{
-			// TODO: if there's a job created recently for the same services, supplier and user,
-			// then the job won't save and we'll need to return the error....
-			job.save(function(err,job){
-				if(err){
-						  // TODO: add logging stating that job could not be updated/generated from review...
-					      // TODO: return error to the client (review could not be generated due to reviews
-					      // recently added for same supplier and services...??
-				}
-				else{
+			async.series ({
+					review: function(done){
+						// TODO: it's possible that the review gets saved without the job being saved...
+						// (e.g.: when adding a review without a job, and there are other jobs
+						// for the same service/s recently loaded)
 
-					//if(!review.job){
-					review.job = job._id; // reassigning the job to the review (in case it was generated on the fly)
-					//}
-				  	review.save(function(err, review){
-						if(err){
-							// TODO: add logging stating that review could not be saved
-							// TODO: return error to the client??
+						review.job = job._id; // reassigning the job to the review
+						// (in case it was generated on the fly, and it was not set from the client side)
+
+						// Saving the review.
+						review.save(function (err, review) {
+							done(err,review);
+						});
+					},
+					job: function(done){
+						// Saving the job
+						job.save(function(err, job){
+							done(err,job);
+						});
+					}
+				},
+				function(err, results){
+					if(err){
+						// TODO: logging here to state that review could not be saved?
+						// Probably return error to client as well....
+					}
+					else{
+						// Returning either job or review object depending on path from the client.
+						if(req.body.reviewPath == 'fromJob'){
+							res.jsonp(results.job);
 						}
-						else{
-
-							if(req.body.reviewPath == 'fromJob'){
-								res.jsonp(job);
-							}
-							else
-							{
-								res.jsonp(review.toJSON());
-							}
-
+						else
+						{
+							res.jsonp(results.review.toJSON());
 						}
-					})
+					}
 
-				}
+			});
 
-			})
 		}
 	});
 
-
-
-	/*	review.save(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-					// determine if existing job needs to be updated (coming from job completed update flow)
-					// or needs to be generated (review without job)...
-					resolveJob(review, new Job(req.body.jobDetails), function(err, job){
-					if(err){
-							// TODO: add logging stating that job could not be resolved...
-							// TODO: return error to the client??
-					}
-					else{
-
-							job.save(function(err, job){
-							// TODO: need to distinguish here between job update and new review to return
-							// different response? (job vs. review?)
-							if (err) {
-								// TODO: add logging stating that job could not be updated/generated from review...
-								// TODO: return error to the client??
-							}
-							else
-							{
-								res.jsonp(job);
-							}
-						});
-					}
-
-				});
-
-		}
-
-		});*/
 };
 
 
@@ -126,8 +96,8 @@ function resolveJob(review, jobDetails, cb)
 			job.finish_date = job.start_date;
 			job.expected_date = job.start_date;
 			job.user = review.user;
-			job.name = 'AutoFromReview';
-			job.description = 'AutoFromReview';
+			job.name = 'Trabajo';
+			job.description = '.';
 			job.service_supplier = review.service_supplier;
 			job.status = jobDetails.status;
 			job.services = jobDetails.services;
