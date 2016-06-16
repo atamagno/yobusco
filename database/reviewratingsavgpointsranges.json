@@ -1,0 +1,36 @@
+{ 
+    "_id" : ObjectId("56b1751d809d6df1dbd79f2f"), 
+    "max" : 1.0, 
+    "min" : 0.0, 
+    "points" : -0.3
+}
+{ 
+    "_id" : ObjectId("56b175c2809d6df1dbd79f31"), 
+    "max" : 2.0, 
+    "min" : 1.01, 
+    "points" : -0.2
+}
+{ 
+    "_id" : ObjectId("56b175da809d6df1dbd79f32"), 
+    "max" : 2.99, 
+    "min" : 2.01, 
+    "points" : -0.1
+}
+{ 
+    "_id" : ObjectId("56b1760b809d6df1dbd79f33"), 
+    "max" : 3.99, 
+    "min" : 3.0, 
+    "points" : 0.1
+}
+{ 
+    "_id" : ObjectId("56b1762c809d6df1dbd79f34"), 
+    "max" : 4.99, 
+    "min" : 4.0, 
+    "points" : 0.2
+}
+{ 
+    "_id" : ObjectId("56b17652809d6df1dbd79f35"), 
+    "max" : 5.0, 
+    "min" : 5.0, 
+    "points" : 0.3
+}
