@@ -5,7 +5,7 @@ angular.module('admin')
 		function($resource) {
 			return $resource('ratingtypes', {},
 				{
-					query: {method: 'GET',cache:true, isArray:true}
+					query: { method: 'GET', cache: true, isArray: true }
 				});
 		})
 	.factory('RatingTypesAdmin',

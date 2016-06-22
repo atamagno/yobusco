@@ -34,7 +34,7 @@
             <div class="input-group">
                 <input type="text" class="form-control" data-ng-model="supplierName" data-ng-keypress="$event.keyCode == 13 && applyFilters()">
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">
+                    <button class="btn btn-default" type="button" data-ng-click="applyFilters()">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </span>

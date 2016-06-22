@@ -22,6 +22,35 @@ angular.module('search')
                 });
             };
 
+            $scope.orderOptions = [
+                {name:'Rating', value: 'rating'},
+                {name:'Cantidad de trabajos', value: 'jobCount'},
+                {name:'Miembro desde', value: 'memberSince'},
+                {name:'Nombre', value: 'name'}
+            ];
+
+            if ($stateParams.orderBy) {
+                var selectedOrderOptions = $scope.orderOptions.filter(filterOrderOption);
+                if (selectedOrderOptions.length == 1) {
+                    $scope.orderBy = selectedOrderOptions[0];
+                }
+            } else {
+                $scope.orderBy = $scope.orderOptions[0];
+            }
+
+            function filterOrderOption(orderOption) {
+                return orderOption.value == $stateParams.orderBy;
+            }
+
+            $scope.orderResults = function() {
+                $state.go('resultsServiceSupplier.list', {
+                    serviceId: $scope.serviceSubcategoryId,
+                    currentPage: 1,
+                    itemsPerPage: $scope.itemsPerPage,
+                    orderBy: $scope.orderBy.value
+                });
+            };
+
             $scope.getResults = function() {
                 $scope.showList = false;
                 ServiceSuppliersSearch.query({
@@ -30,7 +59,8 @@ angular.module('search')
                     itemsPerPage: $stateParams.itemsPerPage,
                     services: $stateParams.services,
                     jobAmount: $stateParams.jobAmount,
-                    supplierName: $stateParams.supplierName
+                    supplierName: $stateParams.supplierName,
+                    orderBy: $stateParams.orderBy
                 }).$promise.then(function (response) {
                     $scope.currentPage = $stateParams.currentPage;
                     $scope.totalItems = response.totalItems;

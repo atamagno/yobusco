@@ -21,13 +21,12 @@ var getUniqueErrorMessage = function(err) {
  * Get the error message from error object
  */
 exports.getErrorMessage = function(err) {
-
-	// default error message.
-	var message = 'Ups. Algo sali\u00f3 mal. Por favor intente nuevamente mas tarde.';
+	var message = 'Algo sali\u00f3 mal, por favor intente m\u00e1s tarde';
 
 	// single error message...
-	if(err.message)
+	if(err.message) {
 		message = err.message;
+	}
 
 	if (err.code) {
 		switch (err.code) {
@@ -36,7 +35,7 @@ exports.getErrorMessage = function(err) {
 				message = getUniqueErrorMessage(err);
 				break;
 			default:
-				message = 'Algo sali\u00f3 mal';
+				message = 'Algo sali\u00f3 mal, por favor intente m\u00e1s tarde';
 		}
 	} else if (err.errors) {
 		for (var errName in err.errors) {

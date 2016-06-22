@@ -19,6 +19,11 @@ module.exports = function(config){
 			required: 'Por favor ingrese un nombre',
 			trim: true
 		},
+		keyword: {
+			type: String,
+			default: '',
+			required: true,
+		},
 		finished: {
 			type: Boolean,
 			default: false,

@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-md-3">
+
+        <p class="lead">Mensajes</p>
+        <div class="list-group">
+            <a ui-sref=".create()" class="list-group-item">Enviar mensaje</a>
+            <a ui-sref=".list({ condition: 'received', currentPage: 1 })" class="list-group-item">Bandeja de entrada</a>
+            <a ui-sref=".list({ condition: 'archived', currentPage: 1 })" class="list-group-item">Archivados</a>
+        </div>
+
+    </div>
+    <div class="col-md-9">
+        <section data-ui-view></section>
+    </div>
+
+    <script type="text/ng-template" id="createMessageModal">
+        <div class="modal-header">
+            <h3 class="modal-title">Enviar Mensaje</h3>
+        </div>
+        <div class="modal-body">
+            Est&#225;s seguro de que quieres enviar el mensaje?
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
+            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
+        </div>
+    </script>
+</div>

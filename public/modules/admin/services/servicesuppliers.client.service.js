@@ -4,7 +4,7 @@
 angular.module('admin')
     .factory('ServiceSuppliers',
         function($resource) {
-            return $resource('servicesuppliers/:servicesupplierId');
+            return $resource('servicesuppliers/:servicesupplierId', { servicesupplierId: '@_id' }, { update: { method: 'PUT' } });
         })
     .factory('ServiceSuppliersAdmin',
         function($resource) {

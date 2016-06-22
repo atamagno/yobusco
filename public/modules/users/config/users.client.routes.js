@@ -7,7 +7,23 @@ angular.module('users').config(
 		$stateProvider.
 		state('profile', {
 			url: '/settings/profile',
-			templateUrl: 'modules/users/views/settings/edit-profile.client.view.html'
+			templateUrl: 'modules/users/views/settings/profile.client.view.html'
+		}).
+		state('profile.user', {
+			url: '/settings/profile/user',
+			templateUrl: 'modules/users/views/settings/user-profile.client.view.html'
+		}).
+		state('profile.serviceSupplier', {
+			url: '/settings/profile/service-supplier',
+			templateUrl: 'modules/users/views/settings/servicesupplier-profile.client.view.html'
+		}).
+		state('profile-edit-user', {
+			url: '/settings/profile/edit-user',
+			templateUrl: 'modules/users/views/settings/edit-user-profile.client.view.html'
+		}).
+		state('profile-edit-servicesupplier', {
+			url: '/settings/profile/edit-service-supplier',
+			templateUrl: 'modules/users/views/settings/edit-servicesupplier-profile.client.view.html'
 		}).
 		state('password', {
 			url: '/settings/password',
@@ -18,7 +34,7 @@ angular.module('users').config(
 			templateUrl: 'modules/users/views/authentication/signup.client.view.html'
 		}).
 		state('signin', {
-			url: '/signin',
+			url: '/signin?err',
 			templateUrl: 'modules/users/views/authentication/signin.client.view.html'
 		}).
 		state('forgot', {

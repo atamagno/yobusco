@@ -20,9 +20,6 @@ var JobCount = new Schema({
     }
 });
 
-
-
-
 /**
  * Service Supplier Schema
  */
@@ -82,15 +79,13 @@ var ServiceSupplierSchema = new Schema({
     }
 });
 
-ServiceSupplierSchema.methods.updatePoints = function(points)
-{
+ServiceSupplierSchema.methods.updatePoints = function(points) {
     this.points += points;
     this.points = parseFloat(this.points.toFixed(2)); // rounding...
     this.updateCategory();
-
 }
 
-ServiceSupplierSchema.methods.updateCategory = function(){
+ServiceSupplierSchema.methods.updateCategory = function() {
 
     this.category = this.constructor.getCategory(this.points)._id;
 
@@ -101,32 +96,29 @@ ServiceSupplierSchema.methods.updateJobCounts = function(previousJobStatusId, jo
     // TODO: this needs to consider decrementing the previous job status count,
     // and incrementing the new one...probably to be called from pre save, with the previous status id...
     // Probably there should be a difference between new and updated jobs.
-    if(previousJobStatusId){
-        var previousJobStatusJobCountIndex = _.findIndex(this.jobCounts, {jobstatus:previousJobStatusId});
-        this.jobCounts[previousJobStatusJobCountIndex].count--;
-
+    if (previousJobStatusId) {
+        var previousJobStatusJobCountIndex = _.findIndex(this.jobCounts, { jobstatus:previousJobStatusId });
+        if (previousJobStatusJobCountIndex >= 0) {
+            this.jobCounts[previousJobStatusJobCountIndex].count--;
+        }
     }
 
-
-    var jobStatusJobCountIndex = _.findIndex(this.jobCounts, {jobstatus:jobStatusId});
-    if(jobStatusJobCountIndex == -1){
-        this.jobCounts.push({jobstatus: jobStatusId, count: 1})
+    var jobStatusJobCountIndex = _.findIndex(this.jobCounts, { jobstatus:jobStatusId });
+    if (jobStatusJobCountIndex == -1) {
+        this.jobCounts.push({ jobstatus: jobStatusId, count: 1 })
     }
-    else{
+    else {
         this.jobCounts[jobStatusJobCountIndex].count++;
     }
-
 }
 
-
-ServiceSupplierSchema.statics.getCategory = function(points)
-{
-    return _.find(config.staticdata.serviceSupplierCategories,function(category){
-        if(points>=0.0){
-            return category.min <= points && points  <= category.max
+ServiceSupplierSchema.statics.getCategory = function(points) {
+    return _.find(config.staticdata.serviceSupplierCategories, function(category) {
+        if (points >= 0.0){
+            return ((category.min <= points) && (points <= category.max))
         }
-        else{
-            return points <= category.min && points >= category.max
+        else {
+            return ((points <= category.min) && (points >= category.max))
         }
     });
 }

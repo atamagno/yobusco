@@ -6,9 +6,7 @@ var express        = require('express'),
     methodOverride = require('method-override'),
     path           = require('path'),
     passport       = require('passport'),
-    mongoStore     = require('connect-mongo')({
-        session: session
-    }),
+    mongoStore     = require('connect-mongo')(session),
     consolidate    = require('consolidate'),
     config         = require('./config');
 
@@ -19,7 +17,6 @@ module.exports = function(db) {
     config.getGlobbedFiles('./app/models/*.js').forEach(function(modelPath) {
         require(path.resolve(modelPath));
     });
-
 
     // globbing model files with static data
     // TODO: move more files to staticdata folder (e.g.: jobstatuses, ratingtypes, etc), so they are retrieved
@@ -57,7 +54,7 @@ module.exports = function(db) {
         resave: true,
         secret: config.sessionSecret,
         store: new mongoStore({
-            db: db.connection.db,
+            mongooseConnection: db.connection,
             collection: config.sessionCollection
         })
     }));

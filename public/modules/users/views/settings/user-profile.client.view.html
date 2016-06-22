@@ -1,0 +1,38 @@
+<section data-ng-controller="SettingsController">
+	<h3 class="text-center"></h3>
+
+	<div class="profile-alert-container">
+		<uib-alert type="{{alerts.type}}" close="alerts.close()" ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
+	</div>
+
+	<fieldset class="text-center">
+
+		<div class="user-field">
+			<img class="profile-image" data-ng-src="{{user.profile_picture}}">
+		</div>
+
+		<div class="user-fields-container">
+			<div class="user-field">
+				<label for="firstName">Nombre:</label>
+				<span id="firstName">&nbsp;{{user.firstName}}</span>
+			</div>
+			<div class="user-field">
+				<label for="lastName">Apellido:</label>
+				<span id="lastName">&nbsp;{{user.lastName}}</span>
+			</div>
+			<div class="user-field">
+				<label for="email">Email:</label>
+				<span id="email">&nbsp;{{user.email}}</span>
+			</div>
+			<div class="user-field">
+				<label for="username">Nombre de usuario:</label>
+				<span id="username">&nbsp;{{user.username}}</span>
+			</div>
+		</div>
+
+		<div class="user-field">
+			<a class="btn btn-large btn-primary" href="/#!/settings/profile/edit-user">Editar</a>
+		</div>
+	</fieldset>
+
+</section>

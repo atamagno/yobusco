@@ -5,16 +5,33 @@
     <p class="text-center">Conectando consumidores y proveedores de servicios en construcci&#243;n</p>
     <form role="form">
         <div class="form-group search-input">
-            <input type="text" class="form-control center-block" data-ng-model="selectedKeyword"
-                   data-ng-keypress="$event.keyCode == 13 && navigateToResultsFromKeywordSearch()"
-                   uib-typeahead="serviceSubcategoryKeyword as serviceSubcategoryKeyword.keyword for serviceSubcategoryKeyword in serviceSubcategoriesKeywords | filter:$viewValue"
-                   placeholder="Ingresa el rubro que buscas." />
-            <div class="advanced-search-link-container">
-                <a class="advanced-search-link" data-ng-click="isCollapsed = !isCollapsed">b&uacute;squeda avanzada</a>
+
+            <div class="input-group">
+                <input type="text" class="form-control center-block" data-ng-model="selectedKeyword" typeahead-min-length="1"
+                       data-ng-keypress="$event.keyCode == 13 && navigateToResultsFromKeywordSearch()"
+                       uib-typeahead="serviceSubcategoryKeyword as serviceSubcategoryKeyword.keyword for serviceSubcategoryKeyword in serviceSubcategoriesKeywords | filter:$viewValue | limitTo:4"
+                       placeholder="Ingresa el rubro que buscas." typeahead-template-url="customTemplate.html" />
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" data-ng-click="navigateToResultsFromKeywordSearch()">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
             </div>
+
+            <!--<div class="advanced-search-link-container">
+                <a class="advanced-search-link" data-ng-click="isCollapsed = !isCollapsed">b&uacute;squeda avanzada</a>
+            </div>-->
         </div>
 
-        <div uib-collapse="!isCollapsed">
+        <div class="form-group subcategory-links-container">
+            <a data-ng-click="navigateToResults('562e3d3c477f0817f38d3069');">Pintores</a>
+            <a data-ng-click="navigateToResults('5626924f477f11b0b2a6dd8d');">Alba&#241;iles</a>
+            <a data-ng-click="navigateToResults('56422424bcc560701d85d3e8');">Gasistas</a>
+            <a data-ng-click="navigateToResults('564224a6bcc560701d85d3e9');">Electricistas</a>
+            <a data-ng-click="navigateToResults('564224dbbcc560701d85d3ea');">Plomeros</a>
+        </div>
+
+        <!--<div uib-collapse="!isCollapsed">
             <div class="well well-lg filters-container">
                 <div class="btn-group" uib-dropdown>
                     <button type="button" class="btn btn-default" uib-dropdown-toggle>
@@ -40,6 +57,12 @@
 
                 <button class="btn btn-large btn-primary search-button" data-ng-click="navigateToResultsFromAdvancedSearch()">Buscar</button>
             </div>
-        </div>
+        </div>-->
     </form>
 </div>
+
+<script type="text/ng-template" id="customTemplate.html">
+    <a>
+        <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+    </a>
+</script>

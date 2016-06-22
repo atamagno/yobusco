@@ -5,9 +5,8 @@ angular.module('admin')
 		function($resource) {
 			return $resource('jobstatus', {},
 				{
-					query: {method: "GET", cache: true, isArray: true}
-				}
-			);
+					query: { method: "GET", cache: true, isArray: true }
+				});
 		})
 	.factory('JobStatusAdmin',
 		function($resource) {

@@ -73,15 +73,6 @@ exports.delete = function(req, res) {
  * List of JobStatus
  */
 exports.list = function(req, res) {
-	/*JobStatus.find().exec(function(err, status) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(status);
-		}
-	});*/
 	res.jsonp(config.staticdata.jobStatuses);
 };
 
@@ -89,19 +80,11 @@ exports.list = function(req, res) {
  * JobStatus middleware
  */
 exports.jobstatusByID = function(req, res, next, id) {
-
-	/*JobStatus.findById(id).exec(function(err, jobstatus) {
-		if (err) return next(err);
-		if (!jobstatus) return next(new Error('Error al cargar estado de trabajo ' + id));
-		req.jobstatus = jobstatus ;
-		next();
-	});*/
-	req.jobstatus = _.find(config.staticdata.jobStatuses, function(jobStatus){
-
+	req.jobstatus = _.find(config.staticdata.jobStatuses, function(jobStatus) {
 		return jobStatus._id == id;
 	});
-	next();
 
+	next();
 };
 
 // TODO: adapt this function to use jobStatuses from config.staticdata.

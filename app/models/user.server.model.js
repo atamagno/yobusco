@@ -56,7 +56,8 @@ var UserSchema = new Schema({
 		trim: true
 	},
 	profile_picture: {
-		type: String
+		type: String,
+		default: 'modules/users/img/profile/default.png'
 	},
 	password: {
 		type: String,

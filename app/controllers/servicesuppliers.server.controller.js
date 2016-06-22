@@ -89,12 +89,11 @@ exports.list = function(req, res) {
 /**
  * ServiceSupplier middleware
  */
-exports.servicesupplierByID = function(req, res, next, id) {
-
+exports.serviceSupplierByID = function(req, res, next, id) {
     // Looks like we're using the display_name field from the supplier on the client side,
     // so no need to populate the associated user...
     ServiceSupplier.findById(id).populate('services').exec(function(err, servicesupplier){
-    // ServiceSupplier.findById(id).populate('user', 'displayName').populate('services').exec(function(err, servicesupplier) {
+        // ServiceSupplier.findById(id).populate('user', 'displayName').populate('services').exec(function(err, servicesupplier) {
         if (err) return next(err);
         if (!servicesupplier) return next(new Error('Error al cargar prestador de servicios ' + id));
         req.servicesupplier = servicesupplier ;
@@ -114,12 +113,13 @@ exports.listByPage = function(req, res) {
         itemsPerPage = parseInt(itemsPerPage);
         var startIndex = (currentPage - 1) * itemsPerPage;
 
+        var orderCondition = buildOrderCondition(req.query.orderBy);
         var query = buildSearchQuery(req.query, serviceId);
         ServiceSupplier.count(query, function (err, count) {
             if (err) {
                 return buildErrorResponse(res, err, 400);
             } else {
-                searchServiceSuppliers(query, startIndex, itemsPerPage, count, res);
+                searchServiceSuppliers(query, orderCondition, startIndex, itemsPerPage, count, res);
             }
         });
 
@@ -141,11 +141,36 @@ function buildSearchQuery(queryString, serviceId) {
     return query;
 };
 
-function searchServiceSuppliers(query, startIndex, itemsPerPage, count, res) {
+function buildOrderCondition(orderBy) {
+
+    var orderCondition = { points: -1 };
+    switch (orderBy)
+    {
+        case 'jobCount':
+            orderCondition = { jobCount: 1 };
+            break;
+        case 'memberSince':
+            orderCondition = { registration_date: 1 };
+            break;
+        case 'name':
+            orderCondition = { display_name: 1 };
+            break;
+    }
+
+    return orderCondition;
+};
+
+function searchServiceSuppliers(query, orderCondition, startIndex, itemsPerPage, count, res) {
 
     var results = { totalItems: count };
     // TODO: need to define sort strategy
-    ServiceSupplier.find(query, {}, { skip: startIndex, limit: itemsPerPage, sort: { points: -1, registration_date: 1 } }, function(err, servicesuppliers) {
+    ServiceSupplier.find(query, {},
+        {
+            skip: startIndex,
+            limit: itemsPerPage,
+            sort: orderCondition
+        }, function(err, servicesuppliers) {
+
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
@@ -153,6 +178,21 @@ function searchServiceSuppliers(query, startIndex, itemsPerPage, count, res) {
         } else {
             results.servicesuppliers = servicesuppliers;
             res.jsonp(results);
+        }
+    });
+};
+
+exports.serviceSupplierByUserID = function(req, res) {
+
+    var userId = req.params.userId;
+
+    ServiceSupplier.findOne({ user: userId }).exec(function(err, servicesupplier) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(servicesupplier);
         }
     });
 };

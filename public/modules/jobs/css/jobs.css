@@ -1,9 +1,19 @@
+.pagination-container {
+    clear: both;
+}
+
 .job-details-container {
     padding: 10px;
 }
 
 .job-name-container {
-    min-height: 40px;
+    height: 30px;
+    font-size: 16px;
+    padding-right: 10px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .job-description-container {
@@ -57,6 +67,10 @@
     padding-top: 5px;
 }
 
+.btn-report {
+    margin-right: 5px;
+}
+
 .thumb {
     width: 24px;
     height: 24px;
@@ -88,8 +102,23 @@
     padding-bottom: 5px;
 }
 
+.job-small-img {
+    border-radius: 5px;
+    box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, .35);
+}
+
+.job-big-img {
+    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, .35);
+}
+
+.label-paused {
+    background-color: tan;
+}
+
 .status-label {
-    padding-left: 10px;
+    margin-left: 3px;
+    margin-top: 2px;
+    padding: 4px;
 }
 
 .job-img-upload-detail-container {

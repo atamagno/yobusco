@@ -20,91 +20,90 @@ var mongoose = require('mongoose'),
 exports.create = function(req, res) {
 
 	var review = new Review(req.body);
+
 	resolveJob(review, req.body.jobDetails, function(err, job) {
 
-		if(err){
-			// TODO: return error to client here...
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
 		}
-		else{
+		else {
 			async.series ({
-					review: function(done){
-						// TODO: it's possible that the review gets saved without the job being saved...
-						// (e.g.: when adding a review without a job, and there are other jobs
-						// for the same service/s recently loaded)
+				review: function(done) {
+					// TODO: it's possible that the review gets saved without the job being saved...
+					// (e.g.: when adding a review without a job, and there are other jobs
+					// for the same service/s recently loaded)
 
-						review.job = job._id; // reassigning the job to the review
-						// (in case it was generated on the fly, and it was not set from the client side)
+					review.job = job._id; // reassigning the job to the review
+					// (in case it was generated on the fly, and it was not set from the client side)
 
-						// Saving the review.
-						review.save(function (err, review) {
-							done(err,review);
-						});
-					},
-					job: function(done){
-						// Saving the job
-						job.save(function(err, job){
-							done(err,job);
-						});
-					}
+					// Saving the review.
+					review.save(function (err, review) {
+						done(err,review);
+					});
 				},
-				function(err, results){
-					if(err){
-						// TODO: logging here to state that review could not be saved?
-						// Probably return error to client as well....
+				job: function(done) {
+					// Saving the job
+					job.save(function(err, job) {
+						done(err,job);
+					});
+				}
+			},
+			function(err, results) {
+				if (err) {
+					// TODO: logging here to state that review could not be saved?
+					return res.status(400).send({
+						message: errorHandler.getErrorMessage(err)
+					});
+				}
+				else {
+					// Returning either job or review object depending on path from the client.
+					if (req.body.reviewPath == 'fromJob') {
+						res.jsonp(results.job);
 					}
-					else{
-						// Returning either job or review object depending on path from the client.
-						if(req.body.reviewPath == 'fromJob'){
-							res.jsonp(results.job);
-						}
-						else
-						{
-							res.jsonp(results.review.toJSON());
-						}
+					else {
+						res.jsonp(results.review.toJSON());
 					}
+				}
 
 			});
-
 		}
 	});
-
 };
 
 
 function resolveJob(review, jobDetails, cb)
 {
-
 	var job = new Job(jobDetails);
 	// If job is selected for a review, update it, and add return reference to it.
-	if(review.job){
-			Job.findById(review.job, function(err, existingJob) {
-			if(err)
-			{
+	if (review.job) {
+		Job.findById(review.job, function(err, existingJob) {
+			if(err) {
 				// TODO: add logging stating that job could not be found from review...
 				cb(err, null);
 			}
-			else{
-				 	existingJob.finish_date = job.finish_date;
-					existingJob.status = job.status;
-					existingJob.description = job.description;
-					existingJob.review = review._id;
-					cb(null, existingJob);
+			else {
+				existingJob.finish_date = job.finish_date;
+				existingJob.status = job.status;
+				existingJob.description = job.description;
+				existingJob.review = review._id;
+				cb(null, existingJob);
 			}
 		});
 	}
-	else{   // otherwise, generate job on the fly and associate to review
-			job.finish_date = job.start_date;
-			job.expected_date = job.start_date;
-			job.user = review.user;
-			job.name = 'Trabajo';
-			job.description = '.';
-			job.service_supplier = review.service_supplier;
-			job.status = jobDetails.status;
-			job.services = jobDetails.services;
-		   	job.review = review._id;
-			cb(null, job);
+	else {   // otherwise, generate job on the fly and associate to review
+		job.finish_date = job.start_date;
+		job.expected_date = job.start_date;
+		job.user = review.user;
+		job.name = 'Trabajo';
+		job.description = '.';
+		job.service_supplier = review.service_supplier;
+		job.status = jobDetails.status;
+		job.services = jobDetails.services;
+		job.review = review._id;
+		cb(null, job);
 	}
-
 }
 
 /**
@@ -214,26 +213,26 @@ exports.list = function(req, res) {
  */
 exports.reviewByID = function(req, res, next, id) {
 	Review.findById(id).populate('user', 'displayName')
-						.populate('job')
-						.populate('service_supplier')
-						.populate('ratings.type')
-						.populate('services').exec(function(err, review) {
+		.populate('job')
+		.populate('service_supplier')
+		.populate('ratings.type')
+		.populate('services').exec(function(err, review) {
 
-		if (err) return next(err);
-		if (!review) return next(new Error('Error al cargar comentario ' + id));
-		if (review.job) {
-			Job.populate(review.job, {path: 'service_supplier', select: 'display_name'}, function(err, job){
-				if (err) return next(err);
-				if (!job) return next(new Error('Error al cargar trabajo'));
+			if (err) return next(err);
+			if (!review) return next(new Error('Error al cargar comentario ' + id));
+			if (review.job) {
+				Job.populate(review.job, {path: 'service_supplier', select: 'display_name'}, function(err, job){
+					if (err) return next(err);
+					if (!job) return next(new Error('Error al cargar trabajo'));
+					req.review = review;
+					next();
+				});
+			} else {
 				req.review = review;
 				next();
-			});
-		} else {
-			req.review = review;
-			next();
-		}
+			}
 
-	});
+		});
 };
 
 exports.listByPage = function(req, res) {
@@ -289,11 +288,8 @@ exports.listByServiceSupplier = function(req, res) {
 		{
 			res.jsonp(reviews);
 		}
-
 	});
-
 };
-
 
 exports.listByJob = function(req, res) {
 

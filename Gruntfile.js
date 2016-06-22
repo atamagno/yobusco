@@ -49,6 +49,31 @@
                         name: 'reviews',
                         file: 'database/reviews.json',
                         drop: true
+                    },
+                    {
+                        name: 'messages',
+                        file: 'database/messages.json',
+                        drop: true
+                    },
+                    {
+                        name: 'conversations',
+                        file: 'database/conversations.json',
+                        drop: true
+                    },
+                    {
+                        name: 'reviewratingsavgpointsranges',
+                        file: 'database/reviewratingsavgpointsranges.json',
+                        drop: true
+                    },
+                    {
+                        name: 'servicesuppliercategories',
+                        file: 'database/servicesuppliercategories.json',
+                        drop: true
+                    },
+                    {
+                        name: 'usersupplieractionpoints',
+                        file: 'database/usersupplieractionpoints.json',
+                        drop: true
                     }
                 ]
             }

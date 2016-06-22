@@ -3,7 +3,7 @@
 module.exports = {
 
 	app: {
-		title: 'yobusco',
+		title: 'Yo Busco',
 		description: 'Test description.',
 		keywords: 'yobusco, mean, mongo, express, angular, node'
 	},
@@ -25,7 +25,8 @@ module.exports = {
 				'public/libs/angular-bootstrap/ui-bootstrap-tpls.js',
 				'public/libs/angular-i18n/angular-locale_es-ar.js',
 				'public/libs/ng-file-upload/ng-file-upload-shim.min.js',
-				'public/libs/ng-file-upload/ng-file-upload.min.js'
+				'public/libs/ng-file-upload/ng-file-upload.min.js',
+				'public/libs/owasp-password-strength-test/owasp-password-strength-test.js'
 			]
 		},
 		css: [

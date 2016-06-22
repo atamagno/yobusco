@@ -43,8 +43,8 @@
 
         <h4 class="review-services-title">Servicios</h4>
         <input type="text" data-ng-model="selectedservice" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
-                   uib-typeahead="servicesubcategory.name for servicesubcategory in servicesubcategories | filter:{name: $viewValue} | limitTo:8"
-                   placeholder="Selecciona un servicio." data-ng-disabled="selectedjob">
+               uib-typeahead="servicesubcategory.name for servicesubcategory in servicesubcategories | filter:{name: $viewValue} | limitTo:8"
+               placeholder="Selecciona un servicio." data-ng-disabled="selectedjob">
 
         <div data-ng-show="selectedservices.length" class="review-selected-services">
             <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default review-selected-service"
@@ -56,14 +56,14 @@
 
         <h4 class="review-ratings-title">Resultado del trabajo</h4>
         <div class="btn-group" uib-dropdown data-ng-disabled="selectedjob">
-                <button type="button" class="btn btn-default" uib-dropdown-toggle>
-                    {{jobstatus.name}} <span class="caret"></span>
-                </button>
-                <ul class="uib-dropdown-menu" role="menu">
-                    <li data-ng-repeat="status in jobstatuses">
-                        <a class="dropdown-item" data-ng-click="changeStatus(status)">{{status.name}}</a>
-                    </li>
-                </ul>
+            <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                {{jobstatus.name}} <span class="caret"></span>
+            </button>
+            <ul class="uib-dropdown-menu" role="menu">
+                <li data-ng-repeat="status in jobstatuses">
+                    <a class="dropdown-item" data-ng-click="changeStatus(status)">{{status.name}}</a>
+                </li>
+            </ul>
         </div>
 
 

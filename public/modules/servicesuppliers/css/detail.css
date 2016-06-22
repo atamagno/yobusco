@@ -1,9 +1,16 @@
+.service-supplier-img-container {
+    padding: 10px;
+    width: 36%;
+}
+
 .service-supplier-review-list:not(:last-child) {
     border-bottom: 1px solid #ccc;
 }
 
 .service-supplier-img {
-    padding: 10px;
+    height: 212px;
+    box-shadow: 1px 1px 10px -3px rgba(0, 0, 0, .35);
+    border-radius: 5%;
 }
 
 .service-supplier-details-container {

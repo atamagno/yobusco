@@ -99,6 +99,19 @@ exports.userForAdminByID = function(req, res, next, id) {
 	});
 };
 
+exports.findByUserName  = function(req, res) {
+	var userName = req.params.userName;
+	User.findOne({username: userName}).exec(function (err, user) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(user);
+		}
+	});
+};
+
 exports.listByPage = function(req, res) {
 
 	var currentPage = req.params.currentPage;

@@ -1,0 +1,50 @@
+<section data-ng-controller="MessagesController" data-ng-init="findOne()">
+
+	<div class="messages-header-container">
+		<h2>{{toUser.displayName}}
+			<a ng-show="!archived" class="btn btn-default pull-right" data-ng-click="openArchiveConversationModal()">Archivar</a>
+		</h2>
+	</div>
+
+	<br>
+
+	<uib-alert type="{{alerts.type}}" close="alerts.close()" ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
+
+	<form class="form-horizontal" novalidate>
+		<fieldset>
+			<textarea name="content" data-ng-model="content" id="content" class="form-control" cols="30" rows="3" placeholder="Escribe tu mensaje aqui."></textarea>
+			<input type="submit" data-ng-click="openCreateMessageModal()" class="btn btn-primary pull-right conversation-send-button" value="Enviar">
+		</fieldset>
+	</form>
+
+	<div data-ng-repeat="message in conversation.messages" style="position: relative; height: 57px; margin-top: 10px;">
+
+		<div data-ng-class="{'message-from': (conversation.user1._id == message.from)}" class="conversation-message">
+
+			<img src="/images/user.jpg" alt="" class="conversation-image">
+			<div>
+				<small>
+					<em class="text-muted">
+						Enviado el
+						<span data-ng-bind="message.created | date:'medium'"></span>
+					</em>
+				</small>
+				<div data-ng-bind="message.content" class="conversation-message-content">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/ng-template" id="archiveConversationModal">
+		<div class="modal-header">
+			<h3 class="modal-title">Archivar Mensaje</h3>
+		</div>
+		<div class="modal-body">
+			Est&#225;s seguro de que quieres archivar el mensaje?
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
+			<button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
+		</div>
+	</script>
+</section>

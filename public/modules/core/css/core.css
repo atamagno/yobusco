@@ -36,12 +36,22 @@ html, body {
 	border-color: #78FA89;
 }
 
-.logged-user-profile-img {
-	width: 34px;
-	height: 34px;
-	position: absolute;
-	left: -34px;
-	top: 9px;
+.header-profile-image {
+	opacity: 0.8;
+	height: 28px;
+	width: 28px;
+	margin-right: 5px;
+	border-radius: 2px;
+	box-shadow: 1px 1px 20px -3px rgba(0, 0, 0, .35);
+}
+.open .header-profile-image,
+a:hover .header-profile-image {
+	opacity: 1;
+}
+
+.user-header-dropdown-toggle {
+	padding-top: 11px !important;
+	padding-bottom: 11px !important;
 }
 
 .custom-alert {
@@ -94,4 +104,16 @@ html, body {
 
 .flex-display {
 	display: flex;
+}
+
+.error-text {
+	display: none;
+}
+
+.has-error .help-block.error-text {
+	display: block;
+}
+
+.has-error .help-inline.error-text {
+	display: inline;
 }

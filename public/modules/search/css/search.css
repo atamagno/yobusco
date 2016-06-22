@@ -8,8 +8,25 @@
 }
 
 .search-input {
-    width: 80%;
+    width: 900px;
     margin: 0 auto;
+}
+
+.search-input > .dropdown-menu {
+    width: 900px;
+}
+
+.subcategory-links-container
+{
+    margin: 30px auto;
+    cursor: pointer;
+    text-align: center;
+    font-size: 20px;
+}
+
+.subcategory-links-container a
+{
+    margin: 0 20px 0 0;
 }
 
 .advanced-search-link-container {
@@ -56,13 +73,16 @@
 }
 
 .search-result-img {
-    width: 20%;
+    height: 124px;
+    margin-right: 10px;
+    border-radius: 5%;
+    box-shadow: 1px 1px 10px -3px rgba(0, 0, 0, .35);
 }
 
 .search-result-details {
     padding-left: 10px;
     position: relative;
-    width: 80%;
+    width: 84%;
 }
 
 .search-results-details-header {

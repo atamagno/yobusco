@@ -83,7 +83,10 @@ exports.forgot = function(req, res, next) {
 			});
 		}
 	], function(err) {
-		if (err) return next(err);
+		return res.status(400).send({
+			message: errorHandler.getErrorMessage(err)
+		});
+		//if (err) return next(err);
 	});
 };
 

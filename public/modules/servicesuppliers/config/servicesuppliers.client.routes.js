@@ -23,6 +23,7 @@ angular.module('servicesuppliers').config(
 			}).
 			state('servicesupplier.viewJobDetail', {
 				url: '/:servicesupplierId/job-detail/:jobId',
-				templateUrl: 'modules/jobs/views/job-detail.client.view.html'
+				templateUrl: 'modules/jobs/views/job-detail.client.view.html',
+				controller: 'JobDetailsController'
 			});
 	});

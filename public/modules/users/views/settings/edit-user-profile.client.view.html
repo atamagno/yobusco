@@ -1,0 +1,61 @@
+<section data-ng-controller="SettingsController">
+	<h3 class="text-center">Edita tu perfil</h3>
+
+	<div class="profile-alert-container">
+		<uib-alert type="{{alerts.type}}" close="alerts.close()" ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
+	</div>
+
+	<div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4">
+
+		<form name="userForm" data-ng-submit="openUpdateUserModal()" class="signin form-horizontal" autocomplete="off">
+			<div class="user-fields-container">
+				<div class="user-field">
+					<label for="profilePicture">Foto de perfil</label>
+					<input id="profilePicture" type="file" ngf-select data-ng-model="picFile" name="file" accept="image/*" ngf-max-size="2MB">
+					<i ng-show="userForm.file.$error.maxSize">Archivo demasiado grande {{picFile.size / 1000000|number:1}}MB: max 2M</i>
+					<div class="profile-image-container" ng-show="picFile">
+						<img class="profile-image" ngf-thumbnail="picFile">
+					</div>
+				</div>
+
+				<div class="user-field">
+					<label class="control-label" for="firstName">Nombre</label>
+					<input type="text" id="firstName" name="firstName" class="form-control" data-ng-model="user.firstName" placeholder="Nombre">
+				</div>
+
+				<div class="user-field">
+					<label class="control-label" for="lastName">Apellido</label>
+					<input type="text" id="lastName" name="lastName" class="form-control" data-ng-model="user.lastName" placeholder="Apellido">
+				</div>
+
+				<div class="user-field">
+					<label class="control-label" for="email">Email</label>
+					<input type="email" id="email" name="email" class="form-control" data-ng-model="user.email" placeholder="Email">
+				</div>
+
+				<div class="user-field">
+					<label class="control-label" for="username">Nombre de usuario</label>
+					<input type="text" id="username" name="username" class="form-control" data-ng-model="user.username" placeholder="Nombre de usuario">
+				</div>
+			</div>
+
+			<div class="text-center form-group">
+				<button ui-sref="profile.user()" class="btn btn-large btn-default">Cancelar</button>
+				<button type="submit" class="btn btn-large btn-primary">Guardar</button>
+			</div>
+		</form>
+	</div>
+
+	<script type="text/ng-template" id="updateUserProfileModal">
+		<div class="modal-header">
+			<h3 class="modal-title">Actualizar Perfil</h3>
+		</div>
+		<div class="modal-body">
+			Est&#225;s seguro de que quieres actualizar tu perfil?
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
+			<button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
+		</div>
+	</script>
+</section>

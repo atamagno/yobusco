@@ -1,0 +1,40 @@
+.messages-header-container {
+    border-bottom: 1px solid #eee;
+}
+
+.message-read {
+    background-color: #d2f9f1;
+}
+
+.conversation-send-button {
+    margin-top: 10px;
+}
+
+.conversation-message {
+    display: flex;
+    position: absolute;
+    width: 90%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .075);
+    padding: 5px 10px;
+}
+
+.message-from {
+    background-color: #d2f9f1;
+    right: 0;
+}
+
+.conversation-image {
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    box-shadow: 1px 1px 10px -3px rgba(0, 0, 0, .35)
+}
+
+.conversation-message-content {
+    padding-top:5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

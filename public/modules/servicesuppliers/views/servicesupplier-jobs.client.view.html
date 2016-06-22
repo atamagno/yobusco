@@ -1,22 +1,31 @@
 <div class="service-supplier-header-container">
-    <div class="pull-right create-job-button-container" data-ng-show="authentication.user">
+    <div class="pull-right create-job-button-container" ng-show="authentication.user && !isServiceSupplier">
         <a ui-sref="jobs.create({ servicesupplierId: servicesupplier._id })" class="btn btn-primary">Crear trabajo</a>
     </div>
     <h1>Trabajos</h1>
 </div>
 <br>
-<div class="alert alert-warning text-center" data-ng-hide="jobs.length">
+<div class="alert alert-warning text-center" ng-show="!jobs.length">
     Este prestador de servicios no tiene trabajos todav&#237;a.
 </div>
 
 <div data-ng-repeat="job in jobs" class="col-sm-4 col-lg-4 col-md-4 no-padding-left">
     <div class="thumbnail">
-        <img src="http://placehold.it/320x150" alt="">
+        <img src="/images/job.png" alt="">
         <div class="job-details-container">
-            <h4 class="pull-right status-label">{{job.status.name}}</h4>
-            <h4 class="job-name-container">
+
+            <span ng-show="job.reported" class="pull-right status-label label label-danger">Reportado</span>
+            <span ng-show="job.status.keyword == 'finished' && !job.reported" class="pull-right status-label label label-success">{{job.status.name}}</span>
+            <span ng-show="job.status.keyword == 'abandoned' && !job.reported" class="pull-right status-label label label-default">{{job.status.name}}</span>
+            <span ng-show="job.status.keyword == 'active' && !job.reported" class="pull-right status-label label label-primary">{{job.status.name}}</span>
+            <span ng-show="job.status.keyword == 'paused' && !job.reported" class="pull-right status-label label label-paused">{{job.status.name}}</span>
+            <span ng-show="job.status.keyword == 'pending' && !job.reported" class="pull-right status-label label label-info">{{job.status.name}}</span>
+            <span ng-show="job.status.keyword == 'delayed' && !job.reported" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+
+            <div class="job-name-container">
                 <a href="" data-ng-click="navigateToJobDetails(job._id)">{{job.name}}</a>
-            </h4>
+            </div>
+
             <div class="job-description-container">{{job.description}}</div>
             <strong>Prestador de servicios:</strong><br>
             <span>{{ job.service_supplier.display_name }}</span>

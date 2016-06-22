@@ -1,0 +1,50 @@
+<section data-ng-controller="SettingsController">
+	<h3 class="text-center"></h3>
+
+	<div class="profile-alert-container">
+		<uib-alert type="{{alerts.type}}" close="alerts.close()" ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
+	</div>
+
+	<fieldset class="text-center">
+
+		<div class="user-field">
+			<img class="profile-image" src="/images/user.jpg">
+		</div>
+
+		<div class="user-fields-container">
+			<div class="user-field">
+				<label>Nombre:</label>
+				<span>&nbsp;{{serviceSupplier.display_name}}</span>
+			</div>
+
+			<div class="user-field">
+				<label>Tel&#233;fono:</label>
+				<span>&nbsp;{{serviceSupplier.phone_number}}</span>
+
+
+			<div class="user-field">
+				<label>Email:</label>
+				<span>&nbsp;{{serviceSupplier.email}}</span>
+			</div>
+
+			<div class="user-field">
+				<label>Descripci&#243;n:</label>
+				<span>&nbsp;{{serviceSupplier.description}}</span>
+			</div>
+
+			<div class="user-field">
+				<label>Fecha de registro:</label>
+				<span>&nbsp;{{serviceSupplier.registration_date | date: 'shortDate'}}</span>
+			</div>
+
+			<div class="user-field">
+				<label>Recibe notificaciones via sms:</label>
+				<span>&nbsp;No</span>
+			</div>
+		</div>
+
+		<div class="user-field">
+			<a class="btn btn-large btn-primary" href="/#!/settings/profile/edit-service-supplier">Editar</a>
+		</div>
+	</fieldset>
+</section>

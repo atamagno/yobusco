@@ -4,7 +4,7 @@ angular.module('search').controller('SuppliersSearchController',
     function($scope, $state, Authentication, ServiceSubcategoriesKeywords, ServiceCategories, ServiceSubcategoriesSearch) {
 
         $scope.authentication = Authentication;
-        $scope.serviceSubcategoriesKeywords = ServiceSubcategoriesKeywords.query();
+        $scope.serviceSubcategoriesKeywords = ServiceSubcategoriesKeywords;
         $scope.serviceCategories = ServiceCategories.query();
         $scope.dropDownDisabled = true;
         $scope.selectedCategory = 'Categorias de Servicios';
@@ -27,9 +27,15 @@ angular.module('search').controller('SuppliersSearchController',
             }
         };
 
-        $scope.navigateToResults = function() {
+        $scope.navigateToResults = function(serviceSubcategoryId) {
+
+            if (!serviceSubcategoryId)
+            {
+                serviceSubcategoryId = $scope.serviceSubcategoryId;
+            }
+
             $state.go('resultsServiceSupplier.list', {
-                serviceId: $scope.serviceSubcategoryId,
+                serviceId: serviceSubcategoryId,
                 currentPage: $scope.currentPage,
                 itemsPerPage: $scope.itemsPerPage
             });

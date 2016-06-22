@@ -16,10 +16,14 @@ module.exports = function(app) {
 
     app.route('/servicesuppliers-admin/:currentPage/:itemsPerPage').get(servicesuppliers.listByPage);
 
-    app.param('servicesupplierId', servicesuppliers.servicesupplierByID);
+    app.param('servicesupplierId', servicesuppliers.serviceSupplierByID);
 
     //ServiceSuppliers routes
     app.route('/servicesuppliers').get(servicesuppliers.list)
-    app.route('/servicesuppliers/:servicesupplierId').get(servicesuppliers.read)
+    app.route('/servicesuppliers/:servicesupplierId')
+        .get(servicesuppliers.read)
+        .put(users.requiresLogin, servicesuppliers.update);
+
     app.route('/servicesuppliers-results/:serviceId/:currentPage/:itemsPerPage').get(servicesuppliers.listByPage);
+    app.route('/servicesupplier-by-user/:userId').get(servicesuppliers.serviceSupplierByUserID);
 };

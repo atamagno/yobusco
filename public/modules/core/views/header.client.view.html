@@ -1,12 +1,21 @@
 <div class="container" data-ng-controller="HeaderController">
 	<div class="navbar-header">
+		<button class="navbar-toggle" type="button" ng-click="toggleCollapsibleMenu()">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
 		<a href="/#!/" class="navbar-brand">Mano de Obra</a>
 	</div>
-	<nav class="collapse navbar-collapse" role="navigation">
+	<nav class="uib-collapse navbar-collapse" uib-collapse="!isCollapsed" role="navigation">
 		<ul class="nav navbar-nav">
-			<li><a ui-sref="jobs.list({ status: 'all' })" data-ng-if="menu.shouldRender(authentication.user);">Mis Trabajos</a></li>
+			<li><a ui-sref="jobs.list({ status: 'all', currentPage: 1 })" data-ng-show="menu.shouldRender(authentication.user);">Mis Trabajos</a></li>
 		</ul>
-		<ul class="nav navbar-nav" data-ng-if="menu.renderIfAdmin(authentication.user);">
+		<ul class="nav navbar-nav" data-ng-show="menu.shouldRender(authentication.user)">
+			<li><a ui-sref="messages.list({condition: 'received', currentPage: 1 })">Mensajes <span class="badge" ng-show="newMessages != 0">{{newMessages}}</span></a></li>
+		</ul>
+		<ul class="nav navbar-nav" data-ng-show="menu.renderIfAdmin(authentication.user);">
 			<li><a ui-sref="admin.listUsers({ currentPage: 1, itemsPerPage: 5 })">Admin</a></li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right" data-ng-hide="authentication.user">
@@ -18,17 +27,34 @@
 				<a href="/#!/signin">Ingresar</a>
 			</li>
 		</ul>
-		<ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
+
+		<form class="navbar-form navbar-left" role="search" data-ng-show="state.current.name != 'home'">
+			<div class="input-group" style="width: 400px;">
+
+				<input type="text" class="form-control"  data-ng-model="selectedKeyword" typeahead-min-length="1"
+					   data-ng-keypress="$event.keyCode == 13 && navigateToResultsFromKeywordSearch()"
+					   uib-typeahead="serviceSubcategoryKeyword as serviceSubcategoryKeyword.keyword for serviceSubcategoryKeyword in serviceSubcategoriesKeywords | filter:$viewValue | limitTo:4"
+					   placeholder="Ingresa el rubro que buscas." typeahead-template-url="customTemplate.html" />
+
+				<span class="input-group-btn">
+                    <button class="btn btn-default" type="button" data-ng-click="navigateToResultsFromKeywordSearch()">
+						<span class="glyphicon glyphicon-search"></span>
+					</button>
+                </span>
+			</div>
+		</form>
+
+		<ul class="nav navbar-nav navbar-right" ng-show="authentication.user">
 			<li class="dropdown" uib-dropdown>
-				<a href="#" uib-dropdown-toggle>
-					<img class="logged-user-profile-img" data-ng-src="{{authentication.user.profile_picture}}">
-					<span data-ng-bind="authentication.user.displayName"></span> <b class="caret"></b>
+				<a class="dropdown-toggle user-header-dropdown-toggle" uib-dropdown-toggle role="button">
+					<img class="header-profile-image" data-ng-src="{{authentication.user.profile_picture}}">
+					<span ng-bind="authentication.user.displayName"></span> <b class="caret"></b>
 				</a>
 				<ul class="uib-dropdown-menu">
 					<li>
-						<a href="/#!/settings/profile">Editar Perfil</a>
+						<a ui-sref="profile.user">Mis Datos</a>
 					</li>
-					<li data-ng-show="authentication.user.provider === 'local'">
+					<li ng-show="authentication.user.provider === 'local'">
 						<a href="/#!/settings/password">Cambiar Contrase&#241;a</a>
 					</li>
 					<li class="divider"></li>
@@ -40,3 +66,9 @@
 		</ul>
 	</nav>
 </div>
+
+<script type="text/ng-template" id="customTemplate.html">
+	<a>
+		<span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+	</a>
+</script>

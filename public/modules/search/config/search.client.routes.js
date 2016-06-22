@@ -14,7 +14,7 @@ angular.module('search').config(
 				templateUrl: 'modules/search/views/results-servicesupplier.client.view.html'
 			}).
 			state('resultsServiceSupplier.list', {
-				url: '/:serviceId/:currentPage/:itemsPerPage?services&jobAmount&supplierName',
+				url: '/:serviceId/:currentPage/:itemsPerPage?services&jobAmount&supplierName&orderBy',
 				templateUrl: 'modules/search/views/results-list.client.view.html'
 			});
 	});

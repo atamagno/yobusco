@@ -1,10 +1,12 @@
 'use strict';
 
 angular.module('servicesuppliers').controller('ServiceSuppliersDetailController',
-    function($scope, $state, $stateParams, Authentication, ServiceSuppliers,
-             ServiceSuppliersDetails, Reviews, $uibModal) {
-
+    function($scope, $state, $stateParams, Authentication, ServiceSuppliers, ServiceSuppliersDetails, Reviews, $uibModal) {
         $scope.authentication = Authentication;
+
+        if ($scope.authentication.user) {
+            $scope.isServiceSupplier = $scope.authentication.user.roles.indexOf('servicesupplier') != -1;
+        }
 
         ServiceSuppliers.get({
             servicesupplierId: $stateParams.servicesupplierId
@@ -29,11 +31,7 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
             });
 
         $scope.navigateToJobDetails = function(jobId) {
-            if ($scope.authentication.user) {
-                $state.go('servicesupplier.viewJobDetail', { servicesupplierId: $stateParams.servicesupplierId, jobId: jobId });
-            } else {
-                $state.go('viewJobDetail', { jobId: jobId});
-            }
+            $state.go('servicesupplier.viewJobDetail', { servicesupplierId: $stateParams.servicesupplierId, jobId: jobId });
         };
 
         $scope.rate = 3;
@@ -51,18 +49,17 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
                 controller: 'SupplierReviewModalInstanceCtrl',
                 scope: $scope,
                 resolve: {
-
                     // Getting jobs that can be used for a review.
-                    jobs: function(JobSearch) {
-                            return JobSearch.jobsForReview.query(
-                            {serviceSupplierId: $scope.servicesupplier._id,
-                             userId: $scope.authentication.user._id}).$promise;
+                    jobs: function(JobDetails) {
+                        return JobDetails.jobsForReview.query({
+                                serviceSupplierId: $scope.servicesupplier._id,
+                                userId: $scope.authentication.user._id}).$promise;
                     },
-                    ratingtypes: function(RatingTypes){
+                    ratingtypes: function(RatingTypes) {
                         return RatingTypes.query().$promise;
                     },
-                    jobstatuses: function(JobStatus){
-                            return JobStatus.query().$promise;
+                    jobstatuses: function(JobStatus) {
+                        return JobStatus.query().$promise;
                     }
                 }
             });
@@ -74,12 +71,11 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
             });
         };
 
-
         $scope.getUpdatedOverallRating = function() {
 
             var ratingsAvgSum = 0;
             $scope.reviews.forEach(function(review) {
-                    ratingsAvgSum+= parseFloat(review.ratingsAvg);
+                ratingsAvgSum+= parseFloat(review.ratingsAvg);
             })
             return (ratingsAvgSum / $scope.reviews.length).toFixed(2);
         }
@@ -90,15 +86,15 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
 
         $scope.alerts = Alerts;
         $scope.jobs = jobs;
-        $scope.jobstatus = {name: '[Seleccione un resultado]'};
+        $scope.jobstatus = { name: 'Seleccione un resultado' };
         $scope.servicesubcategories = $scope.servicesupplier.services;
         $scope.selectedservices = [];
         $scope.rate = 3;
 
         $scope.jobstatuses = [];
-        for(var i=0; i<jobstatuses.length;i++)
+        for(var i = 0; i < jobstatuses.length; i++)
         {
-            if(jobstatuses[i].finished){
+            if (jobstatuses[i].finished) {
                 $scope.jobstatuses.push(jobstatuses[i])
             }
         }
@@ -115,19 +111,17 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                 rate: 3 });
         }
 
-
         // TODO: need to clear services if job is selected and then unselected/removed...
         /*$scope.watch('selectedjob', function(newvalue, oldvalue){
-            if(newvalue.length == 0)
-            {$scope.clearServices();}
-        })*/
+         if(newvalue.length == 0)
+         {$scope.clearServices();}
+         })*/
 
         $scope.setJobServices = function() {
             $scope.clearServices();
             for (var i = 0; i< $scope.selectedjob.services.length; i++) {
                 $scope.selectedservices.push($scope.selectedjob.services[i])
             }
-
         }
 
         $scope.clearServices = function(){
@@ -141,25 +135,30 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
 
         $scope.ok = function () {
 
-            if ($scope.selectedservices.length) {
-                if ($scope.comment) {
-
-                    var reviewInfo = {
-                        job: $scope.selectedjob && $scope.selectedjob._id ? $scope.selectedjob._id : null,
-                        services: $scope.selectedservices,
-                        comment: $scope.comment,
-                        ratings: $scope.ratings,
-                        recommend: $scope.recommend
-                    };
-
-                    $scope.addReview(reviewInfo);
-
-                } else {
-                    Alerts.show('danger', 'Debes dejar un comentario');
-                }
-            } else {
-                Alerts.show('danger','Debes seleccionar al menos un servicio');
+            if (!$scope.selectedservices.length) {
+                Alerts.show('danger','Debes seleccionar al menos un servicio.');
+                return;
             }
+
+            if (!$scope.comment) {
+                Alerts.show('danger', 'Debes dejar un comentario.');
+                return;
+            }
+
+            if (!$scope.jobstatus._id) {
+                Alerts.show('danger', 'Debes seleccionar un resultado del trabajo.');
+                return;
+            }
+
+            var reviewInfo = {
+                job: $scope.selectedjob && $scope.selectedjob._id ? $scope.selectedjob._id : null,
+                services: $scope.selectedservices,
+                comment: $scope.comment,
+                ratings: $scope.ratings,
+                recommend: $scope.recommend ? true : false
+            };
+
+            $scope.addReview(reviewInfo);
         };
 
         $scope.cancel = function () {
@@ -188,7 +187,6 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
         };
 
         $scope.addReview = function(reviewInfo) {
-
 
             var services = [];
             for (var i = 0; i < reviewInfo.services.length; i++) {
@@ -226,5 +224,4 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
             });
 
         };
-
-});
+    });

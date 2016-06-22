@@ -4,15 +4,12 @@ angular.module('search')
     .factory('ServiceSubcategoriesKeywords',
         function($resource)
         {
-            // console.log('executed!! - checking if service is called again');
-            // TODO: what if the service returns no results? What should we do?
-            // Since the route with this dependency won't be resolved...
-            return $resource('servicesubcategories-keywords');
+            return $resource('servicesubcategories-keywords').query();
         })
     .factory('ServiceSuppliersSearch',
         function($resource) {
             return $resource('servicesuppliers-results/:serviceId/:currentPage/:itemsPerPage', null, {
-                    'query':  { method: 'GET', isArray: false, params: { services: '', jobAmount: 0, supplierName: '' } }
+                    'query':  { method: 'GET', isArray: false, params: { services: '', jobAmount: 0, supplierName: '', orderBy: '' } }
                 });
         })
     .factory('ServiceSubcategoriesSearch',
