@@ -1,3 +1,7 @@
+.service-supplier-review-list:not(:last-child) {
+    border-bottom: 1px solid #ccc;
+}
+
 .service-supplier-img {
     padding: 10px;
 }

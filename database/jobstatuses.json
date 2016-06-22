@@ -1,30 +1,69 @@
 {
-    "_id": ObjectId("56269183477f11b662a6dd88"),
-    "name": "En Progreso",
-    finished: false,
-    default: true
+    "_id" : ObjectId("56bd52bb8b2d42938751aa5d"),
+    "name" : "Guaranteed",
+    "points" : 0.8,
+    "possible_next_statuses" : [
+
+    ],
+    "post_finished" : true
 }
 {
-    "_id": ObjectId("56269183455f11b0b2a6dd88"),
-    "name": "Pausado",
-    finished: false,
-    default: false
+"_id" : ObjectId("56269183455f11b0b2a6dd88"),
+"name" : "Paused",
+"possible_next_statuses" : [
+ObjectId("56269183477f11b0b2a99d88"),
+ObjectId("56269183477f11b662a6dd88"),
+ObjectId("56264483477f11b0b2a6dd88"),
+ObjectId("56263383477f11b0b2a6dd88")
+]
 }
 {
-    "_id": ObjectId("56264483477f11b0b2a6dd88"),
-    "name": "Completado",
-    finished: true,
-    default: false
+"_id" : ObjectId("56269183477f11b0b2a99d88"),
+"name" : "Delayed",
+"possible_next_statuses" : [
+ObjectId("56269183455f11b0b2a6dd88"),
+ObjectId("56269183477f11b662a6dd88"),
+ObjectId("56264483477f11b0b2a6dd88"),
+ObjectId("56263383477f11b0b2a6dd88")
+]
 }
 {
-    "_id": ObjectId("56269183477f11b0b2a99d88"),
-    "name": "Demorado",
-    finished: false,
-    default: false
+"_id" : ObjectId("56269183477f11b662a6dd88"),
+"default" : true,
+"name" : "In Progress",
+"possible_next_statuses" : [
+ObjectId("56269183455f11b0b2a6dd88"),
+ObjectId("56269183477f11b0b2a99d88"),
+ObjectId("56264483477f11b0b2a6dd88"),
+ObjectId("56263383477f11b0b2a6dd88")
+]
 }
 {
-    "_id": ObjectId("56263383477f11b0b2a6dd88"),
-    "name": "Abandonado",
-    finished: true,
-    default: false
+"_id" : ObjectId("56264483477f11b0b2a6dd88"),
+"finished" : true,
+"name" : "Completed",
+"points" : 1.0,
+"possible_next_statuses" : [
+ObjectId("56bd52f78b2d42938751aa5e"),
+ObjectId("56bd52bb8b2d42938751aa5d"),
+ObjectId("56269183477f11b662a6dd88")
+]
+}
+{
+"_id" : ObjectId("56263383477f11b0b2a6dd88"),
+"finished" : true,
+"name" : "Abandoned",
+"points" : -1.0,
+"possible_next_statuses" : [
+ObjectId("56bd52bb8b2d42938751aa5d")
+]
+}
+{
+"_id" : ObjectId("56bd52f78b2d42938751aa5e"),
+"name" : "Not guaranteed",
+"points" : -0.8,
+"possible_next_statuses" : [
+ObjectId("56bd52bb8b2d42938751aa5d")
+],
+"post_finished" : true
 }

@@ -26,4 +26,5 @@ module.exports = function(app) {
 
 	app.route('/jobs-by-user/:jobUserId/:status').get(jobs.listByUser);
 	app.route('/jobs-by-servicesupplier/:serviceSupplierId').get(jobs.listByServiceSupplier);
+	app.route('/jobs-for-review/:serviceSupplierId/:userId').get(jobs.listForReview);
 };

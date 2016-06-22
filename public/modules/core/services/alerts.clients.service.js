@@ -1,6 +1,5 @@
 'use strict';
 
-//ServiceCategories service used to communicate ServiceCategories REST endpoints
 angular.module('core')
     .factory('Alerts',function($timeout) {
         return {

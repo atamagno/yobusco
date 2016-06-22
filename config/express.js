@@ -16,8 +16,17 @@ var express        = require('express'),
 module.exports = function(db) {
 
     // globbing model files
-    config.getGlobbedFiles('./app/models/**/*.js').forEach(function(modelPath) {
+    config.getGlobbedFiles('./app/models/*.js').forEach(function(modelPath) {
         require(path.resolve(modelPath));
+    });
+
+
+    // globbing model files with static data
+    // TODO: move more files to staticdata folder (e.g.: jobstatuses, ratingtypes, etc), so they are retrieved
+    // only once by the application.
+    config.staticdata = [{}];
+    config.getGlobbedFiles('./app/models/staticdata/*.js').forEach(function(modelPath) {
+        require(path.resolve(modelPath))(config);
     });
 
     // Setting application local variables

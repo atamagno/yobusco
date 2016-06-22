@@ -1,4 +1,4 @@
-<section data-ng-controller="UserJobsController" data-ng-init="findOne()">
+<section data-ng-init="findOne()">
 
     <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
 
@@ -70,9 +70,9 @@
         <div class="col-lg-12">
             <br>
             <div class="service-supplier-header-container">
-                <div class="pull-right leave-review-button-container" data-ng-show="job.status.finished && authentication.user && (authentication.user.username === job.user.username)">
-                    <a data-ng-click="openReviewModal()" class="btn btn-success">Deja un comentario</a>
-                </div>
+                <!--div class="pull-right leave-review-button-container" data-ng-show="job.status.finished && authentication.user && (authentication.user.username === job.user.username)">
+                    <a data-ng-click="openReviewModal(job)" class="btn btn-success">Deja un comentario</a>
+                </div--> <!-- removing comment/review from jobs, since they will be added when job is set to finished-->
                 <div class="reviews-label-container">Comentarios recientes</div>
             </div>
             <br>
@@ -98,42 +98,6 @@
             </div>
         </div>
     </div>
-
-    <script type="text/ng-template" id="addReviewModal">
-        <div class="modal-header">
-            <h3 class="modal-title">Agrega un comentario</h3>
-        </div>
-        <div class="modal-body">
-
-            <h4 class="review-services-title">Servicios</h4>
-
-            <input type="text" data-ng-model="selected" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
-                   uib-typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
-                   placeholder="Selecciona un servicio.">
-
-            <div data-ng-show="selectedservices.length" class="review-selected-services">
-                <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default review-selected-service"
-                        data-ng-repeat="selectedservice in selectedservices">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{selectedservice.name}}</button>
-            </div>
-
-            <h4 class="review-ratings-title">Ratings</h4>
-            <div class="review-ratings-container">
-                <div data-ng-repeat="rating in ratings">
-                    {{rating.name}} <a uib-tooltip="{{rating.description}}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
-                    <div class="pull-right">
-                        <uib-rating data-ng-model="rating.rate" max="5" class="review-rating-selector"></uib-rating>{{rating.rate}} Estrellas
-                    </div>
-                </div>
-            </div>
-
-            <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
-            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
-        </div>
-    </script>
 
     <script type="text/ng-template" id="addJobImagesModal">
         <div class="modal-header">
