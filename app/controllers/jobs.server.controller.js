@@ -13,24 +13,22 @@ var mongoose = require('mongoose'),
  * Create a Job
  */
 exports.create = function(req, res) {
+
 	var job = new Job(req.body);
 	job.user = req.user;
 
-	job.save(function(err) {
+	if(req.body.jobpath == 'fromReview'){
+		job.setJobDefaultsForReview();
+	}
+
+
+	job.save(function(err, job) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			// Moved logic to job.server.model... (post hook middleware)
-			/*job.constructor.populate(job, [{path: 'service_supplier', select: 'display_name'},
-										   {path: 'user'},
-				                           {path: 'status'}],function(err,job){
-						res.jsonp(job);
-			})*/
-			// TODO: check if population above (now that was moved to post save hook) is done.
 			res.jsonp(job);
-
 		}
 	});
 };
@@ -46,11 +44,12 @@ exports.read = function(req, res) {
  * Update a Job
  */
 exports.update = function(req, res) {
+
 	var job = req.job;
 
 	job = _.extend(job , req.body);
 
-	job.save(function(err) {
+	job.save(function(err, job) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -203,6 +202,7 @@ exports.listByServiceSupplier = function(req, res) {
 
 	var serviceSupplierId = req.params.serviceSupplierId;
 	Job.find({service_supplier: serviceSupplierId}).populate('service_supplier', 'display_name')
+												   .populate('user', 'displayName')
 												   .populate('status').exec(function(err, jobs) {
 		if (err) {
 			return res.status(400).send({

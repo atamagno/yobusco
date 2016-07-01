@@ -18,8 +18,7 @@ angular.module('jobs').controller('UserJobCreateController',
 
 			if ($scope.selectedServiceSupplier && $scope.selectedServiceSupplier._id) {
 				// TODO: add validation for selected services here.
-				// Check how angular form validation has been implemented in admin (user search form).
-				// adminEnhancements branch...
+				// Check Agus' implementation of mandatory fields for registration and use same approach
 				var services = [];
 				for (var i = 0; i < $scope.selectedservices.length; i++) {
 					services.push($scope.selectedservices[i]._id);
@@ -40,21 +39,14 @@ angular.module('jobs').controller('UserJobCreateController',
 				// Redirect after save
 				job.$save(function (job) {
 
-					// NOTE: when transitioning to viewDetail state,
-					// this same controller gets instantiated (is there a way to avoid the
-					// global functions (e.g.: get service supplier) to be executed?)
-					// We probably don't have stateParams.servicesupplierId when transitioning to this state,
-					// thus ServiceSuppliers.get returns an empty array (and we get an angular exception)
-					// Maybe we need a separate controller for the viewDetail view.
 					$state.go('jobs.viewDetail', {jobId: job._id});
 
 					// Clear form fields
-					// TODO: do we really need to clear the form fields if we're redirecting to a different state?
+					$scope.selectedservices = '';
 					$scope.name = '';
 					$scope.description = '';
-					$scope.start_date = '';
 					$scope.expected_date = '';
-					$scope.selectedservices = '';
+
 				}, function (errorResponse) {
 					$scope.error = errorResponse.data.message;
 					Alerts.show('danger', $scope.error);

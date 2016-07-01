@@ -113,11 +113,9 @@
         </div>
         <div class="modal-body">
 
-            <h4 class="review-services-title">Servicios</h4>
+            <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible">{{alerts.msg}}</uib-alert>
 
-            <!--input type="text" data-ng-model="selected" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
-                   uib-typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
-                   placeholder="Selecciona un servicio."-->
+            <h4 class="review-services-title">Servicios</h4>
 
             <div data-ng-show="selectedservices.length" class="review-selected-services">
                 <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default review-selected-service"

@@ -1,5 +1,5 @@
 angular.module('jobs').controller('UserJobDetailsAndEditController',
-	function ($scope, $stateParams, $state, Jobs, $uibModal, Alerts, Reviews) {
+	function ($scope, $stateParams, $state, Jobs, $uibModal, Alerts) {
 
 		// Find existing Job
 		$scope.findOne = function () {
@@ -7,14 +7,6 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 				jobId: $stateParams.jobId
 			}).$promise.then(function (job) {
 					$scope.job = job;
-					// Eliminating the search of job reviews.
-					// There should be only one review per job
-					// ...TODO: consider revising this later...but it seems it does not make sense....
-					/*JobSearch.reviews.query({
-					 jobId: $stateParams.jobId
-					 }).$promise.then(function (response) {
-					 $scope.reviews = response;
-					 });*/
 				});
 		};
 
@@ -36,6 +28,7 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 
 		// Update existing Job
 		$scope.update = function () {
+
 			var job = $scope.job;
 
 			if (job.service_supplier && job.service_supplier._id) {
@@ -44,11 +37,9 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 				if (job.status.finished && !job.finish_date) {
 					Alerts.show('danger', 'Debes seleccionar una fecha de finalizaci\u00f3n');
 				} else {
-					// TODO: check if job status is finished (Completed or Abbandonned)
-					// If so, then let the user know that a review is required. Another modal?
 					if (job.status.finished) {
-						$scope.openReviewModal(job); // note, server will take care of updating the job when
-													 // the status is finished...
+						$scope.openReviewModal();
+
 					}
 					else {
 						job.$update(function () {
@@ -66,68 +57,49 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 			}
 		};
 
-		$scope.openReviewModal = function (job) {
+		$scope.openReviewModal = function () {
 
 			var modalInstance = $uibModal.open({
 				templateUrl: 'addReviewModal',
 				controller: 'ReviewModalInstanceCtrl',
+				scope: $scope,
 				resolve: {
-					job: job,
 					JobStatuses: function(JobStatus){
-							return JobStatus.query().$promise;
-						},
-
+						return JobStatus.query().$promise;
+					},
 					RatingTypes: function(RatingTypes){
 						return RatingTypes.query().$promise;
 					}
-
 				}
 			});
 
-			modalInstance.result.then(function (reviewInfo) {
-				$scope.addReview(reviewInfo)
-				// TODO: maybe just update the job on the server side (since reviewInfo should have the job?)?
-				// What if the status update does not result in completed status? How are we updating it?
-				// Since a review will either have a job (and its status will be updated)
-				// or it will be generated on the fly...
+			modalInstance.result.then(function (reviewinfo) {
+
+				$scope.addReview(reviewinfo)
 
 			});
 		};
 
-		$scope.addReview = function (reviewInfo) {
+		$scope.addReview = function (reviewinfo) {
 
+			var job = $scope.job;
 			var ratings = [];
-			for (var i = 0; i < reviewInfo.ratings.length; i++) {
-				ratings.push({type: reviewInfo.ratings[i]._id, rate: reviewInfo.ratings[i].rate});
+
+			// Converting review ratings in the format used by server.
+			for (var i = 0; i < reviewinfo.ratings.length; i++) {
+				reviewinfo.ratings[i] = { type: reviewinfo.ratings[i]._id, rate: reviewinfo.ratings[i].rate };
 			}
 
-			// Create new Review object and passing job data to be updated...
-			var jobUpdatedDataForReview = {
-				description: $scope.job.description,
-				status: $scope.job.status._id,
-				finish_date: $scope.job.finish_date
-			};
+			job.review = [reviewinfo];
 
-			var review = new Reviews({
-				service_supplier: $scope.job.service_supplier._id,
-				user: $scope.authentication.user._id,
-				comment: reviewInfo.comment,
-				ratings: ratings,
-				recommend: reviewInfo.recommend,
-				job: $scope.job._id,
-				jobDetails: jobUpdatedDataForReview,
-				reviewPath: 'fromJob'
-			});
-
-			// Redirect after save
-			review.$save(function (job) {
+			job.$update(function(){
 				$state.go('jobs.viewDetail', {jobId: job._id});
-				// $scope.reviews.push(response);
-				// Alerts.show('success', 'Rese\u00f1a creada exitosamente');
 			}, function (errorResponse) {
+
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger', $scope.error);
 			});
+
 		};
 
 		$scope.addImages = function (imagePaths) {
@@ -283,9 +255,7 @@ angular.module('jobs').controller('EditJobModalInstanceCtrl',
 
 
 angular.module('jobs').controller('ReviewModalInstanceCtrl',
-	function ($scope, $uibModalInstance, JobStatuses, RatingTypes, job) {
-
-		$scope.job = job;
+	function ($scope, Alerts, $uibModalInstance, JobStatuses, RatingTypes) {
 
 		$scope.finishedjobstatuses = [];
 		for(var i=0; i<JobStatuses.length;i++)
@@ -307,18 +277,24 @@ angular.module('jobs').controller('ReviewModalInstanceCtrl',
 										rate: 3 });
 		}
 
-		$scope.selectedservices = job.services;
+		$scope.selectedservices = $scope.job.services;
 		$scope.rate = 3;
 
 		$scope.ok = function () {
 
-			var reviewInfo = {
-				comment: $scope.comment,
-				ratings: $scope.ratings,
-				recommend: $scope.recommend
-			};
+			if ($scope.comment) {
 
-			$uibModalInstance.close(reviewInfo);
+				var reviewinfo = {
+					comment: $scope.comment,
+					ratings: $scope.ratings,
+					recommend: $scope.recommend
+				};
+				$uibModalInstance.close(reviewinfo);
+
+
+			} else {
+					Alerts.show('danger', 'Debes dejar un comentario');
+			}
 		};
 
 		$scope.cancel = function () {
@@ -328,7 +304,6 @@ angular.module('jobs').controller('ReviewModalInstanceCtrl',
 		$scope.changeStatus = function (status) {
 			$scope.job.status = status;
 		};
-
 
 	});
 

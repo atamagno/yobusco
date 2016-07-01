@@ -18,7 +18,7 @@ var JobCount = new Schema({
         type: Number,
         default: 0
     }
-});
+}, {_id: false});
 
 
 
@@ -63,7 +63,7 @@ var ServiceSupplierSchema = new Schema({
         }],
         required: 'Al menos una subcategor\u00eda de servicio es requerida'
     },
-    jobCounts: {
+    job_counts: {
         type: [JobCount],
         default: []
     },
@@ -84,9 +84,11 @@ var ServiceSupplierSchema = new Schema({
 
 ServiceSupplierSchema.methods.updatePoints = function(points)
 {
-    this.points += points;
-    this.points = parseFloat(this.points.toFixed(2)); // rounding...
-    this.updateCategory();
+    if(points){
+        this.points += points;
+        this.points = parseFloat(this.points.toFixed(2)); // rounding...
+        this.updateCategory();
+    }
 
 }
 
@@ -98,22 +100,30 @@ ServiceSupplierSchema.methods.updateCategory = function(){
 
 ServiceSupplierSchema.methods.updateJobCounts = function(previousJobStatusId, jobStatusId)
 {
-    // TODO: this needs to consider decrementing the previous job status count,
-    // and incrementing the new one...probably to be called from pre save, with the previous status id...
-    // Probably there should be a difference between new and updated jobs.
+
+    // If we received a previous status, and it's different than the next status,
+    // we'll look for it and decrement it.
     if(previousJobStatusId){
-        var previousJobStatusJobCountIndex = _.findIndex(this.jobCounts, {jobstatus:previousJobStatusId});
-        this.jobCounts[previousJobStatusJobCountIndex].count--;
+        if(previousJobStatusId.id != jobStatusId.id){
+            var previousJobStatusJobCountIndex = _.findIndex(this.job_counts, {jobstatus:previousJobStatusId});
+            if(previousJobStatusJobCountIndex != -1){
+                this.job_counts[previousJobStatusJobCountIndex].count--;
+            }
 
+        }
+        else {return;} // if previous and new status are the same, then there's nothing to update.
     }
 
-
-    var jobStatusJobCountIndex = _.findIndex(this.jobCounts, {jobstatus:jobStatusId});
-    if(jobStatusJobCountIndex == -1){
-        this.jobCounts.push({jobstatus: jobStatusId, count: 1})
-    }
-    else{
-        this.jobCounts[jobStatusJobCountIndex].count++;
+    // If we received a next status, we'll add it if it does not exist in the collection
+    // or increment the count for it, if we have it already.
+    if(jobStatusId){
+        var jobStatusJobCountIndex = _.findIndex(this.job_counts, {jobstatus: jobStatusId});
+            if (jobStatusJobCountIndex == -1) {
+                this.job_counts.push({jobstatus: jobStatusId, count: 1})
+            }
+            else {
+                this.job_counts[jobStatusJobCountIndex].count++;
+            }
     }
 
 }

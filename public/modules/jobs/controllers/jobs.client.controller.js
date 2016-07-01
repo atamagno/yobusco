@@ -2,7 +2,7 @@
 
 // UserJobs controller
 angular.module('jobs').controller('UserJobsController',
-	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobStatuses, ServiceSuppliers, Reviews, $uibModal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobStatuses, ServiceSuppliers, $uibModal, Alerts) {
 
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
