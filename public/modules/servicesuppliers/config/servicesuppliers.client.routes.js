@@ -7,19 +7,19 @@ angular.module('servicesuppliers').config(
 		$stateProvider.
 			state('servicesupplier', {
 				url: '/servicesuppliers-detail',
-				templateUrl: 'modules/servicesuppliers/views/servicesupplier.client.view.html',
+				templateUrl: 'modules/servicesuppliers/views/servicesupplier.client.view.html'
 			}).
 			state('servicesupplier.detail', {
 				url: '/:servicesupplierId',
-				templateUrl: 'modules/servicesuppliers/views/servicesupplier-detail.client.view.html',
+				templateUrl: 'modules/servicesuppliers/views/servicesupplier-detail.client.view.html'
 			}).
 			state('servicesupplier.jobs', {
 				url: '/jobs/:servicesupplierId',
-				templateUrl: 'modules/servicesuppliers/views/servicesupplier-jobs.client.view.html',
+				templateUrl: 'modules/servicesuppliers/views/servicesupplier-jobs.client.view.html'
 			}).
 			state('servicesupplier.reviews', {
 				url: '/reviews/:servicesupplierId',
-				templateUrl: 'modules/servicesuppliers/views/servicesupplier-reviews.client.view.html',
+				templateUrl: 'modules/servicesuppliers/views/servicesupplier-reviews.client.view.html'
 			}).
 			state('servicesupplier.viewJobDetail', {
 				url: '/:servicesupplierId/job-detail/:jobId',

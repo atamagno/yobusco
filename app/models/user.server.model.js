@@ -37,7 +37,7 @@ var UserSchema = new Schema({
 		default: '',
 		validate: [validateLocalStrategyProperty, 'Por favor ingrese un apellido']
 	},
-	displayName: {
+	displayName: { //TODO: rename to display_name (to align with service supplier)
 		type: String,
 		trim: true
 	},

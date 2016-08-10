@@ -1,5 +1,5 @@
 <div class="service-supplier-header-container">
-    <div class="pull-right create-job-button-container" ng-show="authentication.user && !isServiceSupplier">
+    <div class="pull-right create-job-button-container" data-ng-show="authentication.user">
         <a ui-sref="jobs.create({ servicesupplierId: servicesupplier._id })" class="btn btn-primary">Crear trabajo</a>
     </div>
     <h1>Detalles</h1>
@@ -41,20 +41,11 @@
                 <strong>Tel&#233;fono: </strong> ...<br><br>
             </div>
 
-            <label class="control-label">Servicios: </label>
-            <span data-ng-repeat="servicesubcategory in servicesupplier.services">
-                <span class="label label-default">{{servicesubcategory.name}}</span>
-            </span>
+            <label class="control-label">Servicios</label>
+            <div data-ng-repeat="servicesubcategory in servicesupplier.services">
+                - {{servicesubcategory.name}}<br>
+            </div>
         </div>
-
-        <!--<div class="ratings">
-            <p class="pull-right">
-                <button type="button" class="btn btn-default btn-sm">
-                    <span class="glyphicon glyphicon-thumbs-up"></span> Me Gusta
-                </button>
-            </p>
-        </div>-->
-
         <div class="ratings service-supplier-rating-count">
             <p class="pull-right">
                 <ng-pluralize count="reviews.length"
@@ -63,7 +54,8 @@
                                      'other': '{{reviews.length}} comentarios'}">
                 </ng-pluralize>
             </p>
-            <p>
+
+            <p data-ng-show="jobs.length">
                 <uib-rating data-ng-model="servicesupplier.overall_rating" max="max" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
                 <span>{{servicesupplier.overall_rating}}</span> (promedio)
             </p>
@@ -74,29 +66,28 @@
 </div>
 
 <div class="service-supplier-header-container">
-    <div class="pull-right leave-review-button-container" ng-show="authentication.user">
+    <div class="pull-right leave-review-button-container" data-ng-show="authentication.user">
         <a data-ng-click="openReviewModal()" class="btn btn-success">Deja un comentario</a>
     </div>
     <div class="reviews-label-container">Comentarios recientes</div>
 </div>
 <br>
 <div class="well" ng-cloak>
-
-    <div data-ng-hide="reviews.length">No hay comentarios</div>
-
-    <div class="row service-supplier-review-list" data-ng-repeat="review in reviews">
+    <div class="row service-supplier-review-list" data-ng-repeat="job in jobs | filter: jobHasReview | limitTo:5 | orderBy: '-review[0].created'">
         <div class="col-md-12">
             <br>
-            <p>{{review.user.displayName}}
-                <span class="pull-right">{{ review.created | date: 'medium' }}</span>
+            <p>{{job.user.displayName || authentication.user.displayName}}
+                <span class="pull-right">
+                    <span class="glyphicon glyphicon-time"></span>
+                    {{ job.review[0].created | date: 'medium' }}
+                </span>
             </p>
             <p>
-                <uib-rating data-ng-model="review.ratingsAvg" max="max" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
-                <span>({{review.ratingsAvg}})</span>
+                <uib-rating data-ng-model="job.review[0].ratingsAvg" max="max" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
+                <span>({{job.review[0].ratingsAvg}})</span>
             </p>
-            <p>{{review.comment}}</p>
+            <p>{{job.review[0].comment}}</p>
         </div>
         <hr>
     </div>
-
 </div>

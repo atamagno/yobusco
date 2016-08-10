@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('servicesuppliers').controller('ServiceSuppliersDetailController',
-    function($scope, $state, $stateParams, Authentication, ServiceSuppliers, ServiceSuppliersDetails, Reviews, $uibModal) {
+    function($scope, $state, $stateParams, Authentication, ServiceSuppliers,
+             ServiceSuppliersDetails, $uibModal) {
+
+        $scope.jobs = [];
         $scope.authentication = Authentication;
 
         if ($scope.authentication.user) {
@@ -13,20 +16,10 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
         }).$promise.then(function(servicesupplier) {
                 $scope.servicesupplier = servicesupplier;
 
-                // TODO: we should probably paginate the reviews and jobs
-                // Or maybe display just the most recent xxx on the details view,
-                // and provide a 'More' option and redirect to the reviews view, with paginated
-                // results.
-                ServiceSuppliersDetails.reviews.query({
-                    serviceSupplierId: $scope.servicesupplier._id
-                }).$promise.then(function (response) {
-                        $scope.reviews = response;
-                    });
-
                 ServiceSuppliersDetails.jobs.query({
                     serviceSupplierId: $scope.servicesupplier._id
-                }).$promise.then(function (response) {
-                        $scope.jobs = response;
+                }).$promise.then(function (jobs) {
+                        $scope.jobs = jobs;
                     });
             });
 
@@ -49,52 +42,82 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
                 controller: 'SupplierReviewModalInstanceCtrl',
                 scope: $scope,
                 resolve: {
+
                     // Getting jobs that can be used for a review.
-                    jobs: function(JobDetails) {
-                        return JobDetails.jobsForReview.query({
-                                serviceSupplierId: $scope.servicesupplier._id,
-                                userId: $scope.authentication.user._id}).$promise;
+                    jobsforreview: function(JobSearch) {
+                            return JobSearch.jobsForReview.query(
+                            {serviceSupplierId: $scope.servicesupplier._id,
+                             userId: $scope.authentication.user._id}).$promise;
                     },
-                    ratingtypes: function(RatingTypes) {
+                    ratingtypes: function(RatingTypes){
                         return RatingTypes.query().$promise;
                     },
-                    jobstatuses: function(JobStatus) {
-                        return JobStatus.query().$promise;
+                    jobstatuses: function(JobStatus){
+                            return JobStatus.query().$promise;
                     }
                 }
             });
 
-            modalInstance.result.then(function (review) {
-                $scope.reviews.splice(0, 0, review);
-                review.user = $scope.authentication.user;
+            modalInstance.result.then(function (job) {
+                $scope.addJob(job);
                 $scope.servicesupplier.overall_rating = $scope.getUpdatedOverallRating();
             });
         };
 
+        $scope.addJob = function(job){
+
+            var found = false;
+            for(var i=0;i<$scope.jobs.length;i++)
+            {
+                if(job._id == $scope.jobs[i]._id){
+                    $scope.jobs[i] = job;
+                    found = true;
+                    break;
+                }
+            }
+
+            if(!found){
+                $scope.jobs.push(job);
+            }
+
+        }
+
+        $scope.jobHasReview = function(job){
+            return job.review.length > 0;
+        }
+        
+        
         $scope.getUpdatedOverallRating = function() {
 
             var ratingsAvgSum = 0;
-            $scope.reviews.forEach(function(review) {
-                ratingsAvgSum+= parseFloat(review.ratingsAvg);
-            })
-            return (ratingsAvgSum / $scope.reviews.length).toFixed(2);
+            var reviewsCount = 0;
+            for(var i = 0; i<$scope.jobs.length;i++)
+            {
+                // if job has a review associated...this will change if we modify job model
+                // to use a single review instead of array
+                if($scope.jobs[i].review[0]){
+                    ratingsAvgSum += parseFloat($scope.jobs[i].review[0].ratingsAvg);
+                    reviewsCount++;
+                }
+            }
+            return (ratingsAvgSum / reviewsCount).toFixed(2);
         }
     });
 
 angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
-    function ($scope, $uibModalInstance, Alerts, Reviews, jobs, ratingtypes, jobstatuses) {
+    function ($scope, $uibModalInstance, Alerts, Jobs, jobsforreview, ratingtypes, jobstatuses) {
 
         $scope.alerts = Alerts;
-        $scope.jobs = jobs;
-        $scope.jobstatus = { name: 'Seleccione un resultado' };
+        $scope.jobsforreview = jobsforreview;
+        $scope.jobstatus = {name: '[Seleccione un resultado]'};
         $scope.servicesubcategories = $scope.servicesupplier.services;
         $scope.selectedservices = [];
         $scope.rate = 3;
 
         $scope.jobstatuses = [];
-        for(var i = 0; i < jobstatuses.length; i++)
+        for(var i=0; i<jobstatuses.length;i++)
         {
-            if (jobstatuses[i].finished) {
+            if(jobstatuses[i].finished){
                 $scope.jobstatuses.push(jobstatuses[i])
             }
         }
@@ -111,17 +134,19 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                 rate: 3 });
         }
 
+
         // TODO: need to clear services if job is selected and then unselected/removed...
         /*$scope.watch('selectedjob', function(newvalue, oldvalue){
-         if(newvalue.length == 0)
-         {$scope.clearServices();}
-         })*/
+            if(newvalue.length == 0)
+            {$scope.clearServices();}
+        })*/
 
         $scope.setJobServices = function() {
             $scope.clearServices();
             for (var i = 0; i< $scope.selectedjob.services.length; i++) {
                 $scope.selectedservices.push($scope.selectedjob.services[i])
             }
+
         }
 
         $scope.clearServices = function(){
@@ -135,30 +160,44 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
 
         $scope.ok = function () {
 
-            if (!$scope.selectedservices.length) {
-                Alerts.show('danger','Debes seleccionar al menos un servicio.');
-                return;
+            // TODO: add client validation like Agus is doing with user registration.
+            // to avoid this nested conditions...
+            if ($scope.selectedservices.length) {
+                if ($scope.comment) {
+                    if($scope.jobstatus._id){
+
+                        var jobinfo = {
+                            job: $scope.selectedjob && $scope.selectedjob._id ? $scope.selectedjob._id : null,
+                            services: $scope.selectedservices,
+                            status: $scope.jobstatus._id
+
+                        }
+
+                        // Converting review ratings in the format used by server.
+                        var ratings = [];
+                        for (var i = 0; i < $scope.ratings.length; i++) {
+                            ratings.push({ type: $scope.ratings[i]._id, rate: $scope.ratings[i].rate });
+                        }
+
+                        var reviewinfo = {
+                            comment: $scope.comment,
+                            ratings: ratings,
+                            recommend: $scope.recommend
+                        };
+
+                        $scope.addReview(jobinfo, reviewinfo);
+                    }
+                    else {
+                        Alerts.show('danger', 'Debes seleccionar un resultado...');
+                    }
+
+
+                } else {
+                    Alerts.show('danger', 'Debes dejar un comentario');
+                }
+            } else {
+                Alerts.show('danger','Debes seleccionar al menos un servicio');
             }
-
-            if (!$scope.comment) {
-                Alerts.show('danger', 'Debes dejar un comentario.');
-                return;
-            }
-
-            if (!$scope.jobstatus._id) {
-                Alerts.show('danger', 'Debes seleccionar un resultado del trabajo.');
-                return;
-            }
-
-            var reviewInfo = {
-                job: $scope.selectedjob && $scope.selectedjob._id ? $scope.selectedjob._id : null,
-                services: $scope.selectedservices,
-                comment: $scope.comment,
-                ratings: $scope.ratings,
-                recommend: $scope.recommend ? true : false
-            };
-
-            $scope.addReview(reviewInfo);
         };
 
         $scope.cancel = function () {
@@ -186,42 +225,48 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
             $scope.selectedservices.splice(index, 1);
         };
 
-        $scope.addReview = function(reviewInfo) {
+        $scope.addReview = function(jobinfo, reviewinfo) {
 
-            var services = [];
-            for (var i = 0; i < reviewInfo.services.length; i++) {
-                services.push(reviewInfo.services[i]._id);
-            }
 
-            var ratings = [];
-            for (var i = 0; i < reviewInfo.ratings.length; i++) {
-                ratings.push({ type: reviewInfo.ratings[i]._id, rate: reviewInfo.ratings[i].rate });
-            }
-
-            var jobDetails = {
-                status: $scope.jobstatus._id,
-                services: services
-            };
-
-            // Create new Review object
-            var review = new Reviews({
-                service_supplier: $scope.servicesupplier._id,
-                user: $scope.authentication.user._id,
-                comment: reviewInfo.comment,
-                ratings: ratings,
-                recommend: reviewInfo.recommend,
-                job: reviewInfo.job,
-                jobDetails: jobDetails,
-                reviewPath: 'fromReview'
+            // If an existing job was selected for the review, we'll just update it
+            var job = new Jobs({
+                status: jobinfo.status,
+                review: [reviewinfo],
+                jobpath: 'fromReview'
             });
 
-            // Redirect after save
-            review.$save(function (review) {
-                $uibModalInstance.close(review)
-            }, function (errorResponse) {
-                $scope.error = errorResponse.data.message;
-                Alerts.show('danger', $scope.error);
-            });
+            if(jobinfo.job){
+
+                job._id = jobinfo.job;
+
+                job.$update(function(job){
+                    $uibModalInstance.close(job)
+                }, function (errorResponse) {
+                    // TODO: after clicking OK to submit we lose the rating types for next input...
+                    $scope.error = errorResponse.data.message;
+                    Alerts.show('danger', $scope.error);
+                });
+
+            } // otherwise we'll create it from the data entered.
+            else
+            {
+                var jobservices = [];
+                for (var i = 0; i < jobinfo.services.length; i++) {
+                    jobservices.push(jobinfo.services[i]._id);
+                }
+
+                job.services = jobservices;
+                job.service_supplier = $scope.servicesupplier._id;
+
+                job.$save(function(job){
+                    $uibModalInstance.close(job)
+                }, function (errorResponse) {
+                    // TODO: after clicking OK to submit we lose the rating types for next input...
+                    $scope.error = errorResponse.data.message;
+                    Alerts.show('danger', $scope.error);
+                });
+            }
 
         };
-    });
+
+});

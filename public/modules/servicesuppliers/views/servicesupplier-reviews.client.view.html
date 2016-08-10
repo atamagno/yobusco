@@ -5,21 +5,25 @@
     <h1>Comentarios</h1>
 </div>
 <br>
+
 <div class="well" ng-cloak>
 
-    <div data-ng-hide="reviews.length">No hay comentarios</div>
+    <!--div data-ng-hide="!supplierHasReviews">No hay comentarios</div-->
 
-    <div class="row service-supplier-review-list" data-ng-repeat="review in reviews">
+    <div class="row service-supplier-review-list" data-ng-repeat="job in jobs | filter: jobHasReview | orderBy: '-review[0].created'">
         <div class="col-md-12">
             <br>
-            <p>{{review.user.displayName}}
-                <span class="pull-right">{{ review.created | date: 'medium' }}</span>
+            <p>{{job.user.displayName || authentication.user.displayName}}
+                <span class="pull-right">
+                    <span class="glyphicon glyphicon-time"></span>
+                    {{ job.review[0].created | date: 'medium' }}
+                </span>
             </p>
             <p>
-                <uib-rating data-ng-model="review.ratingsAvg" max="max" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
-                <span>({{review.ratingsAvg}})</span>
+                <uib-rating data-ng-model="job.review[0].ratingsAvg" max="max" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
+                <span>({{job.review[0].ratingsAvg}})</span>
             </p>
-            <p>{{review.comment}}</p>
+            <p>{{job.review[0].comment}}</p>
         </div>
         <hr>
     </div>

@@ -16,13 +16,17 @@ var mongoose = require('mongoose'),
  * Create a Job
  */
 exports.create = function(req, res) {
-
 	var job = new Job(req.body);
+	job.user = req.user; // TODO: this may need to change to consider jobs created by suppliers 
 	job.createdBy = req.user;
+
+	if(req.body.jobpath == 'fromReview'){
+		job.setJobDefaultsForReview();
+	}
 
 	async.waterfall([
 		function(done) {
-			job.save(function(err) {
+			job.save(function(err, job) {
 				if (err) {
 					return res.status(400).send({
 						message: errorHandler.getErrorMessage(err)
@@ -94,6 +98,7 @@ exports.create = function(req, res) {
 			});
 		}
 	});
+	
 };
 
 /**
@@ -108,12 +113,12 @@ exports.read = function(req, res) {
  */
 exports.update = function(req, res) {
 	var job = req.job;
-	job = _.extend(job, req.body);
+	job = _.extend(job , req.body);
 
 	if (job.reported) {
 		reportJob(req, res);
 	} else {
-		job.save(function(err) {
+		job.save(function(err, job) {
 			if (err) {
 				return res.status(400).send({
 					message: errorHandler.getErrorMessage(err)
@@ -121,7 +126,7 @@ exports.update = function(req, res) {
 			} else {
 
 				var user = req.user;
-				Job.findOne(job)
+				Job.findOne(job)// TODO: maybe job.constructor works here to use findOne - and we don't need the Job model
 					.populate('service_supplier')
 					.populate('user').exec(function (err, job) {
 
@@ -155,50 +160,7 @@ exports.update = function(req, res) {
 			}
 		});
 	}
-};
-
-function reportJob(req, res) {
-	var job = req.job;
-
-	job.save(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-
-			var user = req.user;
-			Job.findOne(job)
-				.populate('service_supplier')
-				.populate('user').exec(function (err, job) {
-
-					var mailOptions = { userName: user.displayName, jobName: job.name };
-					var emailTo = user.email;
-
-					// Send email to user who reported the job.
-					mailer.sendMail(res, 'job-reported-for-user-reporting-email', mailOptions, 'Trabajo reportado', emailTo);
-
-					// TODO: query for admin email, remove hardcoded email.
-					emailTo = 'yo.busco.test@gmail.com';
-
-					// Send email to admin.
-					mailer.sendMail(res, 'job-reported-for-admin-email', mailOptions, 'Trabajo reportado', emailTo);
-
-					if (user.email == job.user.email) {
-						mailOptions.userName =  job.service_supplier.display_name;
-						emailTo = job.service_supplier.email;
-					} else {
-						mailOptions.userName = job.user.displayName;
-						emailTo = job.user.email;
-					}
-
-					// Send email to reported user.
-					mailer.sendMail(res, 'job-reported-for-reported-user-email', mailOptions, 'Trabajo reportado', emailTo);
-
-					res.jsonp(job);
-				});
-		}
-	});
+	
 };
 
 /**
@@ -358,42 +320,15 @@ exports.listByUser = function(req, res) {
 	}
 };
 
-function findJobsByUserID(searchCondition, paginationCondition, req, res) {
-
-	var response = {};
-	Job.count(searchCondition, function (err, count) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			response.totalItems = count;
-			Job.find(searchCondition, {}, paginationCondition)
-				.populate('service_supplier', 'display_name')
-				.populate('status').exec(function (err, jobs) {
-
-					if (err) {
-						return res.status(400).send({
-							message: errorHandler.getErrorMessage(err)
-						});
-					} else {
-						response.jobs = jobs;
-						res.jsonp(response);
-					}
-				});
-		}
-	});
-}
-
 exports.listByServiceSupplier = function(req, res) {
 
 	// TODO: delete hardcoded ID, get id from query.
 	var pendingStatusID = "56263383477f128bb2a6dd88";
 	var serviceSupplierId = req.params.serviceSupplierId;
-
-	// Return all jobs for service supplier except pending and reported.
-	Job.find({service_supplier: serviceSupplierId, status: { $ne: pendingStatusID }, reported: false }).populate('service_supplier', 'display_name')
-												   .populate('status').exec(function(err, jobs) {
+	Job.find({service_supplier: serviceSupplierId,status: { $ne: pendingStatusID }, reported: false })
+			  .populate('service_supplier', 'display_name')
+			  .populate('user', 'displayName')	  		
+			  .populate('status').exec(function(err, jobs) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

@@ -75,7 +75,9 @@ exports.delete = function(req, res) {
  * List of ServiceSupplier
  */
 exports.list = function(req, res) {
-    ServiceSupplier.find().sort('-registration_date').populate('user', 'displayName').exec(function(err, servicesuppliers) {
+    ServiceSupplier.find().sort('-registration_date')
+                          .populate('user', 'displayName')
+                          .exec(function(err, servicesuppliers) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)

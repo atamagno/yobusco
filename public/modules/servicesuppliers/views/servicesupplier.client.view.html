@@ -31,10 +31,10 @@
 
         <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible">{{alerts.msg}}</uib-alert>
 
-        <div data-ng-show="jobs.length">
+        <div data-ng-show="jobsforreview.length">
             <h4 class="review-services-title">Calificar un trabajo existente</h4>
             <input type="text" data-ng-model="selectedjob" class="form-control"
-                   uib-typeahead="job as job.name  for job in jobs | filter:$viewValue | limitTo:8"
+                   uib-typeahead="job as job.name  for job in jobsforreview | filter:{name: $viewValue} | limitTo:8"
                    placeholder="Selecciona un trabajo." typeahead-template-url="jobTypeaheadTemplate.html"
                    typeahead-on-select="setJobServices()">
         </div>
