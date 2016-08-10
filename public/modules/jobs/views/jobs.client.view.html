@@ -3,7 +3,9 @@
 
         <p class="lead">Mis Trabajos</p>
         <div class="list-group">
-            <a ui-sref=".create" class="list-group-item">Crear trabajo</a>
+            <!-- commenting option to create a job from outside a supplier - for now -->
+            <!-- need to decide how to narrow down the list of suppliers during search -->
+            <!--a ui-sref=".create" class="list-group-item">Crear trabajo</a-->
             <a ui-sref=".list({ status: 'all', currentPage: 1 })" class="list-group-item">Todos los trabajos</a>
             <a ui-sref=".list({ status: 'active', currentPage: 1 })" class="list-group-item">Activos</a>
             <a ui-sref=".list({ status: 'finished', currentPage: 1 })" class="list-group-item">Terminados</a>

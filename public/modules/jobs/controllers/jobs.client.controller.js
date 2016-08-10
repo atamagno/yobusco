@@ -2,7 +2,7 @@
 
 // UserJobs controller
 angular.module('jobs').controller('UserJobsController',
-	function($scope, $stateParams, $state, Authentication, Jobs, JobSearch, JobStatuses, ServiceSuppliers, $uibModal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, Jobs, JobStatuses, ServiceSuppliers, $uibModal, Alerts) {
 
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
@@ -91,66 +91,6 @@ angular.module('jobs').controller('UserJobsController',
 		$scope.$on('updateReported', function(event, reportedJobs) {
 			$scope.reportedJobs = reportedJobs;
 		});
-		
-		
-		$scope.getAllJobs = function () {
-
-			$scope.jobstatus = $stateParams.status;
-			$scope.currentPage = $stateParams.currentPage;
-			$scope.jobListTitle = 'Todos los trabajos';
-			$scope.jobStatusLabel = '.';
-			switch ($scope.jobstatus) {
-				case 'active':
-					$scope.jobListTitle = 'Trabajos activos';
-					$scope.jobStatusLabel = ' activo.';
-					break;
-				case 'finished':
-					$scope.jobListTitle = 'Trabajos terminados';
-					$scope.jobStatusLabel = ' terminado.';
-					break;
-				case 'pending':
-					$scope.jobListTitle = 'Trabajos pendientes de aprobacion';
-					$scope.jobStatusLabel = ' pendiente de aprobacion.';
-					break;
-			}
-
-			if (!$scope.jobs) {
-				JobDetails.jobs.query({
-					currentPage: $stateParams.currentPage,
-					itemsPerPage: $scope.itemsPerPage,
-					jobUserId: $scope.authentication.user._id,
-					isServiceSupplier: $scope.isServiceSupplier,
-					status: 'all',
-				}).$promise.then(function (response) {
-						$scope.currentPage = $stateParams.currentPage;
-						$scope.jobs = response.jobs;
-						$scope.filterJobs = $scope.jobs;
-						$scope.totalItems = response.totalItems;
-						if ($scope.jobstatus != 'all') {
-							$scope.filterJobs = $scope.jobs.filter(filterByStatus);
-							$scope.totalItems = $scope.filterJobs.length;
-						}
-
-						$scope.showList = $scope.totalItems > 0;
-						var reportedJobList = $scope.jobs.filter(filterReported);
-						var reportedJobs = reportedJobList.length > 0;
-
-						$rootScope.$broadcast('updateReported', reportedJobs);
-					});
-			} else {
-
-				if ($scope.jobstatus != 'all') {
-					$scope.filterJobs = $scope.jobs.filter(filterByStatus);
-					$scope.totalItems = $scope.filterJobs.length;
-				}
-
-				$scope.showList = $scope.totalItems > 0;
-				var reportedJobList = $scope.jobs.filter(filterReported);
-				var reportedJobs = reportedJobList.length > 0;
-
-				$rootScope.$broadcast('updateReported', reportedJobs);
-			}
-		};
 
 });
 

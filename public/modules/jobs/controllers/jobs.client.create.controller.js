@@ -2,7 +2,7 @@
 
 // UserJobs controller
 angular.module('jobs').controller('UserJobCreateController',
-	function($scope, $stateParams, $state, Jobs, ServiceSuppliers, Alerts) {
+	function($scope, $stateParams, $state, Jobs, ServiceSuppliers, Alerts, $uibModal) {
 
 		// This may affect the creation of a job from outside a supplier (we're relying on a servicesupplierId state param)
 		// - but we might be able to get rid of it for rel 1.
@@ -11,6 +11,19 @@ angular.module('jobs').controller('UserJobCreateController',
 			$scope.selectedServiceSupplier = servicesupplier;
 			$scope.servicesubcategories = $scope.selectedServiceSupplier.services;
 		});
+
+
+		$scope.openCreateJobModal = function () {
+
+			var modalInstance = $uibModal.open({
+				templateUrl: 'createJobModal',
+				controller: 'CreateJobModalInstanceCtrl'
+			});
+
+			modalInstance.result.then(function () {
+				$scope.create()
+			});
+		};
 
 
 		// Create new Job
@@ -85,4 +98,16 @@ angular.module('jobs').controller('UserJobCreateController',
 
 
 });
+
+angular.module('jobs').controller('CreateJobModalInstanceCtrl',
+	function ($scope, $uibModalInstance) {
+
+		$scope.ok = function () {
+			$uibModalInstance.close();
+		};
+
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+	});
 

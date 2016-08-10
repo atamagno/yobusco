@@ -44,8 +44,8 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
                 resolve: {
 
                     // Getting jobs that can be used for a review.
-                    jobsforreview: function(JobSearch) {
-                            return JobSearch.jobsForReview.query(
+                    jobsforreview: function(JobDetails) {
+                            return JobDetails.jobsForReview.query(
                             {serviceSupplierId: $scope.servicesupplier._id,
                              userId: $scope.authentication.user._id}).$promise;
                     },

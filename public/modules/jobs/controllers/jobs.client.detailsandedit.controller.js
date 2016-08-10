@@ -1,5 +1,5 @@
 angular.module('jobs').controller('UserJobDetailsAndEditController',
-	function ($scope, $stateParams, $state, Jobs, $uibModal, Alerts) {
+	function ($scope, $rootScope, $stateParams, $state, Jobs, $uibModal, Alerts) {
 
 		// Find existing Job
 		$scope.findOne = function () {
@@ -168,7 +168,62 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 			});
 		}
 
+		$scope.openApproveJobModal = function() {
 
+			var modalInstance = $uibModal.open({
+				templateUrl: 'approveJobModal',
+				controller: 'ApproveJobModalInstanceCtrl'
+			});
+
+			modalInstance.result.then(function () {
+				$scope.approveJob()
+			});
+		};
+
+		$scope.approveJob = function() {
+			var job = $scope.job;
+
+			// Get active status from list of statuses.
+			for (var i = 0; i < $scope.jobstatuses.length; i++) {
+				if ($scope.jobstatuses[i].keyword == 'active') {
+					job.status = $scope.jobstatuses[i];
+					break;
+				}
+			}
+			job.$update(function() {
+				Alerts.show('success','Trabajo aprobado exitosamente');
+				$state.go('jobs.viewDetail', { jobId: job._id});
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
+			});
+		};
+
+		$scope.reportJob = function() {
+			var job = $scope.job;
+			job.reported = true;
+
+			job.$update(function() {
+				$rootScope.$broadcast('updateReported', true);
+				Alerts.show('success','Trabajo reportado exitosamente')
+				$state.go('jobs.viewDetail', { jobId: job._id });
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
+			});
+		};
+
+		$scope.openReportJobModal = function() {
+
+			var modalInstance = $uibModal.open({
+				templateUrl: 'reportJobModal',
+				controller: 'ReportJobModalInstanceCtrl'
+			});
+
+			modalInstance.result.then(function () {
+				$scope.reportJob()
+			});
+		};
 
 	});
 
@@ -305,6 +360,30 @@ angular.module('jobs').controller('ReviewModalInstanceCtrl',
 			$scope.job.status = status;
 		};
 
+	});
+
+angular.module('jobs').controller('ApproveJobModalInstanceCtrl',
+	function ($scope, $uibModalInstance) {
+
+		$scope.ok = function () {
+			$uibModalInstance.close();
+		};
+
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+	});
+
+angular.module('jobs').controller('ReportJobModalInstanceCtrl',
+	function ($scope, $uibModalInstance) {
+
+		$scope.ok = function () {
+			$uibModalInstance.close();
+		};
+
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
 	});
 
 

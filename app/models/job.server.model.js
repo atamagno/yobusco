@@ -148,7 +148,7 @@ var JobSchema = new Schema({
 		default: '',
 		trim: true
 	},
-	created_date: { // TODO: check pre save hook on job model (think it uses 'created')
+	created_date: {
 		type: Date,
 		default: Date.now
 	},
@@ -325,8 +325,6 @@ JobSchema.pre('save', function(next){
 
 	var job = this;
 	job.wasNew = job.isNew;
-var job = this;
-	job.wasNew = job.isNew;
 
 	// If job submitted is an existing one, we'll check if status update is possible.
 	if(!job.isNew) {
@@ -368,7 +366,7 @@ var job = this;
 			{	user: job.user.toString(),
 				service_supplier: job.service_supplier.toString(),
 				services: {$in: job.services},
-				created: {$gte: recentJobLimitDate}
+				created_date: {$gte: recentJobLimitDate}
 			}, function(err, jobs) {
 				if(err) {
 					// TODO: add logging here...

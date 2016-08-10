@@ -57,7 +57,7 @@ var ConversationSchema = new Schema({
 	messages: [{
 		type: Schema.ObjectId,
 		ref: 'Message'
-	}],
+	}]
 });
 
 mongoose.model('Conversation', ConversationSchema);

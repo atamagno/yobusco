@@ -22,7 +22,7 @@ module.exports = function(config){
 		keyword: {
 			type: String,
 			default: '',
-			required: true,
+			required: true
 		},
 		finished: {
 			type: Boolean,
