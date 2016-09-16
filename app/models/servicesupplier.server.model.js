@@ -101,7 +101,7 @@ ServiceSupplierSchema.methods.updateJobCounts = function(previousJobStatusId, jo
     // If we received a previous status, and it's different than the next status,
     // we'll look for it and decrement it.
     if(previousJobStatusId){
-        if(previousJobStatusId.id != jobStatusId.id){
+        if(!previousJobStatusId.equals(jobStatusId)){
             var previousJobStatusJobCountIndex = _.findIndex(this.job_counts, {jobstatus:previousJobStatusId});
             if(previousJobStatusJobCountIndex != -1){
                 this.job_counts[previousJobStatusJobCountIndex].count--;

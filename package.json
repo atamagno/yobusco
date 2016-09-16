@@ -34,7 +34,7 @@
     "express": "^4.13.1",
     "express-session": "^1.11.3",
     "glob": "~4.0.5",
-    "lodash": "^3.10.0",
+    "lodash": "^4.15.0",
     "consolidate": "~0.10.0",
     "connect-flash": "~0.1.1",
     "connect-mongo": "~0.8.1",

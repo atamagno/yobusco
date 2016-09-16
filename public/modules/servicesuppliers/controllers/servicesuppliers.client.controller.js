@@ -13,9 +13,14 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
 
         ServiceSuppliers.get({
             servicesupplierId: $stateParams.servicesupplierId
-        }).$promise.then(function(servicesupplier) {
+        }).$promise.then(function (servicesupplier) {
                 $scope.servicesupplier = servicesupplier;
 
+                // TODO: move this to the servicesupplier.jobs state
+                // since other jobs can be added by other users or the supplier itself
+                // while the current user is using the app and moved to the 'Trabajos' list from the
+                // supplier view...
+                // Do the same with reviews view ('Comentarios')
                 ServiceSuppliersDetails.jobs.query({
                     serviceSupplierId: $scope.servicesupplier._id
                 }).$promise.then(function (jobs) {
@@ -23,14 +28,17 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
                     });
             });
 
-        $scope.navigateToJobDetails = function(jobId) {
-            $state.go('servicesupplier.viewJobDetail', { servicesupplierId: $stateParams.servicesupplierId, jobId: jobId });
+        $scope.navigateToJobDetails = function (jobId) {
+            $state.go('servicesupplier.viewJobDetail', {
+                servicesupplierId: $stateParams.servicesupplierId,
+                jobId: jobId
+            });
         };
 
         $scope.rate = 3;
         $scope.max = 5;
 
-        $scope.hoveringOver = function(value) {
+        $scope.hoveringOver = function (value) {
             $scope.overStar = value;
             $scope.percent = 100 * (value / $scope.max);
         };
@@ -44,16 +52,18 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
                 resolve: {
 
                     // Getting jobs that can be used for a review.
-                    jobsforreview: function(JobDetails) {
-                            return JobDetails.jobsForReview.query(
-                            {serviceSupplierId: $scope.servicesupplier._id,
-                             userId: $scope.authentication.user._id}).$promise;
+                    jobsforreview: function (JobDetails) {
+                        return JobDetails.jobsForReview.query(
+                            {
+                                serviceSupplierId: $scope.servicesupplier._id,
+                                userId: $scope.authentication.user._id
+                            }).$promise;
                     },
-                    ratingtypes: function(RatingTypes){
+                    ratingtypes: function (RatingTypes) {
                         return RatingTypes.query().$promise;
                     },
-                    jobstatuses: function(JobStatus){
-                            return JobStatus.query().$promise;
+                    jobstatuses: function (JobStatus) {
+                        return JobStatus.query().$promise;
                     }
                 }
             });
@@ -64,38 +74,36 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
             });
         };
 
-        $scope.addJob = function(job){
+        $scope.addJob = function (job) {
 
             var found = false;
-            for(var i=0;i<$scope.jobs.length;i++)
-            {
-                if(job._id == $scope.jobs[i]._id){
+            for (var i = 0; i < $scope.jobs.length; i++) {
+                if (job._id == $scope.jobs[i]._id) {
                     $scope.jobs[i] = job;
                     found = true;
                     break;
                 }
             }
 
-            if(!found){
+            if (!found) {
                 $scope.jobs.push(job);
             }
 
         }
 
-        $scope.jobHasReview = function(job){
+        $scope.jobHasReview = function (job) {
             return job.review.length > 0;
         }
-        
-        
-        $scope.getUpdatedOverallRating = function() {
+
+
+        $scope.getUpdatedOverallRating = function () {
 
             var ratingsAvgSum = 0;
             var reviewsCount = 0;
-            for(var i = 0; i<$scope.jobs.length;i++)
-            {
+            for (var i = 0; i < $scope.jobs.length; i++) {
                 // if job has a review associated...this will change if we modify job model
                 // to use a single review instead of array
-                if($scope.jobs[i].review[0]){
+                if ($scope.jobs[i].review[0]) {
                     ratingsAvgSum += parseFloat($scope.jobs[i].review[0].ratingsAvg);
                     reviewsCount++;
                 }

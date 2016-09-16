@@ -12,6 +12,12 @@ var _ = require('lodash'),
  * Create a User
  */
 exports.create = function(req, res) {
+
+	// TODO: when creating a user that is a service supplier, add it to the servicesuppliers collection too
+	// with a reference to the user..And from the client, prompt for supplier specific data such as services offered,
+	// description, etc...Maybe we can remove the creation of service suppliers from admin, and just handle it
+	// from users....(supplier query, delete and updates from suppliers in admin should still be possible...)
+	// When supplier delete takes place, the associated user should be deleted too....
 	var user = new User(req.body);
 
 	user.provider = 'local';

@@ -10,15 +10,25 @@ var mongoose = require('mongoose'),
 	ServiceSupplier = mongoose.model('ServiceSupplier'),
 	User = mongoose.model('User'),
 	async = require('async'),
-	_ = require('lodash');
+	_ = require('lodash'),
+	prohibitedJobPaths = ['initial_approval_status'
+						 ,'subsequent_approval_status', 'target_status',
+						 'user', 'service_supplier'];
 
 /**
  * Create a Job
  */
 exports.create = function(req, res) {
 	var job = new Job(req.body);
-	job.user = req.user._id; // TODO: this may need to change to consider jobs created by suppliers
-	job.createdBy = req.user._id;
+	job.user = req.user._id; // Check client code that was not merged from develop, that seemed to allow
+						     // creating a job from a supplier...Maybe this is both, the id of the user and supplier...
+						     // NOTE: this (and job. created_by did not work for me by assigning to req.user,
+						     // but changing to ._id is impacting sending emails below since it's using job.created_by.email)
+						     // TODO: revisit this.
+
+	job.created_by = req.user._id;
+	job.last_updated_by = req.user._id;
+
 
 	if(req.body.jobpath == 'fromReview'){
 		job.setJobDefaultsForReview();
@@ -35,7 +45,7 @@ exports.create = function(req, res) {
 					// TODO: seems the response is not sent here, but rather after this function
 					// completes execution (same for update and reportJob functions).
 					// Is there a way to end the express request-response cycle, sending a response back,
-					// but continue executing other tasks on the server (e.g.: such as sending emails below).
+					// but continue executing other tasks on the server (e.g.: such as sending emails below, logging, etc).
 					// Or we need to fork a different process to isolate the tasks after res.jsonp so the
 					// response is returned faster?
 					res.jsonp(job);
@@ -74,13 +84,13 @@ exports.create = function(req, res) {
 				mailer.sendMail(res, 'new-job-for-service-supplier-email',
 					{
 						serviceSupplier: servicesupplier.display_name,
-						userName: job.createdBy.displayName
+						userName: job.created_by.displayName
 					}, 'Nuevo trabajo', servicesupplier.email);
 				mailer.sendMail(res, 'new-job-by-user-email',
 					{
 						serviceSupplier: servicesupplier.display_name,
-						userName: job.createdBy.displayName
-					}, 'Nuevo trabajo', job.createdBy.email);
+						userName: job.created_by.displayName
+					}, 'Nuevo trabajo', job.created_by.email);
 			} else {
 				if (user) {
 					mailer.sendMail(res, 'new-job-for-user-email',
@@ -110,15 +120,31 @@ exports.create = function(req, res) {
  * Show the current Job
  */
 exports.read = function(req, res) {
-	res.jsonp(req.job);
+	res.jsonp(req.job.toJSON());
 };
 
 /**
  * Update a Job
  */
 exports.update = function(req, res) {
+
 	var job = req.job;
-	job = _.extend(job , req.body);
+	var jobDataSubmitted = req.body;
+
+	if(approvingJob(jobDataSubmitted)){
+
+		job.approved = jobDataSubmitted.approved;
+		// flags for validation from model (to verify if the user is actually the one allowed to approve)
+		job.approvingUser = req.user;
+		job.approving = true;
+	}
+	else{
+
+		job = _.extend(job , removeProhibitedJobPaths(jobDataSubmitted)); // TODO: is it better to do this from route middleware?
+		job.last_updated_by = req.user._id;
+	}
+
+
 
 	if (job.reported) {
 		reportJob(req, res);
@@ -132,9 +158,9 @@ exports.update = function(req, res) {
 
 				res.jsonp(job);
 				var user = req.user;
-				Job.findOne(job)// TODO: maybe job.constructor works here to use findOne - and we don't need the Job model
-					.populate('service_supplier')
-					.populate('user').exec(function (err, job) {
+				Job.findOne(job)
+					.populate('service_supplier user')
+					.exec(function (err, job) {
 
 						mailer.sendMail(res, 'updated-job-for-user-updating-email',
 							{
@@ -182,8 +208,8 @@ function reportJob(req, res) {
 			res.jsonp(job);
 			var user = req.user;
 			Job.findOne(job)
-				.populate('service_supplier')
-				.populate('user').exec(function (err, job) {
+				.populate('service_supplier user')
+				.exec(function (err, job) {
 
 					var mailOptions = { userName: user.displayName, jobName: job.name };
 					var emailTo = user.email;
@@ -271,17 +297,26 @@ exports.list = function(req, res) {
  * Job middleware
  */
 exports.findJobByID = function(req, res, next, id) {
-	Job.findById(id).populate('service_supplier')
-		.populate('user')
-		.populate('status')
-		.populate('review')
-		.populate('services').exec(function(err, job) {
-			if (err) return next(err); // TODO: check here if job is not found, it seems there's no 'next'
+
+	// TODO: need to populate less data here...(e.g.: we're populating user password hash, salt, roles, etc)
+	// This populates the job details page. Verify which data we display and need on that page, and
+	// then use them in this populate statement.
+	Job.findById(id).populate([{path: 'service_supplier', select: 'display_name user'},
+		                       {path: 'user', select: 'displayName'},
+							   {path: 'initial_approval_status'},
+							   {path: 'subsequent_approval_status'},
+						       {path: 'status', select: 'keyword name possible_next_statuses'},
+							   {path: 'target_status', select: 'name'},
+							   {path: 'review'},
+							   {path: 'services', select: 'name'}])
+
+					.exec(function(err, job) {
+						if (err) return next(err); // TODO: check here if job is not found, it seems there's no 'next'
 									   // handler capturing the error and this is breaking...
-			if (!job) return next(new Error('Error al cargar trabajo ' + id));
-			req.job = job ;
-			next();
-		});
+						if (!job) return next(new Error('Error al cargar trabajo ' + id));
+							req.job = job ;
+							next();
+					});
 };
 
 exports.listByPage = function(req, res) {
@@ -384,8 +419,9 @@ function findJobsByUserID(searchCondition, paginationCondition, req, res) {
 		} else {
 			response.totalItems = count;
 			Job.find(searchCondition, {}, paginationCondition)
-				.populate('service_supplier', 'display_name')
-				.populate('status').exec(function (err, jobs) {
+				.populate([{path: 'service_supplier', select: 'display_name'},
+						   {path: 'status'}])
+				.exec(function (err, jobs) {
 
 					if (err) {
 						return res.status(400).send({
@@ -403,22 +439,51 @@ function findJobsByUserID(searchCondition, paginationCondition, req, res) {
 
 exports.listByServiceSupplier = function(req, res) {
 
-	// TODO: delete hardcoded ID, get id from query.
-	var pendingStatusID = "56263383477f128bb2a6dd88";
 	var serviceSupplierId = req.params.serviceSupplierId;
-	Job.find({service_supplier: serviceSupplierId,status: { $ne: pendingStatusID }, reported: false })
-			  .populate('service_supplier', 'display_name')
-			  .populate('user', 'displayName')	  		
-			  .populate('status').exec(function(err, jobs) {
+
+	Job.find({service_supplier: serviceSupplierId})
+			  .populate([{path: 'target_status', select: 'name keyword'},
+						 {path: 'user', select: 'displayName'},
+						 {path: 'status'},
+						 {path: 'initial_approval_status'}])
+			  .exec(function(err, jobs) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(jobs);
+
+			res.jsonp(jobs.filter(filterNotApprovedJobsForUser.bind(null, req.user)));
 		}
 	});
 };
+
+function filterNotApprovedJobsForUser(user, job){
+
+	// If the job is not associated to the user requesting the list
+	// (either the user being the consumer -user- or supplier)
+	// and it's either in created status or pending initial approval status,
+	// we will not return it (only the job user and supplier can see it)
+
+	if(job.status.keyword == 'created' || job.initial_approval_status.keyword == 'pending') {
+		if(user){
+			if((!(user._id.equals(job.user._id)) && !(user._id.equals(job.service_supplier._id))) &&
+				(job.status.keyword == 'created' || job.initial_approval_status.keyword == 'pending')){
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+		else{
+			return false;
+		}
+	}
+	return true;
+
+
+
+}
 
 exports.canUpdate = function(req, res, next) {
 	var job = req.job, user = req.user;
@@ -441,4 +506,25 @@ exports.listForReview = function(req, res) {
 			res.jsonp(jobs);
 		}
 	});
+}
+
+function approvingJob(jobDataSubmitted){
+
+	if(typeof jobDataSubmitted.approved != 'undefined') { // user is approving job...
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+function removeProhibitedJobPaths(jobDataSubmitted){
+
+	for(var i=0;i<prohibitedJobPaths.length;i++)
+	{
+		_.unset(jobDataSubmitted, prohibitedJobPaths[i]);
+	}
+
+	return jobDataSubmitted;
 }

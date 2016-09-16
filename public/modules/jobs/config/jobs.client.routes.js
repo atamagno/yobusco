@@ -10,7 +10,7 @@ angular.module('jobs').config(
 				templateUrl: 'modules/jobs/views/jobs.client.view.html',
 				controller: 'UserJobsController',
 				resolve: {
-					JobStatuses: function(JobStatus) {
+					JobStatuses: function (JobStatus) {
 						return JobStatus.query().$promise;
 					}
 				}

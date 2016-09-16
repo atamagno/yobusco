@@ -14,13 +14,21 @@
         <img src="/images/job.png" alt="">
         <div class="job-details-container">
 
+            <!-- TODO: consider reported as a separate field
+            (from job.initial_approval_status || job.subsequent_approval_status.keyword == challenged
+            Or maybe we just need to filter out the ones with initial_approval_status == challenged
+            (for other users/suppliers) and show the current status of those that were approved before and are in
+            subsequent_approval_status == challenged -->
             <span ng-show="job.reported" class="pull-right status-label label label-danger">Reportado</span>
             <span ng-show="job.status.keyword == 'finished' && !job.reported" class="pull-right status-label label label-success">{{job.status.name}}</span>
             <span ng-show="job.status.keyword == 'abandoned' && !job.reported" class="pull-right status-label label label-default">{{job.status.name}}</span>
             <span ng-show="job.status.keyword == 'active' && !job.reported" class="pull-right status-label label label-primary">{{job.status.name}}</span>
             <span ng-show="job.status.keyword == 'paused' && !job.reported" class="pull-right status-label label label-paused">{{job.status.name}}</span>
-            <span ng-show="job.status.keyword == 'pending' && !job.reported" class="pull-right status-label label label-info">{{job.status.name}}</span>
             <span ng-show="job.status.keyword == 'delayed' && !job.reported" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+            <!-- TODO: change colors for created, guaranteed and notguaranteed-->
+            <span ng-show="job.status.keyword == 'created' && !job.reported" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+            <span ng-show="job.status.keyword == 'guaranteed' && !job.reported" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+            <span ng-show="job.status.keyword == 'notguaranteed' && !job.reported" class="pull-right status-label label label-warning">{{job.status.name}}</span>
 
             <div class="job-name-container">
                 <a href="" data-ng-click="navigateToJobDetails(job._id)">{{job.name}}</a>

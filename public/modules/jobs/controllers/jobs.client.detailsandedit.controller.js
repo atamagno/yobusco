@@ -168,28 +168,26 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 			});
 		}
 
-		$scope.openApproveJobModal = function() {
+		$scope.openApproveRejectJobModal = function(approvalAction) {
 
+			$scope.approvalAction = approvalAction;
 			var modalInstance = $uibModal.open({
-				templateUrl: 'approveJobModal',
-				controller: 'ApproveJobModalInstanceCtrl'
+				templateUrl: 'approveRejectJobModal',
+				controller: 'ApproveRejectJobModalInstanceCtrl',
+				scope: $scope
 			});
 
 			modalInstance.result.then(function () {
-				$scope.approveJob()
+				$scope.approveRejectJob($scope.approvalAction);
 			});
 		};
 
-		$scope.approveJob = function() {
-			var job = $scope.job;
+		$scope.approveRejectJob = function(approvalAction) {
 
-			// Get active status from list of statuses.
-			for (var i = 0; i < $scope.jobstatuses.length; i++) {
-				if ($scope.jobstatuses[i].keyword == 'active') {
-					job.status = $scope.jobstatuses[i];
-					break;
-				}
-			}
+			var job = new Jobs();
+			job._id = $scope.job._id;
+			job.approved = approvalAction == 'approved' ? true : false;
+
 			job.$update(function() {
 				Alerts.show('success','Trabajo aprobado exitosamente');
 				$state.go('jobs.viewDetail', { jobId: job._id});
@@ -362,8 +360,16 @@ angular.module('jobs').controller('ReviewModalInstanceCtrl',
 
 	});
 
-angular.module('jobs').controller('ApproveJobModalInstanceCtrl',
+angular.module('jobs').controller('ApproveRejectJobModalInstanceCtrl',
 	function ($scope, $uibModalInstance) {
+
+		if($scope.approvalAction == 'approved'){
+			$scope.approvalActionString = 'aprobar';
+		}
+		else
+		{
+			$scope.approvalActionString = 'rechazar';
+		}
 
 		$scope.ok = function () {
 			$uibModalInstance.close();

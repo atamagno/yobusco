@@ -6,20 +6,44 @@
         <div class="col-lg-12">
             <h1>
                 Detalle de trabajo
-                <a ng-show="!job.reported && !job.status.finished && job.status.keyword != 'pending' && authentication.user && ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))"
+                <a ng-show="(job.initial_approval_status.keyword == 'approved' &&
+                            (job.subsequent_approval_status.keyword == null ||
+                             job.subsequent_approval_status.keyword == 'approved')) && authentication.user && ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))"
                    ui-sref="jobs.edit({ jobId: job._id })" class="btn btn-success pull-right">Actualizar trabajo</a>
 
-                <a ng-show="!job.reported && job.status.keyword == 'pending' && authentication.user && (authentication.user._id !== job.createdBy)"
-                   data-ng-click="openApproveJobModal()" class="btn btn-success pull-right">Aprobar trabajo</a>
 
-                <a data-ng-disabled="true" ng-show="!job.reported && job.status.keyword == 'pending' && authentication.user && (authentication.user._id === job.createdBy)"
+                <div class="btn-group" data-ng-show="(job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword == 'pending')
+                                                      && authentication.user && (authentication.user._id === job.approver)"
+                                                      uib-dropdown>
+                    <button type="button" class="btn btn-default pull-right btn-report" uib-dropdown-toggle>
+                        Aprovar/Rechazar trabajo<span class="caret"></span>
+                    </button>
+                    <ul class="uib-dropdown-menu" role="menu">
+                        <li>
+                            <a class="dropdown-item" data-ng-click="openApproveRejectJobModal('approved')">Aprobar trabajo</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" data-ng-click="openApproveRejectJobModal('rejected')">Rechazar trabajo</a>
+                        </li>
+                    </ul>
+                </div>
+
+
+                <!--a ng-show="(job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword == 'pending') && authentication.user && (authentication.user._id === job.approver || authentication.user._id === job.user._id)"
+                   data-ng-click="openApproveJobModal()" class="btn btn-success pull-right">Aprobar/Rechazar trabajo</a-->
+
+                <a data-ng-disabled="true" ng-show="(job.status.keyword == 'created' || job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword == 'pending')
+                                                    && authentication.user && (authentication.user._id === job.last_updated_by)"
                    class="btn btn-info pull-right">Esperando aprobaci&#243;n</a>
 
-                <a ng-show="(!job.reported && authentication.user && ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))) &&
-                                 !(!job.reported && job.status.keyword == 'pending' && authentication.user && (authentication.user._id === job.createdBy))"
-                   data-ng-click="openReportJobModal()" class="btn btn-default pull-right btn-report">Reportar trabajo</a>
+                <!-- TODO: this should be displayed to both user and supplier only -->
+                <!-- challenged jobs (unless with initial_approval_status == approved) should not be displayed to other users -->
+                <a data-ng-disabled="true"
+                   ng-show="(job.initial_approval_status.keyword == 'challenged' || job.subsequent_approval_status.keyword == 'challenged') &&
+                           ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))"
+                   class="btn btn-danger pull-right">Pendiente de resoluci&#243;n</a>
 
-                <a data-ng-disabled="true" ng-show="job.reported" class="btn btn-danger pull-right">Trabajo reportado</a>
+                <!-- TODO: consider different info to be displayed to other users, user and supplier -->
             </h1>
         </div>
         <div class="col-lg-12" style="color: gray; padding-bottom: 10px; font-size: 120%;">{{job.name}}</div>
@@ -44,7 +68,10 @@
                 <li><strong>Fecha de inicio: </strong>{{job.start_date | date: 'shortDate'}}</li>
                 <li><strong>Fecha estimada: </strong>{{job.expected_date | date: 'shortDate'}}</li>
                 <li><strong>Fecha de finalizaci&#243;n: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
-                <li><strong>Estado: </strong>{{job.status.name}}</li>
+                <li><strong>Estado actual: </strong>{{job.status.name}}</li>
+                <li data-ng-show="authentication.user && (authentication.user._id === job.approver || authentication.user._id === job.user._id) &&
+                                  (job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword =='pending')">
+                    <strong>Estado a aprobar: </strong>{{job.target_status.name}}</li>
                 <li><strong>Prestador de servicios: </strong><a ui-sref="servicesupplier.detail({ servicesupplierId: job.service_supplier._id })">{{job.service_supplier.display_name}}</a></li>
             </ul>
         </div>
@@ -161,12 +188,18 @@
         </div>
     </script>
 
-    <script type="text/ng-template" id="approveJobModal">
+    <script type="text/ng-template" id="approveRejectJobModal">
         <div class="modal-header">
-            <h3 class="modal-title">Aprobar Trabajo</h3>
+            <h3 class="modal-title" data-ng-show="approvalAction == 'approved'">Aprobar Trabajo</h3>
+            <h3 class="modal-title" data-ng-show="approvalAction == 'rejected'">Rechazar Trabajo</h3>
         </div>
         <div class="modal-body">
-            Est&#225;s seguro de que quieres aprobar el trabajo?
+            <p>
+                Est&#225;s seguro de que quieres {{approvalActionString}} el trabajo? <br>
+            </p>
+            <p data-ng-show="approvalAction == 'approved'">
+                El trabajo pasar&#225; de estado '{{job.status.name}}' a estado '{{job.target_status.name}}'.
+            </p>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>

@@ -12,6 +12,9 @@ var mongoose = require('mongoose'),
 /**
  * Create a JobStatus
  */
+
+// TODO: need to refresh the collection under config.staticdata.jobStatuses
+// on create, update and delete?? Otherwise a restart of the app will be required.
 exports.create = function(req, res) {
 	var jobstatus = new JobStatus(req.body);
 
@@ -73,22 +76,23 @@ exports.delete = function(req, res) {
  * List of JobStatus
  */
 exports.list = function(req, res) {
-	res.jsonp(config.staticdata.jobStatuses);
+	res.jsonp(config.staticdata.jobStatuses.getAll());
 };
 
 /**
  * JobStatus middleware
  */
 exports.jobstatusByID = function(req, res, next, id) {
-	req.jobstatus = _.find(config.staticdata.jobStatuses, function(jobStatus) {
-		return jobStatus._id == id;
-	});
 
-	next();
+
+	JobStatus.findById(id).exec(function(err, jobstatus) {
+		if (err) return next(err);
+	 	if (!jobstatus) return next(new Error('Error al cargar estado de trabajo ' + id));
+	 	req.jobstatus = jobstatus ;
+	 	next();
+	 });
 };
 
-// TODO: adapt this function to use jobStatuses from config.staticdata.
-// Do we really need pagination on jobStatuses?
 exports.listByPage = function(req, res) {
 
 	var currentPage = req.params.currentPage;
@@ -101,26 +105,15 @@ exports.listByPage = function(req, res) {
 		var startIndex = (currentPage - 1) * itemsPerPage;
 
 		var response = {};
-		JobStatus.count({}, function (err, count) {
-			if (err) {
-				return res.status(400).send({
-					message: errorHandler.getErrorMessage(err)
-				});
-			} else {
+		var jobStatuses = config.staticdata.jobStatuses.getAll();
+		response.totalItems = jobStatuses.length;
 
-				response.totalItems = count;
-				JobStatus.find({}, {}, { skip: startIndex, limit: itemsPerPage }, function(err, jobstatus) {
-					if (err) {
-						return res.status(400).send({
-							message: errorHandler.getErrorMessage(err)
-						});
-					} else {
-						response.jobstatus = jobstatus;
-						res.jsonp(response);
-					}
-				});
-			}
-		});
+		if(startIndex + itemsPerPage >= response.totalItems){
+			itemsPerPage = response.totalItems;
+		}
+		response.jobstatus = jobStatuses.slice(startIndex,itemsPerPage);
+		res.jsonp(response);
+
 
 	} else {
 		return res.status(400).send({

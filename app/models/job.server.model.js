@@ -125,11 +125,15 @@ var JobPointsSchema = new Schema({
 */
 
 var JobSchema = new Schema({
-	createdBy: {
+	created_by: {
 		type: Schema.ObjectId,
 		ref: 'User'
 	},
-	createdByUser: {
+	createdByUser: { // TODO: can this be a virtual field by checking created_by.roles?
+					 // Currently the app seems not to to manage a user that has both
+					 // user and servicesupplier roles, but we should think about that.
+					 // E.g.: change role from nav bar at the top and selecting default role
+					 // at login from profile.
 		type: Boolean,
 		default: true
 	},
@@ -168,6 +172,10 @@ var JobSchema = new Schema({
 		ref: 'JobStatus',
 		required: 'Por favor seleccione un estado de trabajo'
 	},
+	target_status: {
+		type: Schema.ObjectId,
+		ref: 'JobStatus'
+	},
 	start_date: {
 		type: Date,
 		default: Date.now,
@@ -188,7 +196,7 @@ var JobSchema = new Schema({
 		type: Boolean,
 		default: false
 	},
-	review: [ReviewSchema] // NOTE: mongoose 3.8.0 is not accepting a single document schema (: ReviewSchema) embedded,
+	review: [ReviewSchema],// NOTE: mongoose 3.8.0 is not accepting a single document schema (: ReviewSchema) embedded,
 						   // so using an array for now (even while each job will contain one single review)
 						   // When upgrading to 4.x versions of mongoose, getting a memory leak issue
 	                       // TODO: review this so upgrade can be done and single review is used like:
@@ -198,14 +206,50 @@ var JobSchema = new Schema({
 						   // instead of "$unwind": "$review" and "$unwind" : "$review.ratings".
 						   // More changes will be required on client side to not use array any more.
 						   // and also under post save hook + init functions.
+						   // TODO: Ok, it seems that using node v0.12.7 + mongoose @4.2.10
+						   // (with package.json having "mongoose": "~4.2.3" works with a single review)
+	                       // revisit this later and apply changes....
+						   // As a side benefit, promises can be used with mongoose 4.2.x, so we can
+						   // take advantage of them for nested queries where multiple callbacks are used.
 
-	// points: [JobPointsSchema]
+	initial_approval_status: {
+		type: Schema.ObjectId,
+		ref: 'JobApprovalStatus'
+	},
+	subsequent_approval_status: {
+		type: Schema.ObjectId,
+		ref: 'JobApprovalStatus',
+		default: null
+	},
+	last_updated_by: {
+		type: Schema.ObjectId,
+		ref: 'User'
+	},
+	last_updated: {
+		type: Date,
+		default: Date.now
+	}
+
 });
+
+JobSchema.set('toJSON', {virtuals: true});
 
 
 JobSchema.path('services').validate(function(services) {
 	return services.length;
 },"Por favor seleccione uno o mas servicios para el trabajo.");
+
+JobSchema.virtual('approver').get(function(){
+
+	return this.getJobApprover();
+
+});
+
+/*JobSchema.virtual('submitter').get(function(){
+
+	return getJobSubmitter(this);
+
+});*/
 
 
 JobSchema.methods.setJobDefaultsForReview = function(){
@@ -218,10 +262,15 @@ JobSchema.methods.setJobDefaultsForReview = function(){
 }
 
 JobSchema.post('init', function(job){
+
 	// Storing current status value and review in new paths/properties,
-	// to be checked by pre and post save hooks.
+	// to be checked by post save hooks.
+
+	// TODO: check if job.isModified('status') is a better approach rather than using these aux paths
 	job.previous_status = job.status._id ? job.status._id : job.status;
 	job.review_already_existed = job.review[0] ? true : false;
+	// job.previous_approval_status = job.getApprovalStatus();
+
 });
 
 /**
@@ -239,9 +288,13 @@ JobSchema.post('save',function(job){
 
 		function(done){
 
-			// NOTE: Population of points and job_counts is only required when job is new.
+			// NOTE: Population of points,job_counts,overall_rating is only required when job is new.
 			// If being updated, it seems service supplier is already a model (populated from the query
 			// under job update controller). Maybe use job.wasNew that is set from pre save hook below to differentiate?
+			// This was failing without this population for updated jobs (when supplier was supposed to be populated already),
+			// so test it. Not sure why these values need to be populated for the supplier, since they're not ref ids....
+			// NOTE: we're already populating service supplier (user field only) from pre save hook,
+			// so maybe we can take advantage of that and populate these ones too.
 			job.populate({path: 'service_supplier', select: 'points job_counts overall_rating'},
 				function(err, job) {
 					if (err) {
@@ -261,43 +314,52 @@ JobSchema.post('save',function(job){
 			// changes to 'approved'. We should probably compare previous approval status
 			// with new one, and if new one is 'approved', then update job counts and job points.
 
-			// We should probably also use a temporary status field within job (e.g.: target_status)
-			// in order to store the status that we'll change to (selected by the user) and keep
-			// the status value unchanged, until approved (update status and clear target_status).
-			// This las part will need to be done from pre save hook.
+			//if(job.previous_approval_status != 'approved' && job.getApprovalStatus() == 'approved'){
 
-			// NOTE: job.previous_status is set from schema post init hook (function above)
-			job.service_supplier.updateJobCounts(job.previous_status, job.status);
+			//}
 
+			if(job.approved) { // TODO: test this does not pass when job approval status is set to pending
 
-			var job_status_config = _.find(config.staticdata.jobStatuses, _.matchesProperty('_id', job.status));
-			if(job.wasNew)
-			{
-				job.service_supplier.updatePoints(job_status_config.points * job.services.length);
-			}
-			else {
-				if (job.status.id != job.previous_status.id) {
-					job.service_supplier.updatePoints(job_status_config.points * job.services.length);
+				// TODO: Check if all the below now makes sense with now checking approvals?
+
+				// NOTE: job.previous_status is set from schema post init hook (function above)
+				job.service_supplier.updateJobCounts(job.previous_status, job.status);
+
+				// var job_status_config = _.find(config.staticdata.jobStatuses, _.matchesProperty('_id', job.status));
+
+				var job_status_config = config.staticdata.jobStatuses.getByProperty('_id', job.status);
+				//if(job.wasNew)
+				//{
+				//	job.service_supplier.updatePoints(job_status_config.points * job.services.length);
+				//}
+				//else {
+				//	if (!job.status.equals(job.previous_status)) { // probably can use job.updatingStatus here...
+						job.service_supplier.updatePoints(job_status_config.points * job.services.length);
+				//	}
+				//}
+
+				// NOTE: points for review probably won't require to check for job approval status
+				// since it's a decision of the user that won't need supplier approval.
+				if(job_status_config.finished && !job.review_already_existed && job.review[0]){
+					job.service_supplier.updatePoints(job.review[0].getPoints());
+					job.constructor.getServiceSupplierRatingsAverage(job.service_supplier._id, function(err, ratingsAvg) {
+						if (err) {
+							return done(err);
+							// TODO: add logging here or at the bottom?
+						}
+						else {
+							job.service_supplier.overall_rating = ratingsAvg.toFixed(2);
+							return done(null, job.service_supplier);
+						}
+					});
+
 				}
-			}
+				//else{return done(null, job.service_supplier)}
 
-			// NOTE: points for review probably won't require to check for job approval status
-			// since it's a decision of the user that won't need supplier approval.
-			if(job_status_config.finished && !job.review_already_existed && job.review[0]){
-				job.service_supplier.updatePoints(job.review[0].getPoints());
-				job.constructor.getServiceSupplierRatingsAverage(job.service_supplier._id, function(err, ratingsAvg) {
-					if (err) {
-						return done(err);
-						// TODO: add logging here or at the bottom?
-					}
-					else {
-						job.service_supplier.overall_rating = ratingsAvg.toFixed(2);
-						return done(null, job.service_supplier);
-					}
-				});
 
 			}
-			else{return done(null, job.service_supplier)}
+			return done(null, job.service_supplier);
+
 
 		},
 		function(serviceSupplier, done){
@@ -319,36 +381,60 @@ JobSchema.post('save',function(job){
  *  Validation is also applied in case the Job exists, and it's being updated to an invalid status.
  *  (e.g.: multiple 'completed' / 'abandoned' statues to add/reduce points maliciously)
  *  TODO: this can be refactored to use named functions and make code more readable
- */
-// TODO: Should we add checks here for extra security? (e.g.: clients submitting REST requests directly..)
-JobSchema.pre('save', function(next){
+ *  TODO: Should we add checks here for extra security? (e.g.: clients submitting REST requests directly..) */
+JobSchema.pre('validate',function(next){
 
 	var job = this;
-	job.wasNew = job.isNew;
+
+	// TODO: this needs to be updated to check for target_status?
+	// Or is status fine - and then we'll do the switch from pre save?
+	// Don't think the client is submitting target_status now....
 
 	// If job submitted is an existing one, we'll check if status update is possible.
 	if(!job.isNew) {
 
-		// Status is populated from query that retrieves the job (from update controller)
-		// If status is not updated from the client, then it will keep populated.
-		// We want it not populated (as an ObjectId) to deal with it
-		// that way from the post save hook above
-		job.status = job.status._id ? job.status._id : job.status
+		job.status = job.status._id ? job.status._id : job.status;
 
-		// NOTE job.previous_status is populated from job init hook (above).
-		if (job.status.id != job.previous_status.id){
+		// If job is being approved/rejected, we'll check couple of things...
+		if(job.approving)
+		{
+			// Checking if current approval status is pending. If not, then there's nothing to approve...
+			if(job.getApprovalStatus() != 'pending'){
+				return next(new Error('El trabajo no se encuentra pendiente de aprobacion.'));
+			}
 
-			// Getting config of previous job status
-			var previous_job_status_config = _.find(config.staticdata.jobStatuses, _.matchesProperty('_id', job.previous_status));
-
-			// Checking if new status is allowed
-			var next_status_found = _.find(previous_job_status_config.possible_next_statuses, _.matchesProperty('_id', job.status));
-			if (!next_status_found) {
-				return next(new Error('No es posible actualizar el trabajo al resultado seleccionado.'));
+			// Checking that approver is valid
+			if(!job.approvingUser.equals(job.getJobApprover())){
+				return next(new Error('El usuario no esta autorizado a aprobar el trabajo.'));
 			}
 
 		}
-		// job.updatePoints();
+		else{
+
+			if(job.getApprovalStatus() == 'approved'){ // Only if job is in approved status, we'll accept changes...
+
+				// If status is being updated, we'll check if the transition to next status is possible...
+				// NOTE job.previous_status is populated from job init hook (above).
+				// TODO: would job.isModified('status') work better here?
+				if (!job.status.equals(job.previous_status)){
+
+					// Getting config of previous job status
+					var previous_job_status_config = config.staticdata.jobStatuses.getByProperty('_id',job.previous_status);
+
+					// Checking if new status is allowed
+					var next_status_found = _.find(previous_job_status_config.possible_next_statuses, _.matchesProperty('_id', job.status));
+					if (!next_status_found) {
+						return next(new Error('No es posible actualizar el trabajo al resultado seleccionado.'));
+					}
+					job.updatingStatus = true; // flag for pre save hook, to know status is being updated, and take action.
+				}
+
+			}
+			else{
+					return next(new Error('No es posible actualizar el trabajo en su estado actual.'));
+			}
+		}
+
 		return next();
 	}
 	else // if it's a new one, then search for other existing jobs from the same user, supplier, services,
@@ -379,27 +465,68 @@ JobSchema.pre('save', function(next){
 
 					}
 				}
-
-				// job.updatePoints();
 				return next();
-
 			});
+	}
 
+});
+
+JobSchema.pre('save',function(next){
+
+	var job = this;
+	job.wasNew = job.isNew;
+
+	// If job is new, we'll set the initial_approval_status to pending so it gets approved afterwards.
+	// We'll also set the status to 'Created' - which will be the default status for all new jobs -
+	// and save the status submitted from the client under target_status.
+	if(job.isNew){
+		job.populate('service_supplier', 'user' ,function(err) { // TODO: test with invalid supplier...
+			if(err){
+				return next(new Error());
+			}
+			job.initial_approval_status = config.staticdata.jobApprovalStatuses.getByProperty('keyword', 'pending');
+			job.subsequent_approval_status = null;
+			job.target_status = job.status;
+			job.status = config.staticdata.jobStatuses.getByProperty('keyword', 'created');
+			return next();
+		});
+	}
+	else {
+
+		// If job is being approved, update approval status (to either 'approved' or 'challenged')
+		if(job.approving){
+			job.setApprovalStatus(job.approved);
+			if(job.approved){ // If effectively approved, set status to target status,
+							  // and set target status to null to be prepared for next status update.
+				job.depopulate('target_status');
+				job.status = job.target_status;
+				job.target_status = null;
+			}
+		}
+		else{
+			  // If an update is being done: keep the previous status, and set the target_status
+			  // to the desired one, so it gets approved afterwards...
+			  // Set approval status to pending as well.
+			  if(job.updatingStatus){
+				  job.setApprovalStatus('pending');
+				  job.target_status = job.status;
+				  job.status = job.previous_status;
+			  }
+		}
+		return next();
 	}
 
 
-})
-
+});
 
 /** Get jobs with a status that can be used to add a review.
  *
  */
-
 JobSchema.statics.getJobsForReview = function(serviceSupplierId, userId, callback){
 
 	this.find({user: userId, service_supplier: serviceSupplierId})
-		.populate('services', 'name')
-		.populate('status').exec(
+		.populate([{path: 'services', select: 'name'}, {path: 'status'}])
+		.exec(
 		function(err, jobs){
 			if(err)
 			{
@@ -413,7 +540,8 @@ JobSchema.statics.getJobsForReview = function(serviceSupplierId, userId, callbac
 				if(jobs.length)
 				{
 					// Getting Id of completed status from static data
-					var completedJobStatusConfig = _.find(config.staticdata.jobStatuses, _.matchesProperty('name', 'Completed'));
+					// var completedJobStatusConfig = _.find(config.staticdata.jobStatuses, _.matchesProperty('keyword', 'finished'));
+					var completedJobStatusConfig = config.staticdata.jobStatuses.getByProperty('keyword', 'finished');
 
 					// Checking if completed status Id is present on the list of possible next statuses for each job
 					for(var i = 0;i<jobs.length;i++)
@@ -455,9 +583,104 @@ JobSchema.statics.getServiceSupplierRatingsAverage = function (serviceSupplierId
 
 
 }
-			
-			
-			
+
+JobSchema.methods.getJobApprover = function(){
+
+	// NOTE: whenever comparing a mongoose path that can be a document (populated) or an ObjectId (not populated) -,
+	// such as job.user below - always use the .equals method to compare with an ObjectId.
+	// This ensures that:
+	// If it's a model, then it will compare against the _id property of both.
+	// If it's an ObjectId, then it will compare against the .id property of both.
+	// This makes the model/logic agnostic of whether the document has been populated or not
+	// and allows to use the same logic for created docs (e.g.: that have not been populated) and queried docs (populated)
+	// See http://mongoosejs.com/docs/api.html#document_Document-equals (document)
+	// And ..\node_modules\mongoose\node_modules\bson\lib\bson\objectid.js (ObjectId)
+
+	// TODO: add check for initial_approval_status / subsequent == pending, since those should
+	// be the only statuses that require an approver...
+	// Consider challenged jobs too...since admin should be the actual approver...
+	var job = this;
+	if(job.user.equals(job.last_updated_by)){
+		return job.service_supplier.user;
+	}
+	else{
+		if(job.populated('user')){
+			return job.user._id;
+		}
+		else{
+			return job.user;
+		}
+
+	}
+
+	// TODO: define what to do when the initial_approval_status or subsequent_approval_status
+	// is 'challenged' (since the approver will actually have to be a sys admin).
+
+}
+
+JobSchema.methods.setApprovalStatus = function(approved){
+
+	var job = this;
+	var approvalStatus;
+
+	// Getting approval/challenged/pending job approval statuses to update the job.
+	switch (approved)
+	{
+		case true:
+			approvalStatus = config.staticdata.jobApprovalStatuses.getByProperty('keyword','approved')._id;
+			break;
+		case false:
+			approvalStatus = config.staticdata.jobApprovalStatuses.getByProperty('keyword','challenged')._id;
+			break;
+		case 'pending':
+			approvalStatus = config.staticdata.jobApprovalStatuses.getByProperty('keyword','pending')._id;
+			break;
+		default:
+			return;
+	}
+
+	// Checking if job was initially approved. If not we'll use initial approval.
+	if(!job.initial_approval_status.equals(config.staticdata.jobApprovalStatuses.getByProperty('keyword','approved')._id))
+	{
+		job.initial_approval_status = approvalStatus;
+	}
+	else{
+		// If previously approved, we'll use subsequent approval status for this approval/challenge.
+		job.subsequent_approval_status = approvalStatus;
+	}
+}
+
+JobSchema.methods.getApprovalStatus = function(){
+
+	var job = this;
+
+	// Checking if job has been subsequently approved.
+	// If that's the case, then subsequent approval is the one ruling. Otherwise, initial should be.
+	if(job.subsequent_approval_status != null){
+		return job.subsequent_approval_status.keyword;
+	}
+	else{
+		return job.initial_approval_status.keyword;
+	}
+
+	// Other approaches:
+	// 1- Check if initial is different than approved.
+	// If that's the case, then initial is still ruling.
+	/*if(job.initial_approval_status.keyword != 'approved')
+	{
+		return job.initial_approval_status.keyword;
+	}
+	else{
+		return job.subsequent_approval_status.keyword;
+	}*/
+
+	// 2- Check if the job is in created status (approval status will be the initial one).
+
+}
+
+
+
+
 			
 mongoose.model('Job', JobSchema);
 /**
