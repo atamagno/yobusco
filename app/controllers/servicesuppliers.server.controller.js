@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
     errorHandler = require('./errors.server.controller'),
     ServiceSupplier = mongoose.model('ServiceSupplier'),
+    User = mongoose.model('User'),
     _ = require('lodash');
 
 /**
@@ -13,17 +14,36 @@ var mongoose = require('mongoose'),
  */
 exports.create = function(req, res) {
     var servicesupplier = new ServiceSupplier(req.body);
-    // TODO: we should create a different user for the supplier rather than setting it to the one creating the supplier.
+    var user = new User(req.body);
 
-    servicesupplier.user = req.user;
+    user.provider = 'local';
+    user.displayName = user.firstName + ' ' + user.lastName;
 
-    servicesupplier.save(function(err) {
-        if (err) {
+    user.save(function(errCreatingUser) {
+        if (errCreatingUser) {
             return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
+                message: errorHandler.getErrorMessage(errCreatingUser)
             });
         } else {
-            res.jsonp(servicesupplier);
+            servicesupplier.user = user;
+            servicesupplier.save(function(errCreatingServiceSupplier) {
+                if (errCreatingServiceSupplier) {
+                    // Rollback if error creating service supplier, delete user.
+                    user.remove(function(errDeletingUser) {
+                        if (errDeletingUser) {
+                            return res.status(400).send({
+                                message: errorHandler.getErrorMessage(errDeletingUser)
+                            });
+                        } else {
+                            return res.status(400).send({
+                                message: errorHandler.getErrorMessage(errCreatingServiceSupplier)
+                            });
+                        }
+                    });
+                } else {
+                    res.jsonp(servicesupplier);
+                }
+            });
         }
     });
 };
@@ -94,7 +114,7 @@ exports.list = function(req, res) {
 exports.serviceSupplierByID = function(req, res, next, id) {
     // Looks like we're using the display_name field from the supplier on the client side,
     // so no need to populate the associated user...
-    ServiceSupplier.findById(id).populate('services').exec(function(err, servicesupplier){
+    ServiceSupplier.findById(id).populate('services').populate('city').exec(function(err, servicesupplier){
         // ServiceSupplier.findById(id).populate('user', 'displayName').populate('services').exec(function(err, servicesupplier) {
         if (err) return next(err);
         if (!servicesupplier) return next(new Error('Error al cargar prestador de servicios ' + id));
@@ -108,6 +128,7 @@ exports.listByPage = function(req, res) {
     var currentPage = req.params.currentPage;
     var itemsPerPage = req.params.itemsPerPage;
     var serviceId = req.params.serviceId;
+    var cityId = req.params.cityId;
 
     // TODO: add more validation to query string parameters here.
     if (currentPage && itemsPerPage) {
@@ -116,7 +137,7 @@ exports.listByPage = function(req, res) {
         var startIndex = (currentPage - 1) * itemsPerPage;
 
         var orderCondition = buildOrderCondition(req.query.orderBy);
-        var query = buildSearchQuery(req.query, serviceId);
+        var query = buildSearchQuery(req.query, serviceId, cityId);
         ServiceSupplier.count(query, function (err, count) {
             if (err) {
                 return buildErrorResponse(res, err, 400);
@@ -130,15 +151,18 @@ exports.listByPage = function(req, res) {
     }
 };
 
-function buildSearchQuery(queryString, serviceId) {
+function buildSearchQuery(queryString, serviceId, cityId) {
 
-    var query = serviceId ? { services: serviceId } : {};
+    var query = serviceId ? { services: serviceId, city: cityId } : {};
     if (queryString.supplierName) {
         query.display_name = { $regex: queryString.supplierName, $options: 'i' };
     }
+
+    /*
     if (queryString.jobAmount) {
         query.jobCount = { $gte: queryString.jobAmount };
     }
+    */
 
     return query;
 };

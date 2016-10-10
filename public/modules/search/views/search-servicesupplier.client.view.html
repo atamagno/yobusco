@@ -18,6 +18,17 @@
                 </span>
             </div>
 
+            <div class="btn-group location-dropdown" uib-dropdown>
+                <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                    {{defaultLocation.name}} <span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu">
+                    <li data-ng-repeat="city in cities">
+                        <a class="dropdown-item" data-ng-click="changeLocation(city)">{{city.name}}</a>
+                    </li>
+                </ul>
+            </div>
+
             <!--<div class="advanced-search-link-container">
                 <a class="advanced-search-link" data-ng-click="isCollapsed = !isCollapsed">b&uacute;squeda avanzada</a>
             </div>-->

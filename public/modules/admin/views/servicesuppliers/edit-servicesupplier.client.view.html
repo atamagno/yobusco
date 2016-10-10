@@ -25,6 +25,19 @@
                     <div class="controls">
                         <textarea name="description" data-ng-model="servicesupplier.description" id="description" class="form-control" cols="30" rows="5" placeholder="Descripci&#243;n"></textarea>
                     </div>
+                    <label class="control-label">Ubicaci&#243;n</label>
+                    <div>
+                        <div class="btn-group" uib-dropdown>
+                            <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                                {{defaultLocation.name}} <span class="caret"></span>
+                            </button>
+                            <ul class="uib-dropdown-menu" role="menu">
+                                <li data-ng-repeat="city in cities">
+                                    <a class="dropdown-item" data-ng-click="changeLocation(city)">{{city.name}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <label class="control-label">Subcategor&#237;a de servicio</label>
                     <div data-ng-repeat="servicesubcategory in selectedservicesubcategories">
                         <input type="checkbox" data-ng-model="servicesubcategory.checked">{{servicesubcategory.name}}<br>

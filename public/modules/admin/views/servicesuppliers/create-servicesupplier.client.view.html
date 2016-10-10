@@ -9,9 +9,25 @@
         <form class="form-horizontal" data-ng-submit="create()" novalidate>
             <fieldset>
                 <div class="form-group">
-                    <label class="control-label" for="name">Nombre</label>
+                    <label class="control-label" for="firstName">Nombre</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="display_name" id="name" class="form-control" placeholder="Nombre" required>
+                        <input type="text" data-ng-model="firstName" id="firstName" class="form-control" placeholder="Nombre" required>
+                    </div>
+                    <label class="control-label" for="lastName">Apellido</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="lastName" id="lastName" class="form-control" placeholder="Apellido" required>
+                    </div>
+                    <label class="control-label" for="username">Nombre de usuario</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="username" id="username" class="form-control" placeholder="Nombre de usuario" required>
+                    </div>
+                    <label class="control-label" for="password">Contrase&#241;a</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="password" id="password" class="form-control" placeholder="Contrase&#241;a" required>
+                    </div>
+                    <label class="control-label" for="name">Nombre comercial</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="display_name" id="name" class="form-control" placeholder="Nombre comercial" required>
                     </div>
                     <label class="control-label" for="phone">Tel&#233;fono</label>
                     <div class="controls">
@@ -24,6 +40,19 @@
                     <label class="control-label" for="description">Descripci&#243;n</label>
                     <div class="controls">
                         <textarea name="description" data-ng-model="description" id="description" class="form-control" cols="30" rows="5" placeholder="Descripci&#243;n"></textarea>
+                    </div>
+                    <label class="control-label">Ubicaci&#243;n</label>
+                    <div>
+                        <div class="btn-group" uib-dropdown>
+                            <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                                {{defaultLocation.name}} <span class="caret"></span>
+                            </button>
+                            <ul class="uib-dropdown-menu" role="menu">
+                                <li data-ng-repeat="city in cities">
+                                    <a class="dropdown-item" data-ng-click="changeLocation(city)">{{city.name}}</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <label class="control-label">Subcategor&#237;a de servicio</label>
                     <div data-ng-repeat="servicesubcategory in selectedservicesubcategories">

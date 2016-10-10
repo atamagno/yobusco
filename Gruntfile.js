@@ -74,6 +74,21 @@
                         name: 'usersupplieractionpoints',
                         file: 'database/usersupplieractionpoints.json',
                         drop: true
+                    },
+                    {
+                        name: 'countries',
+                        file: 'database/country.json',
+                        drop: true
+                    },
+                    {
+                        name: 'states',
+                        file: 'database/state.json',
+                        drop: true
+                    },
+                    {
+                        name: 'cities',
+                        file: 'database/city.json',
+                        drop: true
                     }
                 ]
             }

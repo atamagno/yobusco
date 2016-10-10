@@ -2,12 +2,21 @@
 
 // ServiceSuppliers controller
 angular.module('admin').controller('ServiceSuppliersController',
-    function($scope, $stateParams, $state, $location, Authentication, ServiceSuppliersAdmin, ServiceSubcategories, $uibModal, Alerts) {
+    function($scope, $stateParams, $state, $location, Authentication, ServiceSuppliersAdmin, ServiceSubcategories, Cities, $uibModal, Alerts) {
         $scope.authentication = Authentication;
         $scope.alerts = Alerts;
 
         // If user is not signed in then redirect back home
         if (!$scope.authentication.user || ($scope.authentication.user.roles.indexOf('admin') === -1)) $state.go('home');
+
+        Cities.query().$promise.then(function (cities) {
+            $scope.cities = cities;
+            $scope.defaultLocation = cities[0];
+        });
+
+        $scope.changeLocation = function (city) {
+            $scope.defaultLocation = city;
+        };
 
         $scope.createModalInstance = function (templateUrl) {
 
@@ -53,10 +62,16 @@ angular.module('admin').controller('ServiceSuppliersController',
         $scope.create = function() {
             // Create new ServiceSupplier object
             var servicesupplier = new ServiceSuppliersAdmin ({
+                firstName: this.firstName,
+                lastName: this.lastName,
+                username: this.username,
+                password: this.password,
+                roles: ['servicesupplier'],
                 display_name: this.display_name,
                 phone_number: this.phone_number,
                 email: this.email,
-                description: this.description
+                description: this.description,
+                city: $scope.defaultLocation
             });
 
             servicesupplier.services = [];
@@ -97,6 +112,7 @@ angular.module('admin').controller('ServiceSuppliersController',
         // Update existing ServiceSupplier
         $scope.update = function() {
             var servicesupplier = $scope.servicesupplier;
+            servicesupplier.city = $scope.defaultLocation;
 
             servicesupplier.services = [];
             $scope.selectedservicesubcategories.forEach(function(service) {
@@ -145,7 +161,7 @@ angular.module('admin').controller('ServiceSuppliersController',
                 servicesupplierId: $stateParams.servicesupplierId
             }).$promise.then(function(servicesupplier) {
                 $scope.servicesupplier = servicesupplier;
-
+                $scope.defaultLocation = servicesupplier.city;
                 $scope.servicesubcategories = ServiceSubcategories.query();
                 $scope.selectedservicesubcategories = [];
                 $scope.servicesubcategories.$promise.then(function () {
