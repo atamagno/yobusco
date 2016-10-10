@@ -62,7 +62,7 @@
                                         {{job.status.name}} <span class="caret"></span>
                                     </button>
                                     <ul class="uib-dropdown-menu" role="menu">
-                                        <li data-ng-repeat="status in jobstatuses">
+                                        <li data-ng-repeat="status in possibleNextStatuses">
                                             <a class="dropdown-item" data-ng-click="changeStatus(status)">{{status.name}}</a>
                                         </li>
                                     </ul>
@@ -74,8 +74,7 @@
 
                     <label class="control-label" for="name">Prestador de servicios</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="job.service_supplier" class="form-control"
-                               uib-typeahead="servicesupplier as servicesupplier.display_name for servicesupplier in servicesuppliers | filter:$viewValue | limitTo:8">
+                        <input type="text" data-ng-model="job.service_supplier.display_name" class="form-control" data-ng-disabled="true">
                     </div>
 
                     <label class="control-label" for="name">Nombre</label>
@@ -100,61 +99,6 @@
         </div>
         <div class="modal-body">
             Est&#225;s seguro de que quieres actualizar el trabajo?
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
-            <button class="btn btn-default" type="button" data-ng-click="cancel()">Cancelar</button>
-        </div>
-    </script>
-
-    <script type="text/ng-template" id="addReviewModal">
-        <div class="modal-header">
-            <h3 class="modal-title">Agrega un comentario</h3>
-        </div>
-        <div class="modal-body">
-
-            <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible">{{alerts.msg}}</uib-alert>
-            <h4 class="review-services-title">Servicios</h4>
-
-            <!--input type="text" data-ng-model="selected" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
-                   uib-typeahead="servicesubcategory as servicesubcategory.name for servicesubcategory in servicesubcategories | filter:$viewValue | limitTo:8"
-                   placeholder="Selecciona un servicio."-->
-
-            <div data-ng-show="selectedservices.length" class="review-selected-services">
-                <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default review-selected-service"
-                        data-ng-repeat="selectedservice in selectedservices">
-                    {{selectedservice.name}}</button>
-            </div>
-
-            <h4 class="review-ratings-title">Resultado del trabajo</h4>
-            <div class="btn-group" uib-dropdown>
-                <button type="button" class="btn btn-default" uib-dropdown-toggle>
-                    {{job.status.name}} <span class="caret"></span>
-                </button>
-                <ul class="uib-dropdown-menu" role="menu">
-                    <li data-ng-repeat="status in finishedjobstatuses">
-                        <a class="dropdown-item" data-ng-click="changeStatus(status)">{{status.name}}</a>
-                    </li>
-                </ul>
-            </div>
-
-            <h4 class="review-ratings-title">Ratings</h4>
-            <div class="review-ratings-container">
-                <div data-ng-repeat="rating in ratings">
-                    {{rating.name}} <a uib-tooltip="{{rating.description}}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
-                    <div class="pull-right">
-                        <uib-rating data-ng-model="rating.rate" max="5" class="review-rating-selector"></uib-rating>{{rating.rate}} Estrellas
-                    </div>
-                </div>
-            </div>
-
-            <div class="review-ratings-container">
-                <h5>Recomendar&#237a este proveedor a un amigo</h5>
-                <input type="radio" data-ng-model="recommend" value="true">Si</input>
-                <input type="radio" data-ng-model="recommend" value="false">No</input>
-            </div>
-
-            <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>

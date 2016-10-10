@@ -13,22 +13,16 @@ var mongoose = require('mongoose'),
 	_ = require('lodash'),
 	prohibitedJobPaths = ['initial_approval_status'
 						 ,'subsequent_approval_status', 'target_status',
-						 'user', 'service_supplier'];
+						 'user', 'service_supplier', 'last_updated_date', 'last_updated_by'];
 
 /**
  * Create a Job
  */
 exports.create = function(req, res) {
 	var job = new Job(req.body);
-	job.user = req.user._id; // Check client code that was not merged from develop, that seemed to allow
-						     // creating a job from a supplier...Maybe this is both, the id of the user and supplier...
-						     // NOTE: this (and job. created_by did not work for me by assigning to req.user,
-						     // but changing to ._id is impacting sending emails below since it's using job.created_by.email)
-						     // TODO: revisit this.
 
-	job.created_by = req.user._id;
-	job.last_updated_by = req.user._id;
-
+	job.created_by = req.user;
+	job.last_updated_by = req.user;
 
 	if(req.body.jobpath == 'fromReview'){
 		job.setJobDefaultsForReview();
@@ -131,71 +125,80 @@ exports.update = function(req, res) {
 	var job = req.job;
 	var jobDataSubmitted = req.body;
 
-	if(approvingJob(jobDataSubmitted)){
 
-		job.approved = jobDataSubmitted.approved;
-		// flags for validation from model (to verify if the user is actually the one allowed to approve)
-		job.approvingUser = req.user;
-		job.approving = true;
+	job.update_action = getJobUpdateAction(jobDataSubmitted);
+	switch (job.update_action){
+
+		case 'approval':
+			job.approval = jobDataSubmitted.approval;
+			job.approval_challenge_details = jobDataSubmitted.approval_challenge_details;
+			job.approval_review = jobDataSubmitted.approval_review;
+			job.approval_user = req.user;
+			break;
+
+		case 'resolution':
+			job.resolution = jobDataSubmitted.resolution;
+			job.resolution_user = req.user;
+			break;
+
+		case 'update':
+			job = _.extend(job , removeProhibitedJobPaths(jobDataSubmitted)); // TODO: is it better to do this from route middleware?
+			job.last_updated_by = req.user;
+			break;
+
+		default:
+			return res.status(400).send({
+				message: 'La actualización no puede completarse en base a la acción especificada.'
+			});
 	}
-	else{
 
-		job = _.extend(job , removeProhibitedJobPaths(jobDataSubmitted)); // TODO: is it better to do this from route middleware?
-		job.last_updated_by = req.user._id;
-	}
+	job.save(function(err, job) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+
+			res.jsonp(job);
+			var user = req.user;
+			Job.findOne(job)
+				.populate('service_supplier user')
+				.exec(function (err, job) {
+
+					mailer.sendMail(res, 'updated-job-for-user-updating-email',
+						{
+							userName: user.displayName,
+							jobName: job.name
+						}, 'Trabajo modificado', user.email);
+
+					var mailOptions = { jobName: job.name };
+					if (user.email == job.user.email) {
+						mailOptions = {
+							userName: job.service_supplier.display_name,
+							userUpdating: job.user.displayName
+						};
+
+						var emailTo = job.service_supplier.email;
+					} else {
+						mailOptions = {
+							userName: job.user.displayName,
+							userUpdating: job.service_supplier.display_name
+						};
+
+						var emailTo = job.user.email;
+					}
+
+					mailer.sendMail(res, 'updated-job-for-user-not-updating-email', mailOptions, 'Trabajo modificado', emailTo);
 
 
-
-	if (job.reported) {
-		reportJob(req, res);
-	} else {
-		job.save(function(err, job) {
-			if (err) {
-				return res.status(400).send({
-					message: errorHandler.getErrorMessage(err)
 				});
-			} else {
+		}
+	});
 
-				res.jsonp(job);
-				var user = req.user;
-				Job.findOne(job)
-					.populate('service_supplier user')
-					.exec(function (err, job) {
-
-						mailer.sendMail(res, 'updated-job-for-user-updating-email',
-							{
-								userName: user.displayName,
-								jobName: job.name
-							}, 'Trabajo modificado', user.email);
-
-						var mailOptions = { jobName: job.name };
-						if (user.email == job.user.email) {
-							mailOptions = {
-								userName: job.service_supplier.display_name,
-								userUpdating: job.user.displayName
-							};
-
-							var emailTo = job.service_supplier.email;
-						} else {
-							mailOptions = {
-								userName: job.user.displayName,
-								userUpdating: job.service_supplier.display_name
-							};
-
-							var emailTo = job.user.email;
-						}
-
-						mailer.sendMail(res, 'updated-job-for-user-not-updating-email', mailOptions, 'Trabajo modificado', emailTo);
-
-
-					});
-			}
-		});
-	}
 	
 };
 
-function reportJob(req, res) {
+/*function reportJob(req, res) {
 	var job = req.job;
 
 	job.save(function(err) {
@@ -238,7 +241,7 @@ function reportJob(req, res) {
 				});
 		}
 	});
-};
+};*/
 
 
 
@@ -305,10 +308,13 @@ exports.findJobByID = function(req, res, next, id) {
 		                       {path: 'user', select: 'displayName'},
 							   {path: 'initial_approval_status'},
 							   {path: 'subsequent_approval_status'},
-						       {path: 'status', select: 'keyword name possible_next_statuses'},
-							   {path: 'target_status', select: 'name'},
+								{path: 'status',
+							     populate: {path: 'possible_next_statuses', select: 'keyword name finished'}},
+							   {path: 'target_status', select: 'name keyword finished'},
 							   {path: 'review'},
-							   {path: 'services', select: 'name'}])
+							   {path: 'services', select: 'name'},
+							   {path: 'approval_challenge_details.status', select: 'name'},
+							   {path: 'last_updated_by', select: 'roles'}])
 
 					.exec(function(err, job) {
 						if (err) return next(err); // TODO: check here if job is not found, it seems there's no 'next'
@@ -408,6 +414,146 @@ exports.listByUser = function(req, res) {
 	}
 };
 
+exports.listByServiceSupplier = function(req, res) {
+
+	var serviceSupplierId = req.params.serviceSupplierId;
+
+	Job.find({service_supplier: serviceSupplierId})
+			  .populate([{path: 'target_status', select: 'name keyword'},
+						 {path: 'user', select: 'displayName'},
+						 {path: 'status'},
+						 {path: 'initial_approval_status'},
+						 {path: 'service_supplier', select: 'user'},
+						 {path: 'last_updated_by', select: 'roles'}])
+			  .exec(function(err, jobs) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+
+			res.jsonp(jobs.filter(filterNotApprovedJobsForUser.bind(null, req.user)));
+		}
+	});
+};
+
+exports.canUpdate = function(req, res, next) {
+	var job = req.job, user = req.user;
+	if (!(job.user._id.equals(user._id)) && !(job.service_supplier.user.equals(user._id))) {
+		return res.status(401).send({
+			message: 'El usuario no est\u00e1 autorizado'
+		});
+	}
+
+	next();
+};
+
+/**
+ * Checks several conditions that need to be met for job creation.
+ * - User and supplier should exist.
+ * - User and supplier should create a job only for themselves (not for a different user/supplier).
+ * - Services included in the job should be serviced by the service supplier.
+ */
+exports.canCreate = function(req, res, next) {
+
+	var user = req.user;
+	var job = req.body;
+	var error;
+
+	async.parallel([
+		function(done){
+			User.findOne({'_id': job.user, roles: 'user'}).exec(function(err, foundUser){
+				if(err) return done(new Error());
+
+				// Checking that user exists.
+				if(!foundUser) {
+					return done(new Error('El usuario no existe'));
+				}
+				// Checking user is not creating a job for a different user...
+				if(user.roles.indexOf('user') != -1 && user._id.toString() != job.user){
+					error = new Error('El usuario no est\u00e1 autorizado');
+					error.code = 401;
+					return done(error);
+				}
+				done();
+
+			});
+
+		},
+		function(done){
+
+			ServiceSupplier.findById(job.service_supplier).exec(function(err, servicesupplier){
+				if(err)	return done(new Error());
+
+				// Checking that service supplier exists...
+				if(!servicesupplier) {
+					return done(new Error('El prestador de servicios no existe'));
+				}
+
+				// Checking service supplier is not creating a job for a supplier...
+				if(user.roles.indexOf('servicesupplier') != -1 && !user.equals(servicesupplier.user)){
+							error = new Error('El usuario no est\u00e1 autorizado');
+							error.code = 401;
+							return done(error);
+				}
+
+				// Checking that services submitted are offered by service supplier
+				for(var i=0;i<job.services.length;i++){
+					if(!mongoose.Types.ObjectId.isValid(job.services[i]) ||
+					   !_.find(servicesupplier.services, mongoose.Types.ObjectId(job.services[i]))){
+						return done(new Error('Uno o mas servicios seleccionados ' +
+						'no son validos para el prestador de servicios'));
+					}
+				}
+				done();
+			});
+
+
+		}
+	], function(err){
+		if(err){
+			err.code = err.code || 400;
+			return res.status(err.code).send({message: errorHandler.getErrorMessage(err, true)});
+		}
+		next();
+	});
+
+};
+
+exports.listForReview = function(req, res) {
+	Job.getJobsForReview(req.params.serviceSupplierId, req.params.userId, function(err, jobs) {
+		if (err) {
+			// TODO: add logging here...?
+			res.jsonp([]);
+		}
+		else {
+			res.jsonp(jobs);
+		}
+	});
+}
+
+function getJobUpdateAction(jobDataSubmitted){
+
+	if(typeof jobDataSubmitted.update_action == 'undefined') { // user is resolving job challenge...
+		return 'update'
+	}
+	else{
+			 return jobDataSubmitted.update_action;
+	}
+
+}
+
+
+function removeProhibitedJobPaths(jobDataSubmitted){
+
+	for(var i=0;i<prohibitedJobPaths.length;i++)
+	{
+		_.unset(jobDataSubmitted, prohibitedJobPaths[i]);
+	}
+
+	return jobDataSubmitted;
+}
+
 function findJobsByUserID(searchCondition, paginationCondition, req, res) {
 
 	var response = {};
@@ -420,7 +566,7 @@ function findJobsByUserID(searchCondition, paginationCondition, req, res) {
 			response.totalItems = count;
 			Job.find(searchCondition, {}, paginationCondition)
 				.populate([{path: 'service_supplier', select: 'display_name'},
-						   {path: 'status'}])
+					{path: 'status'}])
 				.exec(function (err, jobs) {
 
 					if (err) {
@@ -436,95 +582,16 @@ function findJobsByUserID(searchCondition, paginationCondition, req, res) {
 	});
 }
 
-
-exports.listByServiceSupplier = function(req, res) {
-
-	var serviceSupplierId = req.params.serviceSupplierId;
-
-	Job.find({service_supplier: serviceSupplierId})
-			  .populate([{path: 'target_status', select: 'name keyword'},
-						 {path: 'user', select: 'displayName'},
-						 {path: 'status'},
-						 {path: 'initial_approval_status'}])
-			  .exec(function(err, jobs) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-
-			res.jsonp(jobs.filter(filterNotApprovedJobsForUser.bind(null, req.user)));
-		}
-	});
-};
-
 function filterNotApprovedJobsForUser(user, job){
 
-	// If the job is not associated to the user requesting the list
-	// (either the user being the consumer -user- or supplier)
-	// and it's either in created status or pending initial approval status,
-	// we will not return it (only the job user and supplier can see it)
-
-	if(job.status.keyword == 'created' || job.initial_approval_status.keyword == 'pending') {
-		if(user){
-			if((!(user._id.equals(job.user._id)) && !(user._id.equals(job.service_supplier._id))) &&
-				(job.status.keyword == 'created' || job.initial_approval_status.keyword == 'pending')){
-				return false;
-			}
-			else{
-				return true;
-			}
-		}
-		else{
-			return false;
-		}
+	// If the job has not been initially approved, non logged users and users other than
+	// the job user and job supplier won't see the job.
+	// NOTE: both user (function parameter) and job.user are populated, so we have to compare their Ids
+	// job.service_supplier.user is not populated (it's an ObjectId itself), so we don't need its ._id)
+	if(( !user || (!user._id.equals(job.user._id) && !user._id.equals(job.service_supplier.user)))
+		&& job.initial_approval_status.keyword != 'approved'){
+		return false;
 	}
 	return true;
 
-
-
-}
-
-exports.canUpdate = function(req, res, next) {
-	var job = req.job, user = req.user;
-	if (!(job.user._id.equals(user._id)) && !(job.service_supplier.user.equals(user._id))) {
-		return res.status(401).send({
-			message: 'El usuario no est\u00e1 autorizado'
-		});
-	}
-
-	next();
-};
-
-exports.listForReview = function(req, res) {
-	Job.getJobsForReview(req.params.serviceSupplierId, req.params.userId, function(err, jobs) {
-		if (err) {
-			// TODO: add logging here...?
-			res.jsonp([]);
-		}
-		else {
-			res.jsonp(jobs);
-		}
-	});
-}
-
-function approvingJob(jobDataSubmitted){
-
-	if(typeof jobDataSubmitted.approved != 'undefined') { // user is approving job...
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-function removeProhibitedJobPaths(jobDataSubmitted){
-
-	for(var i=0;i<prohibitedJobPaths.length;i++)
-	{
-		_.unset(jobDataSubmitted, prohibitedJobPaths[i]);
-	}
-
-	return jobDataSubmitted;
 }

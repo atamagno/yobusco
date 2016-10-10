@@ -1,89 +1,145 @@
 {
-    "_id": ObjectId("56269183477f11b662a6dd88"),
-    "name": "En Progreso",
-    "keyword": 'active',
-    "finished": false,
-    "default": false,
-    "possible_next_statuses" : [
-        ObjectId("56269183455f11b0b2a6dd88"),
-        ObjectId("56269183477f11b0b2a99d88"),
-        ObjectId("56264483477f11b0b2a6dd88"),
-        ObjectId("56263383477f11b0b2a6dd88")
-    ]
-}
-{
-    "_id": ObjectId("56269183455f11b0b2a6dd88"),
-    "name": "Pausado",
-    "keyword": 'paused',
-    "finished": false,
-    "default": false,
-    "possible_next_statuses" : [
-        ObjectId("56269183477f11b0b2a99d88"),
-        ObjectId("56269183477f11b662a6dd88"),
-        ObjectId("56264483477f11b0b2a6dd88"),
-        ObjectId("56263383477f11b0b2a6dd88")
-    ]
-}
-{
-    "_id": ObjectId("56264483477f11b0b2a6dd88"),
-    "name": "Completado",
-    "keyword": 'finished',
-    "finished": true,
-    "default": false,
-    "points" : 1.0,
-    "possible_next_statuses" : [
-        ObjectId("56bd52f78b2d42938751aa5e"),
-        ObjectId("56bd52bb8b2d42938751aa5d"),
-        ObjectId("56269183477f11b662a6dd88")
-    ]
-}
-{
-    "_id": ObjectId("56269183477f11b0b2a99d88"),
-    "name": "Demorado",
-    "keyword": 'delayed',
-    "finished": false,
-    "default": false,
-    "possible_next_statuses" : [
-        ObjectId("56269183455f11b0b2a6dd88"),
-        ObjectId("56269183477f11b662a6dd88"),
-        ObjectId("56264483477f11b0b2a6dd88"),
-        ObjectId("56263383477f11b0b2a6dd88")
-    ]
-}
-{
-    "_id": ObjectId("56263383477f11b0b2a6dd88"),
-    "name": "Abandonado",
-    "keyword": 'abandoned',
-    "finished": true,
-    "default": false,
-    "points" : -1.0,
-    "possible_next_statuses" : [
-        ObjectId("56bd52bb8b2d42938751aa5d")
-    ]
-}
-{
-    "_id": ObjectId("56263383477f128bb2a6dd88"),
-    "name": "Pendiente Aprobacion",
-    "keyword": 'pending',
-    "finished": false,
-    "default": true,
-    "possible_next_statuses" : [
-        ObjectId("56269183477f11b662a6dd88")
-    ]
-}
-{
     "_id" : ObjectId("56bd52bb8b2d42938751aa5d"),
+    "keyword" : "guaranteed",
     "name" : "Garantizado",
     "points" : 0.8,
-    "possible_next_statuses" : [],
-    "post_finished" : true
+    "possible_next_statuses" : [
+
+    ],
+    "post_finished" : true,
+    "requires_approval_by" : [
+
+    ],
+    "roles" : [
+        "user"
+    ]
 }
 {
-    "_id" : ObjectId("56bd52f78b2d42938751aa5e"),
-    "name" : "Not Garantizado",
-    "points" : -0.8,
-    "possible_next_statuses" : [
-        ObjectId("56bd52bb8b2d42938751aa5d")
-    ],
-    "post_finished" : true
+"_id" : ObjectId("56bd52f78b2d42938751aa5e"),
+"keyword" : "notguaranteed",
+"name" : "No garantizado",
+"points" : -0.8,
+"possible_next_statuses" : [
+ObjectId("56bd52bb8b2d42938751aa5d")
+],
+"post_finished" : true,
+"requires_approval_by" : [
+
+],
+"roles" : [
+"user"
+]
+}
+{
+"_id" : ObjectId("56269183455f11b0b2a6dd88"),
+"keyword" : "paused",
+"name" : "Pausado",
+"possible_next_statuses" : [
+ObjectId("56269183477f11b0b2a99d88"),
+ObjectId("56269183477f11b662a6dd88"),
+ObjectId("56264483477f11b0b2a6dd88"),
+ObjectId("56263383477f11b0b2a6dd88")
+],
+"requires_approval_by" : [
+
+],
+"roles" : [
+"servicesupplier",
+"user"
+]
+}
+{
+"_id" : ObjectId("57bdf9d8e16d21810390560a"),
+"keyword" : "created",
+"name" : "Creado",
+"possible_next_statuses" : [
+ObjectId("56269183455f11b0b2a6dd88"),
+ObjectId("56263383477f11b0b2a6dd88"),
+ObjectId("56269183477f11b662a6dd88"),
+ObjectId("56264483477f11b0b2a6dd88")
+],
+"requires_approval_by" : [
+
+],
+"roles" : [
+"servicesupplier",
+"user"
+]
+}
+{
+"_id" : ObjectId("56264483477f11b0b2a6dd88"),
+"finished" : true,
+"initial" : true,
+"keyword" : "finished",
+"name" : "Terminado",
+"points" : 1.0,
+"possible_next_statuses" : [
+ObjectId("56bd52f78b2d42938751aa5e"),
+ObjectId("56bd52bb8b2d42938751aa5d"),
+ObjectId("56269183477f11b662a6dd88")
+],
+"requires_approval_by" : [
+"user"
+],
+"roles" : [
+"servicesupplier",
+"user"
+]
+}
+{
+"_id" : ObjectId("56263383477f11b0b2a6dd88"),
+"finished" : true,
+"initial" : true,
+"keyword" : "abandoned",
+"name" : "Abandonado",
+"points" : -1.0,
+"possible_next_statuses" : [
+ObjectId("56bd52bb8b2d42938751aa5d")
+],
+"requires_approval_by" : [
+"servicesupplier"
+],
+"roles" : [
+"servicesupplier",
+"user"
+]
+}
+{
+"_id" : ObjectId("56269183477f11b0b2a99d88"),
+"keyword" : "delayed",
+"name" : "Demorado",
+"possible_next_statuses" : [
+ObjectId("56269183455f11b0b2a6dd88"),
+ObjectId("56269183477f11b662a6dd88"),
+ObjectId("56264483477f11b0b2a6dd88"),
+ObjectId("56263383477f11b0b2a6dd88")
+],
+"requires_approval_by" : [
+"servicesupplier"
+],
+"roles" : [
+"servicesupplier",
+"user"
+]
+}
+{
+"_id" : ObjectId("56269183477f11b662a6dd88"),
+"default" : true,
+"initial" : true,
+"keyword" : "active",
+"name" : "En Progreso",
+"possible_next_statuses" : [
+ObjectId("56269183455f11b0b2a6dd88"),
+ObjectId("56269183477f11b0b2a99d88"),
+ObjectId("56264483477f11b0b2a6dd88"),
+ObjectId("56263383477f11b0b2a6dd88")
+],
+"requires_approval_by" : [
+"user",
+"servicesupplier"
+],
+"roles" : [
+"servicesupplier",
+"user"
+]
 }

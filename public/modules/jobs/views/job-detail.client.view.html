@@ -6,9 +6,13 @@
         <div class="col-lg-12">
             <h1>
                 Detalle de trabajo
-                <a ng-show="(job.initial_approval_status.keyword == 'approved' &&
-                            (job.subsequent_approval_status.keyword == null ||
-                             job.subsequent_approval_status.keyword == 'approved')) && authentication.user && ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))"
+                <a data-ng-show="(job.initial_approval_status.keyword == 'approved' &&
+                            (job.subsequent_approval_status.keyword == null || job.subsequent_approval_status.keyword == 'approved')) &&
+                            (authentication.user &&
+                            ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))) &&
+                            ((!job.status.finished && !job.status.post_finished) ||
+                            (job.status.finished && authentication.user._id === job.user._id) ||
+                            (job.status.post_finished && authentication.user._id === job.user._id))"
                    ui-sref="jobs.edit({ jobId: job._id })" class="btn btn-success pull-right">Actualizar trabajo</a>
 
 
@@ -28,12 +32,25 @@
                     </ul>
                 </div>
 
+                <div class="btn-group" data-ng-show="(job.initial_approval_status.keyword == 'challenged' || job.subsequent_approval_status.keyword == 'challenged')
+                                                      && authentication.user && isAdmin"
+                     uib-dropdown>
+                    <button type="button" class="btn btn-default pull-right btn-report" uib-dropdown-toggle>
+                        Resolver trabajo<span class="caret"></span>
+                    </button>
+                    <ul class="uib-dropdown-menu" role="menu">
+                        <li>
+                            <a class="dropdown-item" data-ng-click="openResolveJobModal('target')">Aceptar estado a aprobar</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" data-ng-click="openResolveJobModal('challenge')">Aceptar challenge</a>
+                        </li>
+                    </ul>
+                </div>
 
-                <!--a ng-show="(job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword == 'pending') && authentication.user && (authentication.user._id === job.approver || authentication.user._id === job.user._id)"
-                   data-ng-click="openApproveJobModal()" class="btn btn-success pull-right">Aprobar/Rechazar trabajo</a-->
 
-                <a data-ng-disabled="true" ng-show="(job.status.keyword == 'created' || job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword == 'pending')
-                                                    && authentication.user && (authentication.user._id === job.last_updated_by)"
+                <a data-ng-disabled="true" ng-show="(job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword == 'pending')
+                                                    && authentication.user && (authentication.user._id === job.last_updated_by._id)"
                    class="btn btn-info pull-right">Esperando aprobaci&#243;n</a>
 
                 <!-- TODO: this should be displayed to both user and supplier only -->
@@ -51,9 +68,8 @@
 
     <div class="row">
 
-        <div class="col-md-8">
-            <img ng-show="!job.pictures.length" class="img-responsive" src="/images/job-big.png" alt="">
-            <uib-carousel ng-show="job.pictures.length" interval="0" no-wrap="false" class="job-big-img">
+        <div class="col-md-8" data-ng-show="job.pictures.length">
+            <uib-carousel interval="0" no-wrap="false" class="job-big-img">
                 <uib-slide data-ng-repeat="slide in job.pictures" style="min-height: 260px;">
                     <img data-ng-src="{{slide}}" class="slide-container">
                 </uib-slide>
@@ -69,7 +85,7 @@
                 <li><strong>Fecha estimada: </strong>{{job.expected_date | date: 'shortDate'}}</li>
                 <li><strong>Fecha de finalizaci&#243;n: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
                 <li><strong>Estado actual: </strong>{{job.status.name}}</li>
-                <li data-ng-show="authentication.user && (authentication.user._id === job.approver || authentication.user._id === job.user._id) &&
+                <li data-ng-show="authentication.user && ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user)) &&
                                   (job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword =='pending')">
                     <strong>Estado a aprobar: </strong>{{job.target_status.name}}</li>
                 <li><strong>Prestador de servicios: </strong><a ui-sref="servicesupplier.detail({ servicesupplierId: job.service_supplier._id })">{{job.service_supplier.display_name}}</a></li>
@@ -85,7 +101,10 @@
             <div class="upload-image-header-container">
                 <div class="pull-right btn-upload-image">
                     <button data-ng-click="openUploadImagesModal()" type="button" class="btn btn-primary"
-                            ng-show="!job.reported && job.status.keyword != 'pending' && !job.status.finished && authentication.user && ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))">
+                            data-ng-show="(job.initial_approval_status.keyword == 'approved' &&
+                            (job.subsequent_approval_status.keyword == null ||
+                             job.subsequent_approval_status.keyword == 'approved')) &&
+                             authentication.user && ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar im&#225;genes
                     </button>
                 </div>
@@ -190,16 +209,41 @@
 
     <script type="text/ng-template" id="approveRejectJobModal">
         <div class="modal-header">
-            <h3 class="modal-title" data-ng-show="approvalAction == 'approved'">Aprobar Trabajo</h3>
-            <h3 class="modal-title" data-ng-show="approvalAction == 'rejected'">Rechazar Trabajo</h3>
+            <h3 class="modal-title" data-ng-show="approvalAction == 'approved'">Aprobar trabajo</h3>
+            <h3 class="modal-title" data-ng-show="approvalAction == 'rejected'">Rechazar trabajo</h3>
         </div>
         <div class="modal-body">
+
+            <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible">{{alerts.msg}}</uib-alert>
+
             <p>
                 Est&#225;s seguro de que quieres {{approvalActionString}} el trabajo? <br>
             </p>
             <p data-ng-show="approvalAction == 'approved'">
                 El trabajo pasar&#225; de estado '{{job.status.name}}' a estado '{{job.target_status.name}}'.
             </p>
+            <p data-ng-show="approvalAction == 'rejected'">
+                El estado del trabajo ser&#225; resuelto por un administrador del sistema. <br>
+                Para ello, necesitamos que completes la siguiente informaci&#243;n:
+            </p>
+
+            <div data-ng-show="approvalAction == 'rejected'">
+                <h4>Cual ser&#237;a actual del estado del trabajo en tu opini&#243;n?</h4>
+                <div class="btn-group" uib-dropdown>
+                    <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                        {{challengestatus.name}} <span class="caret"></span>
+                    </button>
+                    <ul class="uib-dropdown-menu" role="menu">
+                        <li data-ng-repeat="challengestatus in possiblechallengestatuses">
+                            <a class="dropdown-item" data-ng-click="changeChallengeStatus(challengestatus)">{{challengestatus.name}}</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <textarea data-ng-model="challengecomment" class="form-control comments-text-area" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
+
+            </div>
+
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>
@@ -207,12 +251,17 @@
         </div>
     </script>
 
-    <script type="text/ng-template" id="reportJobModal">
+    <script type="text/ng-template" id="resolveJobModal">
         <div class="modal-header">
-            <h3 class="modal-title">Reportar Trabajo</h3>
+            <h3 class="modal-title">Resolver trabajo</h3>
         </div>
         <div class="modal-body">
-            Est&#225;s seguro de que quieres reportar el trabajo?
+
+            <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible">{{alerts.msg}}</uib-alert>
+            <p>
+                El trabajo quedar&#225; en estado {{resolvedJobStatus}}.<br>
+                Est&#225;s seguro de aplicar el cambio?
+            </p>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>

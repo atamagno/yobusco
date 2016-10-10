@@ -42,7 +42,23 @@ var JobStatusSchema = new Schema({
 	}],
 	post_finished:{
 		type: Boolean,
-		default:null
+		default:false
+	},
+	initial:{
+		type: Boolean,
+		default:false
+	},
+	roles: {
+		type: [{
+			type: String,
+			enum: ['user', 'servicesupplier', 'admin']
+		}]
+	},
+	requires_approval_by: {
+		type: [{
+			type: String,
+			enum: ['user', 'servicesupplier', 'admin']
+		}]
 	}
 });
 
@@ -54,6 +70,7 @@ module.exports = function(config){
 		config.staticdata.jobStatuses = {};
 		config.staticdata.jobStatuses.getAll = getAll;
 		config.staticdata.jobStatuses.getByProperty = getByProperty;
+		config.staticdata.jobStatuses.isNextPossible = isNextPossible;
 	})
 
 }
@@ -65,6 +82,27 @@ var getByProperty = function(propertyName, propertyValue)
 var getAll = function()
 {
 	return JobStatuses;
+}
+
+var isNextPossible = function(currentStatus, nextStatus)
+{
+	if(currentStatus.equals(nextStatus)){
+		return true;
+	}
+	else{
+		// Getting config of current status
+		var currentStatusConfig = getByProperty('_id', currentStatus);
+
+		// Checking if next status is present in the list of possible next statuses for current one.
+		var next_status_found = _.find(currentStatusConfig.possible_next_statuses, _.matchesProperty('_id', nextStatus));
+		if (next_status_found){
+			return true;
+		}
+		else{
+			return false;
+		}
+
+	}
 }
 
 // Synchronizing local data after new/updated/removed items

@@ -1,12 +1,16 @@
 angular.module('jobs').controller('UserJobDetailsAndEditController',
 	function ($scope, $rootScope, $stateParams, $state, Jobs, $uibModal, Alerts) {
 
+		$scope.possibleNextStatuses = [];
+
 		// Find existing Job
 		$scope.findOne = function () {
 			Jobs.get({
 				jobId: $stateParams.jobId
 			}).$promise.then(function (job) {
 					$scope.job = job;
+					$scope.possibleNextStatuses.push(job.status);
+					$scope.possibleNextStatuses = $scope.possibleNextStatuses.concat(job.status.possible_next_statuses);
 				});
 		};
 
@@ -37,9 +41,8 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 				if (job.status.finished && !job.finish_date) {
 					Alerts.show('danger', 'Debes seleccionar una fecha de finalizaci\u00f3n');
 				} else {
-					if (job.status.finished) {
+					if(!job.review[0] && job.status.finished && !$scope.isServiceSupplier) {
 						$scope.openReviewModal();
-
 					}
 					else {
 						job.$update(function () {
@@ -59,22 +62,8 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 
 		$scope.openReviewModal = function () {
 
-			var modalInstance = $uibModal.open({
-				templateUrl: 'addReviewModal',
-				controller: 'ReviewModalInstanceCtrl',
-				scope: $scope,
-				resolve: {
-					JobStatuses: function(JobStatus){
-						return JobStatus.query().$promise;
-					},
-					RatingTypes: function(RatingTypes){
-						return RatingTypes.query().$promise;
-					}
-				}
-			});
-
+			var modalInstance = $scope.showReviewModal();
 			modalInstance.result.then(function (reviewinfo) {
-
 				$scope.addReview(reviewinfo)
 
 			});
@@ -83,13 +72,6 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 		$scope.addReview = function (reviewinfo) {
 
 			var job = $scope.job;
-			var ratings = [];
-
-			// Converting review ratings in the format used by server.
-			for (var i = 0; i < reviewinfo.ratings.length; i++) {
-				reviewinfo.ratings[i] = { type: reviewinfo.ratings[i]._id, rate: reviewinfo.ratings[i].rate };
-			}
-
 			job.review = [reviewinfo];
 
 			job.$update(function(){
@@ -171,57 +153,90 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 		$scope.openApproveRejectJobModal = function(approvalAction) {
 
 			$scope.approvalAction = approvalAction;
-			var modalInstance = $uibModal.open({
+			var approveRejectModalInstance = $uibModal.open({
 				templateUrl: 'approveRejectJobModal',
 				controller: 'ApproveRejectJobModalInstanceCtrl',
 				scope: $scope
 			});
 
-			modalInstance.result.then(function () {
-				$scope.approveRejectJob($scope.approvalAction);
+			approveRejectModalInstance.result.then(function (challengeDetails) {
+				if((!$scope.isServiceSupplier && !$scope.job.review[0]) &&
+				   (($scope.approvalAction == 'approved' && $scope.job.target_status.finished) ||
+				   ($scope.approvalAction == 'rejected' && challengeDetails.status.finished))){
+						var modalInstance = $scope.showReviewModal();
+						modalInstance.result.then(function (reviewInfo) {
+							$scope.approveRejectJob(approvalAction,challengeDetails, reviewInfo);
+						});
+				}
+				else{
+					$scope.approveRejectJob(approvalAction,challengeDetails);
+				}
 			});
 		};
 
-		$scope.approveRejectJob = function(approvalAction) {
+		$scope.approveRejectJob = function(approvalAction, challengeDetails, reviewInfo) {
 
 			var job = new Jobs();
 			job._id = $scope.job._id;
-			job.approved = approvalAction == 'approved' ? true : false;
+			job.update_action = 'approval';
+
+			if(approvalAction == 'approved'){
+				job.approval = true;
+			}
+			else{
+				challengeDetails.status = challengeDetails.status._id;
+				job.approval_challenge_details = challengeDetails;
+				job.approval = false;
+			}
+
+			if(reviewInfo) {job.approval_review = reviewInfo;}
 
 			job.$update(function() {
-				Alerts.show('success','Trabajo aprobado exitosamente');
-				$state.go('jobs.viewDetail', { jobId: job._id});
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-				Alerts.show('danger',$scope.error);
-			});
+					if (approvalAction == 'approved') {
+						Alerts.show('success', 'Trabajo aprobado exitosamente');
+					}
+					else {
+						Alerts.show('success', 'El estado del trabajo ser&#225; resuelto por un administrador del sistema \n' +
+						'Ser&#225;s contactado en caso de que se requiera mas informaci&#243;n.');
+					}
+					$state.reload();
+				},function(errorResponse) {
+							$scope.error = errorResponse.data.message;
+							Alerts.show('danger',$scope.error);
+				});
 		};
 
-		$scope.reportJob = function() {
-			var job = $scope.job;
-			job.reported = true;
+		$scope.openResolveJobModal = function(resolveAction) {
 
-			job.$update(function() {
-				$rootScope.$broadcast('updateReported', true);
-				Alerts.show('success','Trabajo reportado exitosamente')
-				$state.go('jobs.viewDetail', { jobId: job._id });
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-				Alerts.show('danger',$scope.error);
-			});
-		};
-
-		$scope.openReportJobModal = function() {
-
+			$scope.resolveAction = resolveAction;
 			var modalInstance = $uibModal.open({
-				templateUrl: 'reportJobModal',
-				controller: 'ReportJobModalInstanceCtrl'
+				templateUrl: 'resolveJobModal',
+				controller: 'ResolveJobModalInstanceCtrl',
+				scope: $scope
 			});
 
 			modalInstance.result.then(function () {
-				$scope.reportJob()
+				$scope.resolveJob($scope.resolveAction);
 			});
 		};
+
+		$scope.resolveJob = function(resolveAction) {
+
+			var job = new Jobs();
+			job._id = $scope.job._id;
+			job.update_action = 'resolution';
+			job.resolution = resolveAction;
+
+			job.$update(function() {
+					Alerts.show('success','Trabajo actualizado exitosamente');
+					$state.reload();
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+				Alerts.show('danger',$scope.error);
+			});
+		};
+
+
 
 	});
 
@@ -307,61 +322,8 @@ angular.module('jobs').controller('EditJobModalInstanceCtrl',
 	});
 
 
-angular.module('jobs').controller('ReviewModalInstanceCtrl',
-	function ($scope, Alerts, $uibModalInstance, JobStatuses, RatingTypes) {
-
-		$scope.finishedjobstatuses = [];
-		for(var i=0; i<JobStatuses.length;i++)
-		{
-				if(JobStatuses[i].finished){
-					$scope.finishedjobstatuses.push(JobStatuses[i])
-				}
-		}
-
-		// Mapping rating types obtained from service (see resolve item in modal controller configuration)
-		// to the rating objects used by the uib-rating directive
-		// TODO: What if we just add a 'defaultRate' property/virtual to the object on the database/model,
-		// would we still need this mapping?
-		$scope.ratings = [];
-		for (var i = 0; i < RatingTypes.length; i++) {
-				$scope.ratings.push({ 	_id: RatingTypes[i]._id,
-									 	name: RatingTypes[i].name,
-										description: RatingTypes[i].description,
-										rate: 3 });
-		}
-
-		$scope.selectedservices = $scope.job.services;
-		$scope.rate = 3;
-
-		$scope.ok = function () {
-
-			if ($scope.comment) {
-
-				var reviewinfo = {
-					comment: $scope.comment,
-					ratings: $scope.ratings,
-					recommend: $scope.recommend
-				};
-				$uibModalInstance.close(reviewinfo);
-
-
-			} else {
-					Alerts.show('danger', 'Debes dejar un comentario');
-			}
-		};
-
-		$scope.cancel = function () {
-			$uibModalInstance.dismiss('cancel');
-		};
-
-		$scope.changeStatus = function (status) {
-			$scope.job.status = status;
-		};
-
-	});
-
 angular.module('jobs').controller('ApproveRejectJobModalInstanceCtrl',
-	function ($scope, $uibModalInstance) {
+	function ($scope, $uibModalInstance, Alerts) {
 
 		if($scope.approvalAction == 'approved'){
 			$scope.approvalActionString = 'aprobar';
@@ -369,6 +331,62 @@ angular.module('jobs').controller('ApproveRejectJobModalInstanceCtrl',
 		else
 		{
 			$scope.approvalActionString = 'rechazar';
+			$scope.possiblechallengestatuses = getChallengeStatuses($scope.job);
+			$scope.challengestatus = {name: '[Seleccione un estado]'};
+		}
+
+		$scope.ok = function () {
+
+			if($scope.approvalAction == 'rejected')
+			{
+				if(!$scope.challengestatus._id){
+					Alerts.show('danger', 'Debes seleccionar un estado');
+				}
+				else{
+					$uibModalInstance.close({status: $scope.challengestatus,
+											 comments: $scope.challengecomment});
+				}
+			}
+			else{
+				$uibModalInstance.close();
+			}
+
+		};
+
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+
+		function getChallengeStatuses(job){
+
+			var possible_next_statuses = job.status.possible_next_statuses;
+			var possiblechallengestatuses = job.status.keyword == 'created' ? [] : [job.status];
+			for(var i=0;i<possible_next_statuses.length;i++)
+			{
+				if(possible_next_statuses[i]._id != job.target_status._id){
+					possiblechallengestatuses.push(possible_next_statuses[i]);
+				}
+			}
+
+			return possiblechallengestatuses;
+		}
+
+		$scope.changeChallengeStatus = function(status) {
+			$scope.challengestatus = status;
+		}
+
+	});
+
+angular.module('jobs').controller('ResolveJobModalInstanceCtrl',
+	function ($scope, $uibModalInstance, Alerts) {
+
+		var job = $scope.job;
+		if($scope.resolveAction == 'target'){
+			$scope.resolvedJobStatus = job.target_status.name;
+		}
+		else
+		{
+			$scope.resolvedJobStatus = job.approval_challenge_details.status.name;
 		}
 
 		$scope.ok = function () {
@@ -378,19 +396,11 @@ angular.module('jobs').controller('ApproveRejectJobModalInstanceCtrl',
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
+
 	});
 
-angular.module('jobs').controller('ReportJobModalInstanceCtrl',
-	function ($scope, $uibModalInstance) {
 
-		$scope.ok = function () {
-			$uibModalInstance.close();
-		};
 
-		$scope.cancel = function () {
-			$uibModalInstance.dismiss('cancel');
-		};
-	});
 
 
 

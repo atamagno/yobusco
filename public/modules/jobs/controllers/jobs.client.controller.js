@@ -11,29 +11,14 @@ angular.module('jobs').controller('UserJobsController',
 		$scope.itemsPerPage = 6;
 		$scope.maxPages = 5;
 		$scope.showList = false;
+		$scope.jobstatuses = JobStatuses;
 
 		// If user is not signed in then redirect back home
 		if (!$scope.authentication.user) {
 			$state.go('home');
 		} else {
 			$scope.isServiceSupplier = $scope.authentication.user.roles.indexOf('servicesupplier') != -1;
-		}
-		
-		// TODO: we may not need this for creation, since we just need the default status and no selection is possible
-		// Check JobStatus service for alternatives to get only the default..
-		// We'll need the other statuses for job update, though
-		$scope.jobstatuses = JobStatuses;
-		for (var i = 0; i < $scope.jobstatuses.length; i++) {
-			if ($scope.jobstatuses[i].default) {
-				$scope.defaultStatus = $scope.jobstatuses[i];
-				break;
-			}
-		}
-
-		$scope.jobstatuses = $scope.jobstatuses.filter(filterPendingStatus);
-
-		function filterPendingStatus(status) {
-			return status.keyword != 'pending';
+			$scope.isAdmin = $scope.authentication.user.roles.indexOf('admin') != -1;
 		}
 
 		$scope.selectService = function ($item) {
@@ -92,7 +77,80 @@ angular.module('jobs').controller('UserJobsController',
 			$scope.reportedJobs = reportedJobs;
 		});
 
+		$scope.showReviewModal = function(){
+
+			return $uibModal.open({
+				templateUrl: 'addReviewModal',
+				controller: 'ReviewModalInstanceCtrl',
+				resolve: {
+					RatingTypes: function(RatingTypes){
+						return RatingTypes.query().$promise;
+					}
+				}
+			});
+
+		}
 });
+
+angular.module('jobs').controller('ReviewModalInstanceCtrl',
+	function ($scope, Alerts, $uibModalInstance, RatingTypes) {
+
+		/*$scope.finishedjobstatuses = [];
+		for(var i=0; i<JobStatuses.length;i++)
+		{
+			if(JobStatuses[i].finished){
+				$scope.finishedjobstatuses.push(JobStatuses[i])
+			}
+		}*/
+
+		// Mapping rating types obtained from service (see resolve item in modal controller configuration)
+		// to the rating objects used by the uib-rating directive
+		// TODO: What if we just add a 'defaultRate' property/virtual to the object on the database/model,
+		// would we still need this mapping?
+		$scope.ratings = [];
+		for (var i = 0; i < RatingTypes.length; i++) {
+			$scope.ratings.push({ 	_id: RatingTypes[i]._id,
+				name: RatingTypes[i].name,
+				description: RatingTypes[i].description,
+				rate: 3 });
+		}
+
+		// $scope.selectedservices = $scope.job.services;
+		$scope.rate = 3;
+
+		$scope.ok = function () {
+
+			if ($scope.comment) {
+
+				// Converting review ratings in the format used by server.
+				// TODO: maybe we can try to use the server format from the client and avoid this.
+				for (var i = 0; i < $scope.ratings.length; i++) {
+					$scope.ratings[i] = { type: $scope.ratings[i]._id, rate: $scope.ratings[i].rate };
+				}
+
+				var reviewinfo = {
+					comment: $scope.comment,
+					ratings: $scope.ratings,
+					recommend: $scope.recommend
+				};
+				$uibModalInstance.close(reviewinfo);
+
+
+			} else {
+				Alerts.show('danger', 'Debes dejar un comentario');
+			}
+		};
+
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+
+		/*$scope.changeStatus = function (status) {
+			$scope.job.status = status;
+		};*/
+
+});
+
 
 
 

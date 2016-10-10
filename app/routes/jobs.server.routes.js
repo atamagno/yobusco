@@ -19,7 +19,7 @@ module.exports = function(app) {
 	app.route('/jobs-admin/:currentPage/:itemsPerPage').get(jobs.listByPage);
 
 	// Jobs routes
-	app.route('/jobs').post(users.requiresLogin, jobs.create);
+	app.route('/jobs').post(users.requiresLogin, jobs.canCreate, jobs.create);
 	app.route('/jobs/:jobId')
 		.get(jobs.read)
 		.put(users.requiresLogin, jobs.canUpdate, jobs.update);
