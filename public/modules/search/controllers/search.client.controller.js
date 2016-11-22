@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('search').controller('SuppliersSearchController',
-    function($scope, $state, Authentication, ServiceSubcategoriesKeywords, ServiceCategories, ServiceSubcategoriesSearch) {
+    function($scope, $state, Authentication, ServiceSubcategoriesKeywords, ServiceCategories, ServiceSubcategoriesSearch, Cities) {
 
         $scope.authentication = Authentication;
         $scope.serviceSubcategoriesKeywords = ServiceSubcategoriesKeywords;
@@ -12,6 +12,15 @@ angular.module('search').controller('SuppliersSearchController',
 
         $scope.currentPage = 1;
         $scope.itemsPerPage = 5;
+
+        Cities.query().$promise.then(function (cities) {
+            $scope.cities = cities;
+            $scope.defaultLocation = cities[0];
+        });
+
+        $scope.changeLocation = function (city) {
+            $scope.defaultLocation = city;
+        };
 
         $scope.navigateToResultsFromKeywordSearch = function() {
             if ($scope.selectedKeyword && $scope.selectedKeyword.serviceSubcategoryId) {
@@ -36,6 +45,7 @@ angular.module('search').controller('SuppliersSearchController',
 
             $state.go('resultsServiceSupplier.list', {
                 serviceId: serviceSubcategoryId,
+                cityId: $scope.defaultLocation._id,
                 currentPage: $scope.currentPage,
                 itemsPerPage: $scope.itemsPerPage
             });

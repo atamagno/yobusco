@@ -8,13 +8,19 @@
 }
 
 .search-input {
-    width: 900px;
+    width: 800px;
     margin: 0 auto;
+    display: flex;
 }
 
+.location-dropdown {
+    padding-left: 10px;
+}
+/*
 .search-input > .dropdown-menu {
     width: 900px;
 }
+*/
 
 .subcategory-links-container
 {

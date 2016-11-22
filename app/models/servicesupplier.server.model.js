@@ -72,10 +72,15 @@ var ServiceSupplierSchema = new Schema({
         type: Number,
         default: null
     },
-    category:{
+    category: {
         type: Schema.ObjectId,
         ref: 'ServiceSupplierCategory',
         default: null
+    },
+    city: {
+        type: Schema.ObjectId,
+        ref: 'City',
+        required: 'Por favor seleccione una ubicaci\u00f3n'
     }
 });
 

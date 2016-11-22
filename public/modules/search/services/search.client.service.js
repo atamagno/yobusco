@@ -8,7 +8,7 @@ angular.module('search')
         })
     .factory('ServiceSuppliersSearch',
         function($resource) {
-            return $resource('servicesuppliers-results/:serviceId/:currentPage/:itemsPerPage', null, {
+            return $resource('servicesuppliers-results/:serviceId/:cityId/:currentPage/:itemsPerPage', null, {
                     'query':  { method: 'GET', isArray: false, params: { services: '', jobAmount: 0, supplierName: '', orderBy: '' } }
                 });
         })

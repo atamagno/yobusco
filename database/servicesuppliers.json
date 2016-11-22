@@ -7,106 +7,113 @@
     "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"), 
     "services" : [
         ObjectId("564224dbbcc560701d85d3ea")
-    ], 
-    "overall_rating" : NumberInt(0), 
+    ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
+    "overall_rating" : NumberInt(0),
     "user" : ObjectId("564f5531a8df043c1db47888"),
-    "__v" : NumberInt(2), 
+    "__v" : NumberInt(2),
     "reviewCount" : NumberInt(0),
     "jobCount" : NumberInt(0)
 }
-{ 
-    "_id" : ObjectId("5626984b477f11b0b2a6dd97"), 
-    "description" : "Soy el mas grande de la construcción", 
-    "display_name" : "Manuel Acosta", 
-    "email" : "elmasgrande@mail.com", 
-    "phone_number" : "02245-555669", 
-    "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"), 
+{
+    "_id" : ObjectId("5626984b477f11b0b2a6dd97"),
+    "description" : "Soy el mas grande de la construcción",
+    "display_name" : "Manuel Acosta",
+    "email" : "elmasgrande@mail.com",
+    "phone_number" : "02245-555669",
+    "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"),
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
-    ], 
-    "overall_rating" : NumberInt(1), 
+    ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
+    "overall_rating" : NumberInt(1),
     "user" : ObjectId("563a15959c77c494207a04a5"),
-    "__v" : NumberInt(1), 
+    "__v" : NumberInt(1),
     "reviewCount" : NumberInt(1),
     "jobCount" : NumberInt(1)
 }
-{ 
-    "_id" : ObjectId("56269852477f11b0b2a6dd99"), 
-    "description" : "Soy el mas grande de la construcción", 
-    "display_name" : "Jose Aguilar", 
-    "email" : "elmasgrande@mail.com", 
-    "phone_number" : "02245-555669", 
-    "registration_date" : ISODate("2015-12-01T19:37:44.284+0000"), 
+{
+    "_id" : ObjectId("56269852477f11b0b2a6dd99"),
+    "description" : "Soy el mas grande de la construcción",
+    "display_name" : "Jose Aguilar",
+    "email" : "elmasgrande@mail.com",
+    "phone_number" : "02245-555669",
+    "registration_date" : ISODate("2015-12-01T19:37:44.284+0000"),
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
-    ], 
-    "overall_rating" : NumberInt(0), 
+    ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
+    "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a15959c77c488807a04a5"),
-    "__v" : NumberInt(1), 
+    "__v" : NumberInt(1),
     "reviewCount" : NumberInt(0),
     "jobCount" : NumberInt(0)
 }
-{ 
-    "_id" : ObjectId("56269584477f11b0b2a6dd91"), 
-    "description" : "Soy el mas grande de la construcción", 
-    "display_name" : "Juan Perez", 
-    "email" : "elmasgrande@mail.com", 
-    "phone_number" : "02245-555669", 
-    "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"), 
+{
+    "_id" : ObjectId("56269584477f11b0b2a6dd91"),
+    "description" : "Soy el mas grande de la construcción",
+    "display_name" : "Juan Perez",
+    "email" : "elmasgrande@mail.com",
+    "phone_number" : "02245-555669",
+    "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"),
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
-    ], 
-    "overall_rating" : NumberInt(2), 
+    ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
+    "overall_rating" : NumberInt(2),
     "user" : ObjectId("563a15955577c488807a04a5"),
-    "__v" : NumberInt(5), 
+    "__v" : NumberInt(5),
     "reviewCount" : NumberInt(1),
     "jobCount" : NumberInt(2)
 }
-{ 
-    "_id" : ObjectId("562e3d3c477f0817f38d3072"), 
-    "description" : "Soy el mas grande de la construcción", 
-    "display_name" : "Martin Sanchez", 
-    "email" : "elmasgrande@mail.com", 
-    "phone_number" : "02245-555669", 
-    "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"), 
+{
+    "_id" : ObjectId("562e3d3c477f0817f38d3072"),
+    "description" : "Soy el mas grande de la construcción",
+    "display_name" : "Martin Sanchez",
+    "email" : "elmasgrande@mail.com",
+    "phone_number" : "02245-555669",
+    "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"),
     "services" : [
         ObjectId("56422424bcc560701d85d3e8")
-    ], 
-    "overall_rating" : NumberInt(0), 
+    ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
+    "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a15955577c488809994a5"),
-    "__v" : NumberInt(1), 
+    "__v" : NumberInt(1),
     "reviewCount" : NumberInt(0),
     "jobCount" : NumberInt(1)
 }
-{ 
-    "_id" : ObjectId("562e3d3c477f0817f38d3069"), 
+{
+    "_id" : ObjectId("562e3d3c477f0817f38d3069"),
     "description" : "El mejor pintor de la zona",
-    "display_name" : "Alberto Juarez", 
-    "email" : "elmasgrande@mail.com", 
-    "phone_number" : "02245-555669", 
-    "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"), 
+    "display_name" : "Alberto Juarez",
+    "email" : "elmasgrande@mail.com",
+    "phone_number" : "02245-555669",
+    "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"),
     "services" : [
         ObjectId("562e3d3c477f0817f38d3069")
-    ], 
-    "overall_rating" : NumberInt(0), 
+    ],
+    "city": ObjectId("56233183447f11b662a6dd33"),
+    "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445577c488809994a5"),
-    "__v" : NumberInt(1), 
+    "__v" : NumberInt(1),
     "reviewCount" : NumberInt(0),
     "jobCount" : NumberInt(1)
 }
-{ 
-    "_id" : ObjectId("562e3d3c477f0817f38d3070"), 
-    "description" : "Soy el mas grande de la construcción", 
-    "display_name" : "Nicolas Fernandez", 
-    "email" : "elmasgrande@mail.com", 
-    "phone_number" : "02245-555669", 
-    "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"), 
+{
+    "_id" : ObjectId("562e3d3c477f0817f38d3070"),
+    "description" : "Soy el mas grande de la construcción",
+    "display_name" : "Nicolas Fernandez",
+    "email" : "elmasgrande@mail.com",
+    "phone_number" : "02245-555669",
+    "registration_date" : ISODate("2015-10-20T19:37:44.284+0000"),
     "services" : [
         ObjectId("56422424bcc560701d85d3e8")
-    ], 
-    "overall_rating" : NumberInt(0), 
+    ],
+    "city": ObjectId("56233183447f11b662a6dd33"),
+    "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445666c488809994a5"),
-    "__v" : NumberInt(1), 
+    "__v" : NumberInt(1),
     "reviewCount" : NumberInt(0),
     "jobCount" : NumberInt(0)
 }
@@ -120,6 +127,7 @@
     "services" : [
         ObjectId("564224a6bcc560701d85d3e9")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445577c481239994a5"),
     "__v" : NumberInt(1),
@@ -136,6 +144,7 @@
     "services" : [
         ObjectId("564224a6bcc560701d85d3e9")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14447897c488809994a5"),
     "__v" : NumberInt(1),
@@ -152,6 +161,7 @@
     "services" : [
         ObjectId("564224dbbcc560701d85d3ea")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(1),
     "user" : ObjectId("563a144455771118809994a5"),
     "__v" : NumberInt(2),
@@ -168,6 +178,7 @@
     "services" : [
         ObjectId("564224a6bcc560701d85d3e9")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(2),
     "user" : ObjectId("56abc4445577c488809994a5"),
     "__v" : NumberInt(1),
@@ -184,6 +195,7 @@
     "services" : [
         ObjectId("564224dbbcc560701d85d3ea")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445577ccba809994a5"),
     "__v" : NumberInt(2),
@@ -200,6 +212,7 @@
     "services" : [
         ObjectId("564224dbbcc560701d85d3ea")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(7),
     "user" : ObjectId("563a144455722288809994a5"),
     "__v" : NumberInt(2),
@@ -216,6 +229,7 @@
     "services" : [
         ObjectId("562e3d3c477f0817f38d3069")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445577c678809994a5"),
     "__v" : NumberInt(3),
@@ -232,6 +246,7 @@
     "services" : [
         ObjectId("562e3d3c477f0817f38d3069")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a144455774448809994a5"),
     "__v" : NumberInt(2),
@@ -248,6 +263,7 @@
     "services" : [
         ObjectId("562e3d3c477f0817f38d3069")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445577c837809994a5"),
     "__v" : NumberInt(2),
@@ -264,6 +280,7 @@
     "services" : [
         ObjectId("56422424bcc560701d85d3e8")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14467677c488809994a5"),
     "__v" : NumberInt(2),
@@ -280,6 +297,7 @@
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14489877c488809994a5"),
     "__v" : NumberInt(1),
@@ -296,6 +314,7 @@
     "services" : [
         ObjectId("56422424bcc560701d85d3e8")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("56a674445577c488809994a5"),
     "__v" : NumberInt(2),
@@ -312,6 +331,7 @@
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445577c458709994a5"),
     "__v" : NumberInt(1),
@@ -328,6 +348,7 @@
     "services" : [
         ObjectId("56422424bcc560701d85d3e8")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a144455775558809994a5"),
     "__v" : NumberInt(1),
@@ -344,6 +365,7 @@
     "services" : [
         ObjectId("564224a6bcc560701d85d3e9")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14572577c488809994a5"),
     "__v" : NumberInt(2),
@@ -360,6 +382,7 @@
     "services" : [
         ObjectId("564224a6bcc560701d85d3e9")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445577c488098994a5"),
     "__v" : NumberInt(2),
@@ -376,6 +399,7 @@
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14440657c488809994a5"),
     "__v" : NumberInt(1),
@@ -392,6 +416,7 @@
     "services" : [
         ObjectId("56422424bcc560701d85d3e8")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445074c488809994a5"),
     "__v" : NumberInt(1),
@@ -408,6 +433,7 @@
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a00045577c488809994a5"),
     "__v" : NumberInt(1),
@@ -424,6 +450,7 @@
     "services" : [
         ObjectId("564224dbbcc560701d85d3ea")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14071577c488809994a5"),
     "__v" : NumberInt(1),
@@ -440,6 +467,7 @@
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14448027c488809994a5"),
     "__v" : NumberInt(1),
@@ -456,6 +484,7 @@
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445577c055809994a5"),
     "__v" : NumberInt(1),
@@ -472,6 +501,7 @@
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14443407c488809994a5"),
     "__v" : NumberInt(1),
@@ -488,6 +518,7 @@
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a10075577c488809994a5"),
     "__v" : NumberInt(1),
@@ -504,6 +535,7 @@
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445577c410109994a5"),
     "__v" : NumberInt(1),
@@ -520,6 +552,7 @@
     "services" : [
         ObjectId("5626924f477f11b0b2a6dd8d")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a0a4445577c488809994a"),
     "__v" : NumberInt(1),
@@ -536,6 +569,7 @@
     "services" : [
         ObjectId("562e3d3c477f0817f38d3069")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(2),
     "user" : ObjectId("563a144455c90488809994a5"),
     "__v" : NumberInt(2),
@@ -552,6 +586,7 @@
     "services" : [
         ObjectId("564224a6bcc560701d85d3e9")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14445aa0c488809994a5"),
     "__v" : NumberInt(2),
@@ -568,6 +603,7 @@
     "services" : [
         ObjectId("564224dbbcc560701d85d3ea")
     ],
+    "city": ObjectId("56233183447f11b662a6dd22"),
     "overall_rating" : NumberInt(0),
     "user" : ObjectId("563a14447807c488809994a5"),
     "__v" : NumberInt(1),

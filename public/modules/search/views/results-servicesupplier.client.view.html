@@ -2,6 +2,20 @@
 
     <div class="col-md-3">
         <div class="well">
+            <h4 class="no-margin-top">Ubicaci&#243;n</h4>
+            <div class="btn-group" uib-dropdown>
+                <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                    {{defaultLocation.name}} <span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu">
+                    <li data-ng-repeat="city in cities">
+                        <a class="dropdown-item" data-ng-click="changeLocation(city)">{{city.name}}</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="filter-divider"></div>
+
             <h4 class="no-margin-top">Servicios</h4>
             <div data-ng-repeat="servicesubcategory in serviceSubcategories">
                 <label class="service-filter-label">

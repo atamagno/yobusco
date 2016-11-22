@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('core').controller('HeaderController',
-	function($scope, $state, Authentication, Menus, MessageSearch, ServiceSubcategoriesKeywords) {
+	function($scope, $state, Authentication, Menus, MessageSearch, ServiceSubcategoriesKeywords, Cities) {
 
 		$scope.state = $state;
 		$scope.serviceSubcategoriesKeywords = ServiceSubcategoriesKeywords;
@@ -17,6 +17,11 @@ angular.module('core').controller('HeaderController',
 				$scope.newMessages = response.unreadCount;
 			});
 		}
+
+		Cities.query().$promise.then(function (cities) {
+			$scope.cities = cities;
+			$scope.defaultLocation = cities[0];
+		});
 
 		$scope.$on('updateUnread', function(event, unreadMessages) {
 			$scope.newMessages = unreadMessages;
@@ -38,6 +43,7 @@ angular.module('core').controller('HeaderController',
 				$scope.selectedKeyword = '';
 				$state.go('resultsServiceSupplier.list', {
 					serviceId: $scope.serviceSubcategoryId,
+					cityId: $scope.defaultLocation._id,
 					currentPage: 1,
 					itemsPerPage: 5
 				});

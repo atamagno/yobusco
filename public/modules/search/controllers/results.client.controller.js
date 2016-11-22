@@ -17,6 +17,7 @@ angular.module('search')
             $scope.navigateToResults = function() {
                 $state.go('resultsServiceSupplier.list', {
                     serviceId: $scope.serviceSubcategoryId,
+                    cityId: $scope.defaultLocation._id,
                     currentPage: $scope.currentPage,
                     itemsPerPage: $scope.itemsPerPage
                 });
@@ -45,6 +46,7 @@ angular.module('search')
             $scope.orderResults = function() {
                 $state.go('resultsServiceSupplier.list', {
                     serviceId: $scope.serviceSubcategoryId,
+                    cityId: $scope.defaultLocation._id,
                     currentPage: 1,
                     itemsPerPage: $scope.itemsPerPage,
                     orderBy: $scope.orderBy.value
@@ -55,6 +57,7 @@ angular.module('search')
                 $scope.showList = false;
                 ServiceSuppliersSearch.query({
                     serviceId: $stateParams.serviceId,
+                    cityId: $stateParams.cityId,
                     currentPage: $stateParams.currentPage,
                     itemsPerPage: $stateParams.itemsPerPage,
                     services: $stateParams.services,
@@ -76,11 +79,26 @@ angular.module('search')
             };
         })
     .controller('SuppliersFiltersController',
-        function($scope, $state, $stateParams, ServiceSubcategories, RatingTypes, ServiceSuppliersSearch) {
+        function($scope, $state, $stateParams, ServiceSubcategories, RatingTypes, ServiceSuppliersSearch, Cities) {
 
             $scope.jobAmount = 0;
             $scope.serviceSubcategoryId = $stateParams.serviceId;
             $scope.itemsPerPage = 5;
+
+            Cities.query().$promise.then(function (cities) {
+                $scope.cities = cities;
+
+                for (var i = 0; i < cities.length; i++) {
+                    if (cities[i]._id == $stateParams.cityId) {
+                        $scope.defaultLocation = cities[i];
+                        break;
+                    }
+                }
+            });
+
+            $scope.changeLocation = function (city) {
+                $scope.defaultLocation = city;
+            };
 
             $scope.serviceSubcategories = [];
             ServiceSubcategories.query().$promise.then(function (services) {
@@ -110,6 +128,7 @@ angular.module('search')
 
                 $state.go('resultsServiceSupplier.list', {
                     serviceId: $scope.serviceSubcategoryId,
+                    cityId: $scope.defaultLocation._id,
                     currentPage: 1,
                     itemsPerPage: $scope.itemsPerPage,
                     services: services,
