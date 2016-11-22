@@ -11,9 +11,11 @@ var mongoose = require('mongoose'),
 	User = mongoose.model('User'),
 	async = require('async'),
 	_ = require('lodash'),
+	config = require('../../config/config'),
 	prohibitedJobPaths = ['initial_approval_status'
 						 ,'subsequent_approval_status', 'target_status',
 						 'user', 'service_supplier', 'last_updated_date', 'last_updated_by'];
+
 
 /**
  * Create a Job
@@ -29,79 +31,75 @@ exports.create = function(req, res) {
 	}
 
 	async.waterfall([
-		function(done) {
+		function saveJob (done) {
 			job.save(function(err, job) {
 				if (err) {
 					return res.status(400).send({
 						message: errorHandler.getErrorMessage(err)
 					});
 				} else {
-					// TODO: seems the response is not sent here, but rather after this function
-					// completes execution (same for update and reportJob functions).
-					// Is there a way to end the express request-response cycle, sending a response back,
-					// but continue executing other tasks on the server (e.g.: such as sending emails below, logging, etc).
-					// Or we need to fork a different process to isolate the tasks after res.jsonp so the
-					// response is returned faster?
 					res.jsonp(job);
-					done(err, job);
+					var jobCopy = new Job(job); // Copying job so as populate in the next function is not overridden by
+												// job population performed in job post save hook
+												// Note that in the functions below, we're only getting supplier and user
+												// display name and email from this copy (so we ensure it's our populated
+												// copied document), but for the rest of the items (e.g.: job.name,
+												// job.approval, etc) we use the former doc since those attributes are
+												// not changed by the job post save hook.
+					return done(null, jobCopy);
 				}
 			});
-		},
-		function(job, done) {
-			ServiceSupplier.findById(job.service_supplier).exec(function(err, servicesupplier) {
+		}, // TODO: maybe we should defer the emails to a dedicated job/queue manager?
+		   // E.g.: see https://github.com/nodemailer/nodemailer (Deliverying Bulk email section
+		   // E.g.: see https://ifelse.io/2016/02/23/using-node-redis-and-kue-for-priority-job-processing/
+		   // And see: https://devcenter.heroku.com/articles/asynchronous-web-worker-model-using-rabbitmq-in-node
+		   // And: https://www.quora.com/What-is-the-best-way-to-have-delayed-job-queue-with-node-js
+		   // TODO: make a difference here on jobs created from a review?
+		function getUserAndSupplierDataForEmail(jobCopy, done) {
+			jobCopy.populate([{path: 'service_supplier', select: 'display_name email'},
+						  {path: 'user', select: 'displayName email'}], function(err,jobCopy){
+
 				if (err) {
-					return res.status(400).send({
-						message: errorHandler.getErrorMessage(err)
-					});
+					// TODO: logging here?
+					return done(err);
 				} else {
-					done(err, job, servicesupplier);
+					return done(null, jobCopy);
 				}
+
 			});
 		},
-		function(job, servicesupplier, done) {
-			if (!job.createdByUser) {
-				User.findById(job.user).exec(function (err, user) {
-					if (err) {
-						return res.status(400).send({
-							message: errorHandler.getErrorMessage(err)
-						});
-					} else {
-						done(err, job, servicesupplier, user);
-					}
-				});
-			} else {
-				done(null, job, servicesupplier, null);
-			}
-		},
-		function(job, servicesupplier, user) {
-			if (job.createdByUser) {
-				mailer.sendMail(res, 'new-job-for-service-supplier-email',
-					{
-						serviceSupplier: servicesupplier.display_name,
-						userName: job.created_by.displayName
-					}, 'Nuevo trabajo', servicesupplier.email);
-				mailer.sendMail(res, 'new-job-by-user-email',
-					{
-						serviceSupplier: servicesupplier.display_name,
-						userName: job.created_by.displayName
-					}, 'Nuevo trabajo', job.created_by.email);
-			} else {
-				if (user) {
-					mailer.sendMail(res, 'new-job-for-user-email',
-						{
-							serviceSupplier: servicesupplier.display_name,
-							userName: user.displayName
-						}, 'Nuevo trabajo', user.email);
-					mailer.sendMail(res, 'new-job-by-service-supplier-email',
-						{
-							serviceSupplier: servicesupplier.display_name,
-							userName: user.displayName
-						}, 'Nuevo trabajo', servicesupplier.email);
-				}
-			}
+		function sendJobCreatedEmail(jobCopy) { // TODO: add done parameter and call it here + error handling for mailer.sendMail...
+			var createdByUser = job.created_by.roles.indexOf('user') != -1;
+			var recipientName = createdByUser ? jobCopy.service_supplier.display_name : jobCopy.user.displayName;
+			var fromName = createdByUser ? jobCopy.user.displayName : jobCopy.service_supplier.display_name;
+			var toEmail = createdByUser ? jobCopy.service_supplier.email : jobCopy.user.email;
+
+			// TODO: remove the hashtag in urls by updating angular settings.
+			// See: https://scotch.io/tutorials/pretty-urls-in-angularjs-removing-the-hashtag
+			// TODO: if user is not logged in, we redirect to login page from angular.
+			// That's ok, but we should probably redirect to the job once the user logs in...
+			// TODO: add job details to email (e.g.: job nane, services, dates, etc?)
+			// TODO: check if jobUrl as it is now, still works for other environments, (especially prod)...
+			// If port is still returned from req.get('host'), we don't want to include it in the job url...
+			// All these apply also for updated jobs email notification below...
+			var jobUrl = req.protocol + '://' + req.get('host') +
+						 '/#!/jobs/detail/' + job._id.toString();
+
+			mailer.sendMail(res, 'new-job-email',
+				{
+					createdByUser: createdByUser,
+					recipientName: recipientName,
+					fromName: fromName,
+					jobRequiresApproval: job.approval_required,
+					jobUrl: jobUrl
+				}, 'Nuevo trabajo', toEmail);
 		}
-	], function(err) {
-		if (err) {
+	], function asyncFinalCallback(err) {
+		if (err) { // TODO: does it make sense to send an error back here?
+			       // Maybe if job was not saved, but not if email was not sent...maybe just logging in this case...
+			       // Check if this function is really needed, since we're returning on save error already.
+			       // Maybe restructure the code to use this function and handle the error...
+			       // See this if last callback function is not really needed: https://github.com/caolan/async/issues/11
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
@@ -126,8 +124,8 @@ exports.update = function(req, res) {
 	var jobDataSubmitted = req.body;
 
 
-	job.update_action = getJobUpdateAction(jobDataSubmitted);
-	switch (job.update_action){
+	job.action = getJobUpdateAction(jobDataSubmitted);
+	switch (job.action){
 
 		case 'approval':
 			job.approval = jobDataSubmitted.approval;
@@ -142,7 +140,8 @@ exports.update = function(req, res) {
 			break;
 
 		case 'update':
-			job = _.extend(job , removeProhibitedJobPaths(jobDataSubmitted)); // TODO: is it better to do this from route middleware?
+			// TODO: is it better to do this (remove paths that cannot be updated from client) from route middleware?
+			job = _.extend(job , removeProhibitedJobPaths(jobDataSubmitted));
 			job.last_updated_by = req.user;
 			break;
 
@@ -152,98 +151,105 @@ exports.update = function(req, res) {
 			});
 	}
 
-	job.save(function(err, job) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
+	async.waterfall([
+
+		function saveJob(done){
+			job.save(function(err, job) {
+				if (err) {
+					return res.status(400).send({
+						message: errorHandler.getErrorMessage(err)
+					});
+				} else {
+					res.jsonp(job);
+					var jobCopy = new Job(job); // Copying job so as populate in the next function is not overridden by
+									  			// job population performed in job post save hook
+					 					        // Note that in the functions below, we're only getting supplier and user
+											    // display name and email from this copy (so we ensure it's our populated
+											    // copied document), but for the rest of the items (e.g.: job.name,
+												// job.approval, etc) we use the former doc since those attributes are
+											    // not changed by the job post save hook.
+					return done(null, jobCopy);
+				}
 			});
-		} else {
+		},
+		function getUserAndSupplierDataForEmail(jobCopy, done){
 
-			res.jsonp(job);
-			var user = req.user;
-			Job.findOne(job)
-				.populate('service_supplier user')
-				.exec(function (err, job) {
+			jobCopy.populate([{path: 'user', select: 'displayName email'},
+				{path: 'service_supplier', select: 'display_name email'}], function(err, jobCopy) {
+				if (err) {
+					// TODO: logging here?
+					return done(err);
+				}
+				else {
+					return done(null,jobCopy);
 
-					mailer.sendMail(res, 'updated-job-for-user-updating-email',
-						{
-							userName: user.displayName,
-							jobName: job.name
-						}, 'Trabajo modificado', user.email);
+				}
+			});
+		},
+		function sendJobUpdatedEmail(jobCopy) { // TODO: add done parameter and call it here + error handling for mailer.sendMail...
 
-					var mailOptions = { jobName: job.name };
-					if (user.email == job.user.email) {
-						mailOptions = {
-							userName: job.service_supplier.display_name,
-							userUpdating: job.user.displayName
-						};
+			var actionTriggeredByUser, toEmail,
+				emailTemplateName, emailTemplateInfo, emailSubject, bcc;
+			switch (job.action) {
+				// TODO: do we need to send an email notification when job approval is not required?
+				case 'update':
+					actionTriggeredByUser = job.last_updated_by.roles.indexOf('user') != -1;
+					toEmail = actionTriggeredByUser ? jobCopy.service_supplier.email : jobCopy.user.email;
+					emailTemplateInfo = {
+						actionTriggeredByUser: actionTriggeredByUser,
+						recipientName: actionTriggeredByUser ? jobCopy.service_supplier.display_name : jobCopy.user.displayName,
+						fromName: actionTriggeredByUser ? jobCopy.user.displayName : jobCopy.service_supplier.display_name,
+						jobName: job.name,
+						jobRequiresApproval: job.approval_required
+					};
+					emailTemplateName = 'updated-job-email';
+					emailSubject = 'Trabajo modificado';
+					break;
 
-						var emailTo = job.service_supplier.email;
-					} else {
-						mailOptions = {
-							userName: job.user.displayName,
-							userUpdating: job.service_supplier.display_name
-						};
+				case 'approval':
+					actionTriggeredByUser = job.approval_user.roles.indexOf('user') != -1;
+					toEmail = actionTriggeredByUser ? jobCopy.service_supplier.email : jobCopy.user.email;
+					emailTemplateInfo = {
+						actionTriggeredByUser: actionTriggeredByUser,
+						recipientName: actionTriggeredByUser ? jobCopy.service_supplier.display_name : jobCopy.user.displayName,
+						fromName: actionTriggeredByUser ? jobCopy.user.displayName : jobCopy.service_supplier.display_name,
+						jobName: job.name,
+						jobApproved: job.approval,
+						jobInitialApproval: !job.subsequent_approval_status
+					};
+					emailTemplateName = 'approved-job-email';
+					emailSubject = job.approval ? 'Trabajo aprobado' : 'Trabajo rechazado';
+					break;
 
-						var emailTo = job.user.email;
+				case 'resolution':
+					emailTemplateInfo = {
+						jobName : job.name
 					}
+					emailTemplateName = 'resolved-job-email';
+					emailSubject = 'Resolucion de trabajo';
+					bcc = jobCopy.service_supplier.email + ','  + jobCopy.user.email;
+					break;
+			}
 
-					mailer.sendMail(res, 'updated-job-for-user-not-updating-email', mailOptions, 'Trabajo modificado', emailTo);
+			var jobUrl = req.protocol + '://' + req.get('host') +
+						'/#!/jobs/detail/' + job._id.toString();
+			emailTemplateInfo.jobUrl = jobUrl;
+			mailer.sendMail(res, emailTemplateName, emailTemplateInfo,emailSubject,toEmail, bcc);
 
-
-				});
 		}
-	});
+	], function asyncFinalCallback(err){
+		if(err){   // TODO: does it make sense to send an error back here?
+				   // Maybe if job was not saved, but not if email was not sent...maybe just logging in this case...
+				   // Check if this function is really needed, since we're returning on save error already.
+				   // Maybe restructure the code to use this function and handle the error...
+				   // See this if last callback function is not really needed: https://github.com/caolan/async/issues/11
+			return res.status(400).send({
+					message: errorHandler.getErrorMessage(err)
+				});
+			}
+		});
 
-	
 };
-
-/*function reportJob(req, res) {
-	var job = req.job;
-
-	job.save(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-
-			res.jsonp(job);
-			var user = req.user;
-			Job.findOne(job)
-				.populate('service_supplier user')
-				.exec(function (err, job) {
-
-					var mailOptions = { userName: user.displayName, jobName: job.name };
-					var emailTo = user.email;
-
-					// Send email to user who reported the job.
-					mailer.sendMail(res, 'job-reported-for-user-reporting-email', mailOptions, 'Trabajo reportado', emailTo);
-
-					// TODO: query for admin email, remove hardcoded email.
-					emailTo = 'yo.busco.test@gmail.com';
-
-					// Send email to admin.
-					mailer.sendMail(res, 'job-reported-for-admin-email', mailOptions, 'Trabajo reportado', emailTo);
-
-					if (user.email == job.user.email) {
-						mailOptions.userName =  job.service_supplier.display_name;
-						emailTo = job.service_supplier.email;
-					} else {
-						mailOptions.userName = job.user.displayName;
-						emailTo = job.user.email;
-					}
-
-					// Send email to reported user.
-					mailer.sendMail(res, 'job-reported-for-reported-user-email', mailOptions, 'Trabajo reportado', emailTo);
-
-
-				});
-		}
-	});
-};*/
-
-
 
 /**
  * Delete an Job
@@ -302,14 +308,14 @@ exports.list = function(req, res) {
 exports.findJobByID = function(req, res, next, id) {
 
 	// TODO: need to populate less data here...(e.g.: we're populating user password hash, salt, roles, etc)
-	// This populates the job details page. Verify which data we display and need on that page, and
-	// then use them in this populate statement.
+	// This populates the job details page and used from job model too (during job updates, approval & resolution).
+	// Verify which data we need , and then use them in this populate statement.
 	Job.findById(id).populate([{path: 'service_supplier', select: 'display_name user'},
 		                       {path: 'user', select: 'displayName'},
 							   {path: 'initial_approval_status'},
 							   {path: 'subsequent_approval_status'},
 								{path: 'status',
-							     populate: {path: 'possible_next_statuses', select: 'keyword name finished'}},
+							     populate: {path: 'possible_next_statuses', select: 'keyword name finished post_finished'}},
 							   {path: 'target_status', select: 'name keyword finished'},
 							   {path: 'review'},
 							   {path: 'services', select: 'name'},
@@ -318,7 +324,7 @@ exports.findJobByID = function(req, res, next, id) {
 
 					.exec(function(err, job) {
 						if (err) return next(err); // TODO: check here if job is not found, it seems there's no 'next'
-									   // handler capturing the error and this is breaking...
+									   			   // handler capturing the error and this is breaking...
 						if (!job) return next(new Error('Error al cargar trabajo ' + id));
 							req.job = job ;
 							next();
@@ -367,8 +373,6 @@ exports.listByPage = function(req, res) {
 
 exports.listByUser = function(req, res) {
 
-	var jobUserId = req.params.jobUserId;
-	var isServiceSupplier = req.params.isServiceSupplier;
 	var status = req.params.status;
 	var currentPage = req.params.currentPage;
 	var itemsPerPage = req.params.itemsPerPage;
@@ -379,24 +383,10 @@ exports.listByUser = function(req, res) {
 		var startIndex = (currentPage - 1) * itemsPerPage;
 
 		var paginationCondition = { skip: startIndex, limit: itemsPerPage };
+		var searchCondition = buildJobSearchQuery({status: status, user: req.user});
 
-		// TODO: change this logic and add a query the status IDs. Remove harcoded IDs.
-		var searchCondition = {};
-		switch (status)
-		{
-			case 'finished':
-				searchCondition = { status: { $in: ['56264483477f11b0b2a6dd88','56263383477f11b0b2a6dd88']} };
-				break;
-			case 'active':
-				searchCondition = { status: { $in: ['56269183477f11b662a6dd88']} };
-				break;
-			case 'pending':
-				searchCondition = { status: { $in: ['56263383477f128bb2a6dd88']} };
-				break;
-		}
-
-		if (isServiceSupplier === 'true') {
-			ServiceSupplier.findOne({user: jobUserId}).exec(function (err, servicesupplier) {
+		if (req.user.roles.indexOf('servicesupplier') != - 1) {
+			ServiceSupplier.findOne({user: req.user._id}).exec(function (err, servicesupplier) {
 				if (err) {
 					return res.status(400).send({
 						message: errorHandler.getErrorMessage(err)
@@ -408,7 +398,7 @@ exports.listByUser = function(req, res) {
 			});
 		}
 		else {
-			searchCondition.user = jobUserId;
+			searchCondition.user = req.user._id;
 			findJobsByUserID(searchCondition, paginationCondition, req, res);
 		}
 	}
@@ -417,29 +407,108 @@ exports.listByUser = function(req, res) {
 exports.listByServiceSupplier = function(req, res) {
 
 	var serviceSupplierId = req.params.serviceSupplierId;
+	var currentPage = req.params.currentPage;
+	var itemsPerPage = req.params.itemsPerPage;
 
-	Job.find({service_supplier: serviceSupplierId})
-			  .populate([{path: 'target_status', select: 'name keyword'},
-						 {path: 'user', select: 'displayName'},
-						 {path: 'status'},
-						 {path: 'initial_approval_status'},
-						 {path: 'service_supplier', select: 'user'},
-						 {path: 'last_updated_by', select: 'roles'}])
-			  .exec(function(err, jobs) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
+	if (currentPage && itemsPerPage) {
+		currentPage = parseInt(currentPage);
+		itemsPerPage = parseInt(itemsPerPage);
+		var startIndex = (currentPage - 1) * itemsPerPage;
 
-			res.jsonp(jobs.filter(filterNotApprovedJobsForUser.bind(null, req.user)));
-		}
-	});
+		var paginationCondition = { skip: startIndex, limit: itemsPerPage };
+		var searchCondition = buildJobSearchQuery({status: 'approved'});
+		searchCondition.service_supplier = serviceSupplierId;
+
+		var response = {};
+		Job.count(searchCondition, function (err, count) {
+			if (err) {
+				return res.status(400).send({
+					message: errorHandler.getErrorMessage(err)
+				});
+			} else {
+				// TODO: this is used to show the list of jobs by supplier, so verify what is the
+				// data that is really required and don't populate more than required.
+				response.totalItems = count;
+				Job.find(searchCondition,{}, paginationCondition)
+					.populate([{path: 'target_status', select: 'name keyword'}, // TODO: is this one really needed?
+						{path: 'user', select: 'displayName'},
+						{path: 'status', select: 'name keyword'},
+						{path: 'initial_approval_status', select: 'keyword'},
+						{path: 'service_supplier', select: 'user'}, // TODO: is this one really needed?
+						{path: 'last_updated_by', select: 'roles'}, // is this one really needed too?
+						{path: 'services', select: 'name'}])
+					.sort('-last_updated_date')
+					.exec(function(err, jobs) {
+						if (err) {
+							return res.status(400).send({
+								message: errorHandler.getErrorMessage(err)
+							});
+						} else {
+
+							//response.jobs = jobs.filter(filterNotApprovedJobsForUser.bind(null, req.user));
+							response.jobs = jobs;
+							res.jsonp(response);
+						}
+					});
+
+			}
+		});
+	}
+
 };
+
+exports.listReviewsByServiceSupplier = function(req, res) {
+
+	var serviceSupplierId = req.params.serviceSupplierId;
+	var currentPage = req.params.currentPage;
+	var itemsPerPage = req.params.itemsPerPage;
+
+	if (currentPage && itemsPerPage) {
+		currentPage = parseInt(currentPage);
+		itemsPerPage = parseInt(itemsPerPage);
+		var startIndex = (currentPage - 1) * itemsPerPage;
+
+		var paginationCondition = { skip: startIndex, limit: itemsPerPage };
+		// var searchCondition = buildJobSearchQuery({status: 'approved'});
+		// searchCondition.review = { $exists: true, $ne: [] };
+		var searchCondition = {review: {$exists: true, $ne: []}};
+		searchCondition.service_supplier = serviceSupplierId;
+
+		var response = {};
+		Job.count(searchCondition, function (err, count) {
+			if (err) {
+				return res.status(400).send({
+					message: errorHandler.getErrorMessage(err)
+				});
+			} else {
+				response.totalItems = count;
+				Job.find(searchCondition,{}, paginationCondition)
+					.populate([{path: 'user', select: 'displayName'}
+							   /*,{path: 'services', select: 'name'}*/])
+					.sort('-review.created')
+					.exec(function(err, jobs) {
+						if (err) {
+							return res.status(400).send({
+								message: errorHandler.getErrorMessage(err)
+							});
+						} else {
+							response.jobs = jobs;
+							res.jsonp(response);
+						}
+					});
+
+			}
+		});
+	}
+
+};
+
+
 
 exports.canUpdate = function(req, res, next) {
 	var job = req.job, user = req.user;
-	if (!(job.user._id.equals(user._id)) && !(job.service_supplier.user.equals(user._id))) {
+	if (!(job.user._id.equals(user._id)) && !(job.service_supplier.user.equals(user._id))
+		&& (req.user.roles.indexOf('admin') == -1)) {
 		return res.status(401).send({
 			message: 'El usuario no est\u00e1 autorizado'
 		});
@@ -490,7 +559,7 @@ exports.canCreate = function(req, res, next) {
 					return done(new Error('El prestador de servicios no existe'));
 				}
 
-				// Checking service supplier is not creating a job for a supplier...
+				// Checking service supplier is not creating a job for a different supplier...
 				if(user.roles.indexOf('servicesupplier') != -1 && !user.equals(servicesupplier.user)){
 							error = new Error('El usuario no est\u00e1 autorizado');
 							error.code = 401;
@@ -521,6 +590,8 @@ exports.canCreate = function(req, res, next) {
 };
 
 exports.listForReview = function(req, res) {
+
+	// TODO: maybe use req.user here? And remove userId from client and server routes?
 	Job.getJobsForReview(req.params.serviceSupplierId, req.params.userId, function(err, jobs) {
 		if (err) {
 			// TODO: add logging here...?
@@ -534,21 +605,21 @@ exports.listForReview = function(req, res) {
 
 function getJobUpdateAction(jobDataSubmitted){
 
-	if(typeof jobDataSubmitted.update_action == 'undefined') { // user is resolving job challenge...
+	if(typeof jobDataSubmitted.action == 'undefined') { // user is resolving job challenge...
 		return 'update'
 	}
 	else{
-			 return jobDataSubmitted.update_action;
+			 return jobDataSubmitted.action;
 	}
 
 }
-
 
 function removeProhibitedJobPaths(jobDataSubmitted){
 
 	for(var i=0;i<prohibitedJobPaths.length;i++)
 	{
 		_.unset(jobDataSubmitted, prohibitedJobPaths[i]);
+		//TODO: maybe faster/better to use --> delete jobDataSubmitted[prohibitedPaths[i]] here?
 	}
 
 	return jobDataSubmitted;
@@ -566,7 +637,10 @@ function findJobsByUserID(searchCondition, paginationCondition, req, res) {
 			response.totalItems = count;
 			Job.find(searchCondition, {}, paginationCondition)
 				.populate([{path: 'service_supplier', select: 'display_name'},
-					{path: 'status'}])
+						   {path: 'user', select: 'displayName'},
+						   {path: 'services', select: 'name'},
+						   {path: 'status'}])
+				.sort('-last_updated_date')
 				.exec(function (err, jobs) {
 
 					if (err) {
@@ -594,4 +668,73 @@ function filterNotApprovedJobsForUser(user, job){
 	}
 	return true;
 
+}
+
+
+/**
+ * Creates a mongoose query object by calling different helper functions, depending on query parameter.
+ *
+ */
+function buildJobSearchQuery(queryParams){
+
+	var query = {};
+	query.$and = [];
+
+	// TODO: when in need to add new parameters, add them here, by calling additional functions similar to
+	// buildJobSearchQueryByStatus
+	if(queryParams.status){
+		query = buildJobSearchQueryByStatus(queryParams, query);
+	}
+
+	// Removing $and property of query if no conditions have been added to it...
+	if(query.$and.length == 0){
+		delete query.$and;
+	}
+	return query;
+}
+
+function buildJobSearchQueryByStatus(queryParams, query){
+
+	switch (queryParams.status)
+	{
+		case 'approved':
+			var jobApprovedApprovalStatusId = config.staticdata.jobApprovalStatuses.getByProperty('keyword','approved')._id;
+			query.initial_approval_status = jobApprovedApprovalStatusId;
+			break;
+
+		case 'finished':
+			var finishedStatuses = [];
+			finishedStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'finished')._id);
+			finishedStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'guaranteed')._id);
+			query.status = { $in: finishedStatuses};
+			break;
+		case 'incomplete':
+			var incompleteStatuses = [];
+			incompleteStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'incomplete')._id);
+			incompleteStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'abandoned')._id)
+			query.status = { $in: incompleteStatuses};
+			break;
+		case 'active':
+			var jobInProgressStatusId = config.staticdata.jobStatuses.getByProperty('keyword', 'active')._id;
+			query.status = jobInProgressStatusId;
+			break;
+		case 'pending-self':
+			var jobPendingApprovalStatusId = config.staticdata.jobApprovalStatuses.getByProperty('keyword','pending')._id;
+			query.$and.push({$or: 	[{initial_approval_status: jobPendingApprovalStatusId},
+									 {subsequent_approval_status: jobPendingApprovalStatusId}]});
+			query.last_updated_by = {$ne: queryParams.user._id};
+			break;
+		case 'pending-other':
+			var jobPendingApprovalStatusId = config.staticdata.jobApprovalStatuses.getByProperty('keyword','pending')._id;
+			query.$and.push({$or: 	[{initial_approval_status: jobPendingApprovalStatusId},
+									 {subsequent_approval_status: jobPendingApprovalStatusId}]});
+			query.last_updated_by = queryParams.user._id;
+			break;
+		case 'challenged':
+			var jobChallengedApprovalStatusId = config.staticdata.jobApprovalStatuses.getByProperty('keyword','challenged')._id;
+			query.$and.push({$or: [{initial_approval_status: jobChallengedApprovalStatusId},
+									 {subsequent_approval_status: jobChallengedApprovalStatusId}]});
+			break;
+	}
+	return query;
 }

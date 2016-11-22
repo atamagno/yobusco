@@ -1,58 +1,14 @@
-<div class="service-supplier-header-container">
-    <div class="pull-right create-job-button-container" ng-show="authentication.user && !isServiceSupplier">
-        <a ui-sref="jobs.create({ servicesupplierId: servicesupplier._id })" class="btn btn-primary">Crear trabajo</a>
-    </div>
-    <h1>Trabajos</h1>
-</div>
-<br>
-<div class="alert alert-warning text-center" ng-show="!jobs.length">
-    Este prestador de servicios no tiene trabajos todav&#237;a.
-</div>
-
-<div data-ng-repeat="job in jobs" class="col-sm-4 col-lg-4 col-md-4 no-padding-left">
-    <div class="thumbnail">
-        <img src="/images/job.png" alt="">
-        <div class="job-details-container">
-
-            <!-- TODO: consider reported as a separate field
-            (from job.initial_approval_status || job.subsequent_approval_status.keyword == challenged
-            Or maybe we just need to filter out the ones with initial_approval_status == challenged
-            (for other users/suppliers) and show the current status of those that were approved before and are in
-            subsequent_approval_status == challenged -->
-            <span ng-show="job.reported" class="pull-right status-label label label-danger">Reportado</span>
-            <span ng-show="job.status.keyword == 'finished' && !job.reported" class="pull-right status-label label label-success">{{job.status.name}}</span>
-            <span ng-show="job.status.keyword == 'abandoned' && !job.reported" class="pull-right status-label label label-default">{{job.status.name}}</span>
-            <span ng-show="job.status.keyword == 'active' && !job.reported" class="pull-right status-label label label-primary">{{job.status.name}}</span>
-            <span ng-show="job.status.keyword == 'paused' && !job.reported" class="pull-right status-label label label-paused">{{job.status.name}}</span>
-            <span ng-show="job.status.keyword == 'delayed' && !job.reported" class="pull-right status-label label label-warning">{{job.status.name}}</span>
-            <!-- TODO: change colors for created, guaranteed and notguaranteed-->
-            <span ng-show="job.status.keyword == 'created' && !job.reported" class="pull-right status-label label label-warning">{{job.status.name}}</span>
-            <span ng-show="job.status.keyword == 'guaranteed' && !job.reported" class="pull-right status-label label label-warning">{{job.status.name}}</span>
-            <span ng-show="job.status.keyword == 'notguaranteed' && !job.reported" class="pull-right status-label label label-warning">{{job.status.name}}</span>
-
-            <div class="job-name-container">
-                <a href="" data-ng-click="navigateToJobDetails(job._id)">{{job.name}}</a>
-            </div>
-
-            <div class="job-description-container">{{job.description}}</div>
-            <strong>Prestador de servicios:</strong><br>
-            <span>{{ job.service_supplier.display_name }}</span>
+<section data-ng-controller="ServiceSuppliersJobsController"  data-ng-init="getJobsForSupplier()">
+    <div class="service-supplier-header-container">
+        <div class="pull-right create-job-button-container" data-ng-show="authentication.user &&
+                       ((isServiceSupplier && authentication.user._id === servicesupplier.user) || !isServiceSupplier)">
+            <a ui-sref="jobs.create({ servicesupplierId: servicesupplier._id })" class="btn btn-primary">Crear trabajo</a>
         </div>
-        <div class="ratings">
-            <p class="pull-right">
-                <ng-pluralize count="job.reviewCount"
-                              when="{'0': '0 comentarios',
-                                     '1': '{{job.reviewCount}} comentario',
-                                     'other': '{{job.reviewCount}} comentarios'}">
-                </ng-pluralize>
-            </p>
-            <p>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star"></span>
-            </p>
-        </div>
+        <h1>Trabajos de: {{servicesupplier.display_name}}</h1>
     </div>
-</div>
+    <br>
+    <div class="alert alert-warning text-center" data-ng-show="!jobs.length">
+        Este prestador de servicios no tiene trabajos todav&#237;a.
+    </div>
+    <div data-ng-include="'/modules/jobs/views/job-list.template.client.view.html'"></div>
+</section>

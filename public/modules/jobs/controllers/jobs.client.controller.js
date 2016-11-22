@@ -7,10 +7,6 @@ angular.module('jobs').controller('UserJobsController',
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 		$scope.selectedservices = [];
-
-		$scope.itemsPerPage = 6;
-		$scope.maxPages = 5;
-		$scope.showList = false;
 		$scope.jobstatuses = JobStatuses;
 
 		// If user is not signed in then redirect back home
@@ -21,6 +17,8 @@ angular.module('jobs').controller('UserJobsController',
 			$scope.isAdmin = $scope.authentication.user.roles.indexOf('admin') != -1;
 		}
 
+		// TODO: maybe move this function, deleteSelectedService function and selectedservices array declaration above
+		// to the detailsandedit controller? It may not be required here...
 		$scope.selectService = function ($item) {
 
 			var alreadySelected = false;
@@ -42,7 +40,7 @@ angular.module('jobs').controller('UserJobsController',
 			$scope.selectedservices.splice(index, 1);
 		};
 
-		// TODO: needed here? Or only on create?
+		// TODO: needed here? Or only on create + edit?
 		$scope.dateFormats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
 		$scope.dateFormat = $scope.dateFormats[0];
 		$scope.today = new Date();
@@ -73,9 +71,6 @@ angular.module('jobs').controller('UserJobsController',
 			$state.go('jobs.viewDetail', { jobId: jobId});
 		};
 
-		$scope.$on('updateReported', function(event, reportedJobs) {
-			$scope.reportedJobs = reportedJobs;
-		});
 
 		$scope.showReviewModal = function(){
 
@@ -95,14 +90,7 @@ angular.module('jobs').controller('UserJobsController',
 angular.module('jobs').controller('ReviewModalInstanceCtrl',
 	function ($scope, Alerts, $uibModalInstance, RatingTypes) {
 
-		/*$scope.finishedjobstatuses = [];
-		for(var i=0; i<JobStatuses.length;i++)
-		{
-			if(JobStatuses[i].finished){
-				$scope.finishedjobstatuses.push(JobStatuses[i])
-			}
-		}*/
-
+		$scope.alerts = Alerts;
 		// Mapping rating types obtained from service (see resolve item in modal controller configuration)
 		// to the rating objects used by the uib-rating directive
 		// TODO: What if we just add a 'defaultRate' property/virtual to the object on the database/model,
@@ -115,7 +103,6 @@ angular.module('jobs').controller('ReviewModalInstanceCtrl',
 				rate: 3 });
 		}
 
-		// $scope.selectedservices = $scope.job.services;
 		$scope.rate = 3;
 
 		$scope.ok = function () {
@@ -144,10 +131,6 @@ angular.module('jobs').controller('ReviewModalInstanceCtrl',
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
-
-		/*$scope.changeStatus = function (status) {
-			$scope.job.status = status;
-		};*/
 
 });
 

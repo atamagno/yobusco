@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('jobs')
-	.factory('JobDetails', // TODO: accepted change from develop (jobs branch had this as 'JobSearch') 
+	.factory('JobDetails',
 		function($resource) {
 			return {
-				jobs: $resource('jobs-by-user/:jobUserId/:isServiceSupplier/:status/:currentPage/:itemsPerPage', { jobUserId: '@_id'},
+				jobs: $resource('jobs-by-user/:status/:currentPage/:itemsPerPage', {},
 					{
 						'query':  { method: 'GET', isArray: false }
 					}),

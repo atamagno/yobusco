@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+
+	<p>Estimado <b>{{recipientName}}</b>,</p>
+	<p></p>
+	{% if jobInitialApproval %}
+	{% set jobApprovalString = "trabajo" %}
+	{% else %}
+	{% set jobApprovalString = "cambio de estado del trabajo" %}
+	{% endif %}
+
+	{% if actionTriggeredByUser %}
+	<p>El {{jobApprovalString}} <b>{{jobName}}</b> ha sido {% if jobApproved %}{{"aprobado"}}{% else %}{{"rechazado"}}{% endif %} por el usuario <b>{{fromName}}</b>.</p>
+	{% else %}
+	<p>El {{jobApprovalString}} <b>{{jobName}}</b> ha sido {% if jobApproved %}{{"aprobado"}}{% else %}{{"rechazado"}}{% endif %} por el prestador de servicios <b>{{fromName}}</b>.</p>
+	{% endif %}
+	<br>
+	<p>Puede revisar los detalles del trabajo en la siguiente direccion:</p>
+	<p>{{jobUrl}}</p>
+	<br>
+	<br>
+	<p>El equipo de {{appName}}</p>
+</body>
+</html>

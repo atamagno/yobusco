@@ -1,7 +1,8 @@
-angular.module('jobs').controller('UserJobDetailsAndEditController',
+angular.module('jobs').controller('UserJobDetailsController',
 	function ($scope, $rootScope, $stateParams, $state, Jobs, $uibModal, Alerts) {
 
-		$scope.possibleNextStatuses = [];
+
+		$scope.max = 5;
 
 		// Find existing Job
 		$scope.findOne = function () {
@@ -9,56 +10,74 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 				jobId: $stateParams.jobId
 			}).$promise.then(function (job) {
 					$scope.job = job;
-					$scope.possibleNextStatuses.push(job.status);
-					$scope.possibleNextStatuses = $scope.possibleNextStatuses.concat(job.status.possible_next_statuses);
+					$scope.isJobInFinishedStatus = isJobInFinishedStatus();
+					$scope.hasJobNextStatuses = hasJobNextStatuses();
+					$scope.isJobWaitingApproval = isJobWaitingApproval();
+					$scope.isJobChallenged = isJobChallenged();
+					$scope.isJobApproved = isJobApproved();
+					$scope.isJobReviewed = isJobReviewed();
+					$scope.isJobParticipant = isJobParticipant();
+					$scope.isUserLastUpdater = isUserLastUpdater();
+					$scope.isJobUser = isJobUser();
+					$scope.isJobApprover = isJobApprover();
+					$scope.hasJobPictures = hasJobPictures();
 				});
 		};
 
-		$scope.changeStatus = function (status) {
-			$scope.job.status = status;
-		};
+		function hasJobPictures(){
+			return $scope.job.pictures.length;
+		}
 
-		$scope.openEditJobModal = function () {
+		function isJobChallenged(){
+			return ($scope.job.initial_approval_status.keyword == 'challenged'
+					|| ($scope.job.subsequent_approval_status && $scope.job.subsequent_approval_status.keyword == 'challenged'));
+		}
 
-			var modalInstance = $uibModal.open({
-				templateUrl: 'editJobByUserModal',
-				controller: 'EditJobModalInstanceCtrl'
-			});
+		function isJobApproved(){
+			return (($scope.job.initial_approval_status.keyword == 'approved' && !$scope.job.subsequent_approval_status)
+				   || ($scope.job.subsequent_approval_status && $scope.job.subsequent_approval_status.keyword == 'approved'));
+		}
 
-			modalInstance.result.then(function () {
-				$scope.update()
-			});
-		};
+		function isUserLastUpdater(){
 
-		// Update existing Job
-		$scope.update = function () {
+			return ($scope.authentication.user &&
+				   ($scope.authentication.user._id === $scope.job.last_updated_by._id));
 
-			var job = $scope.job;
+		}
 
-			if (job.service_supplier && job.service_supplier._id) {
-				// TODO: we should probably pre-populate finish_date date picker with current date...
-				// So we probably don't need this check....Avoid past date???
-				if (job.status.finished && !job.finish_date) {
-					Alerts.show('danger', 'Debes seleccionar una fecha de finalizaci\u00f3n');
-				} else {
-					if(!job.review[0] && job.status.finished && !$scope.isServiceSupplier) {
-						$scope.openReviewModal();
-					}
-					else {
-						job.$update(function () {
-							$state.go('jobs.viewDetail', {jobId: job._id});
-						}, function (errorResponse) {
-							$scope.error = errorResponse.data.message;
-							Alerts.show('danger', $scope.error);
-						});
-					}
+		function isJobReviewed(){
+			return ($scope.job.review.length);
 
-				}
+		}
 
-			} else {
-				Alerts.show('danger', 'Debes seleccionar un prestador de servicios');
-			}
-		};
+		function isJobUser(){
+			return ($scope.authentication.user && $scope.authentication.user._id === $scope.job.user._id);
+		}
+
+		function isJobParticipant(){
+			return isJobUser() || isJobSupplier();
+		}
+
+		function isJobSupplier(){
+			return ($scope.authentication.user && $scope.authentication.user._id === $scope.job.service_supplier.user);
+		}
+
+		function isJobWaitingApproval(){
+			return ($scope.job.initial_approval_status.keyword == 'pending'
+					|| ($scope.job.subsequent_approval_status && $scope.job.subsequent_approval_status.keyword == 'pending'));
+		}
+
+		function isJobInFinishedStatus() {
+			return $scope.job.status.finished || $scope.job.status.post_finished;
+		}
+
+		function hasJobNextStatuses(){
+			return $scope.job.status.possible_next_statuses.length;
+		}
+
+		function isJobApprover(){
+			return ($scope.authentication.user && $scope.authentication.user._id === $scope.job.approver);
+		}
 
 		$scope.openReviewModal = function () {
 
@@ -70,14 +89,13 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 		};
 
 		$scope.addReview = function (reviewinfo) {
-
 			var job = $scope.job;
 			job.review = [reviewinfo];
 
 			job.$update(function(){
-				$state.go('jobs.viewDetail', {jobId: job._id});
+				Alerts.show('success', 'Trabajo actualizado exitosamente');
+				$state.reload();
 			}, function (errorResponse) {
-
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger', $scope.error);
 			});
@@ -92,9 +110,9 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 					job.pictures.push(imagePaths[i]);
 				}
 			}
-
 			job.$update(function () {
 				Alerts.show('success', 'Trabajo actualizado exitosamente');
+				$state.reload();
 			}, function (errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger', $scope.error);
@@ -110,6 +128,7 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 
 			job.$update(function () {
 				Alerts.show('success', 'Imagen eliminada exitosamente');
+				$state.reload();
 			}, function (errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger', $scope.error);
@@ -178,7 +197,7 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 
 			var job = new Jobs();
 			job._id = $scope.job._id;
-			job.update_action = 'approval';
+			job.action = 'approval';
 
 			if(approvalAction == 'approved'){
 				job.approval = true;
@@ -224,7 +243,7 @@ angular.module('jobs').controller('UserJobDetailsAndEditController',
 
 			var job = new Jobs();
 			job._id = $scope.job._id;
-			job.update_action = 'resolution';
+			job.action = 'resolution';
 			job.resolution = resolveAction;
 
 			job.$update(function() {
@@ -306,21 +325,6 @@ angular.module('jobs').controller('OpenImagesModalInstanceCtrl',
 			$uibModalInstance.dismiss('cancel');
 		};
 	});
-
-
-
-angular.module('jobs').controller('EditJobModalInstanceCtrl',
-	function ($scope, $uibModalInstance) {
-
-		$scope.ok = function () {
-			$uibModalInstance.close();
-		};
-
-		$scope.cancel = function () {
-			$uibModalInstance.dismiss('cancel');
-		};
-	});
-
 
 angular.module('jobs').controller('ApproveRejectJobModalInstanceCtrl',
 	function ($scope, $uibModalInstance, Alerts) {

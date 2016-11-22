@@ -1,5 +1,7 @@
 <div class="service-supplier-header-container">
-    <div class="pull-right create-job-button-container" data-ng-show="authentication.user">
+    <div class="pull-right create-job-button-container"
+         data-ng-show="authentication.user &&
+                       ((isServiceSupplier && authentication.user._id === servicesupplier.user) || !isServiceSupplier)">
         <a ui-sref="jobs.create({ servicesupplierId: servicesupplier._id })" class="btn btn-primary">Crear trabajo</a>
     </div>
     <h1>Detalles</h1>
@@ -10,26 +12,27 @@
     <div class="service-supplier-img-container">
         <img src="/images/user.jpg" alt="" class="service-supplier-img">
     </div>
-    <div class="service-supplier-details-container">
+    <div class="service-supplier-details-container" ng-cloak>
         <div class="caption-full">
-            <strong class="pull-right">
-                <!--<ng-pluralize count="jobs.length"
-                              when="{'0': '0 trabajos',
-                                     '1': '{{jobs.length}} trabajo',
-                                     'other': '{{jobs.length}} trabajos'}">
-                </ng-pluralize>-->
-                <p>
-                    <span class="label label-success">1 Terminados</span>
-                    <span class="label label-primary">1 En Progreso</span>
-                    <span class="label label-danger">0 Abandonados</span>
-                </p>
-            </strong>
-            <small class="list-group-item-text">
+            <small class="list-group-item-text pull-right">
                 Miembro desde
                 <span data-ng-bind="servicesupplier.registration_date | date:'shortDate'"></span>
             </small>
             <h4><a href="">{{servicesupplier.display_name}}</a></h4>
             <p>{{servicesupplier.description}}</p>
+
+            <div data-ng-show="servicesupplier.job_counts.length">
+                <label class="control-label">Trabajos</label>
+                <strong>
+                    <p>
+                        <span class="label label-success">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'finished'} })[0].count || 0}} Finalizados</span>
+                        <span class="label label-primary">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'active'} })[0].count || 0}} Activos</span>
+                        <span class="label label-primary">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'incomplete'} })[0].count || 0}} Incompletos</span>
+                        <span class="label label-primary">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'guaranteed'} })[0].count || 0}} Garantizados</span>
+                        <span class="label label-primary">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'abandoned'} })[0].count || 0}} Abandonados</span>
+                    </p>
+                </strong>
+            </div>
 
             <div ng-show="authentication.user">
                 <strong>Email: </strong> {{servicesupplier.email}}<br>
@@ -47,14 +50,6 @@
             </div>
         </div>
         <div class="ratings service-supplier-rating-count">
-            <p class="pull-right">
-                <ng-pluralize count="reviews.length"
-                              when="{'0': '0 comentarios',
-                                     '1': '{{reviews.length}} comentario',
-                                     'other': '{{reviews.length}} comentarios'}">
-                </ng-pluralize>
-            </p>
-
             <p data-ng-show="jobs.length">
                 <uib-rating data-ng-model="servicesupplier.overall_rating" max="max" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
                 <span>{{servicesupplier.overall_rating}}</span> (promedio)
@@ -66,17 +61,18 @@
 </div>
 
 <div class="service-supplier-header-container">
-    <div class="pull-right leave-review-button-container" data-ng-show="authentication.user">
-        <a data-ng-click="openReviewModal()" class="btn btn-success">Deja un comentario</a>
+    <div class="pull-right leave-review-button-container" data-ng-show="authentication.user && !isServiceSupplier">
+        <a data-ng-click="openReviewModal()" class="btn btn-success">Deja una calificacion</a>
     </div>
-    <div class="reviews-label-container">Comentarios recientes</div>
+    <div class="reviews-label-container">Calificaciones recientes</div>
 </div>
 <br>
 <div class="well" ng-cloak>
-    <div class="row service-supplier-review-list" data-ng-repeat="job in jobs | filter: jobHasReview | limitTo:5 | orderBy: '-review[0].created'">
+    <div data-ng-show="!jobs.length">El prestador de servicios no ha sido calificado</div>
+    <div class="row service-supplier-review-list" data-ng-repeat="job in jobs">
         <div class="col-md-12">
             <br>
-            <p>{{job.user.displayName || authentication.user.displayName}}
+            <p>{{job.user.displayName}}
                 <span class="pull-right">
                     <span class="glyphicon glyphicon-time"></span>
                     {{ job.review[0].created | date: 'medium' }}

@@ -1,31 +1,44 @@
-<div class="service-supplier-header-container">
-    <div class="pull-right leave-review-button-container" ng-show="authentication.user">
-        <a data-ng-click="openReviewModal()" class="btn btn-success">Deja un comentario</a>
-    </div>
-    <h1>Comentarios</h1>
-</div>
-<br>
-
-<div class="well" ng-cloak>
-
-    <!--div data-ng-hide="!supplierHasReviews">No hay comentarios</div-->
-
-    <div class="row service-supplier-review-list" data-ng-repeat="job in jobs | filter: jobHasReview | orderBy: '-review[0].created'">
-        <div class="col-md-12">
-            <br>
-            <p>{{job.user.displayName || authentication.user.displayName}}
-                <span class="pull-right">
-                    <span class="glyphicon glyphicon-time"></span>
-                    {{ job.review[0].created | date: 'medium' }}
-                </span>
-            </p>
-            <p>
-                <uib-rating data-ng-model="job.review[0].ratingsAvg" max="max" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
-                <span>({{job.review[0].ratingsAvg}})</span>
-            </p>
-            <p>{{job.review[0].comment}}</p>
+<section data-ng-controller="ServiceSuppliersReviewsController"  data-ng-init="getReviewsForSupplier()">
+    <div class="service-supplier-header-container">
+        <div class="pull-right leave-review-button-container" data-ng-show="authentication.user && !isServiceSupplier">
+            <a data-ng-click="openReviewModal()" class="btn btn-success">Deja una calificacion</a>
         </div>
-        <hr>
+        <h1>Calificaciones para: {{servicesupplier.display_name}}</h1>
+    </div>
+    <br>
+
+    <div data-ng-show="jobs.length">
+        Calificaciones: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + jobs.length}} de {{totalItems}}
     </div>
 
-</div>
+    <div class="alert alert-warning text-center" data-ng-show="!jobs.length">El prestador de servicios no ha sido calificado</div>
+
+    <div class="well" data-ng-show="showList" ng-cloak>
+        <!--div class="row service-supplier-review-list" data-ng-repeat="review in reviews | filter: jobHasReview | orderBy: '-review[0].created'"-->
+        <div class="row service-supplier-review-list" data-ng-repeat="job in jobs">
+            <div class="col-md-12">
+                <br>
+                <p>{{job.user.displayName}}
+                    <span class="pull-right">
+                        <span class="glyphicon glyphicon-time"></span>
+                        {{ job.review[0].created | date: 'medium' }}
+                    </span>
+                </p>
+                <p>
+                    <uib-rating data-ng-model="job.review[0].ratingsAvg" max="max" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
+                    <span>({{job.review[0].ratingsAvg}})</span>
+                </p>
+                <p>{{job.review[0].comment}}</p>
+            </div>
+            <hr>
+        </div>
+
+    </div>
+
+    <div class="pagination-container" ng-show="totalItems > itemsPerPage">
+        <uib-pagination boundary-links="true" total-items="totalItems" data-ng-model="currentPage" class="pagination-sm" max-size="maxPages"
+                        items-per-page="itemsPerPage" data-ng-click="navigateToResults()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></uib-pagination>
+    </div>
+
+</section>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+	<p>Estimado <b>{{recipientName}}</b>,</p>
+	<p></p>
+	{% if actionTriggeredByUser %}
+	<p>El trabajo <b>{{jobName}}</b> fue actualizado por el usuario <b>{{fromName}}</b>.</p>
+	{% else %}
+	<p>El trabajo <b>{{jobName}}</b> fue actualizado por el prestador de servicios <b>{{fromName}}</b>.</p>
+	{% endif %}
+	<br>
+	<p>Puede revisar los detalles del trabajo en la siguiente direccion:</p>
+	<p>{{jobUrl}}</p>
+	<br>
+	{% if jobRequiresApproval %}
+	<p>Tenga en cuenta que los cambios efectuados requieren de su aprobacion.</p>
+	<p>Si no existe aprobacion en los proximos dias, el sistema aprobara los cambios automaticamente.</p>
+	{% endif %}
+	<br>
+	<br>
+	<p>El equipo de {{appName}}</p>
+</body>
+</html>

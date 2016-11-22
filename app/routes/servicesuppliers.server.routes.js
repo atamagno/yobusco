@@ -26,4 +26,5 @@ module.exports = function(app) {
 
     app.route('/servicesuppliers-results/:serviceId/:currentPage/:itemsPerPage').get(servicesuppliers.listByPage);
     app.route('/servicesupplier-by-user/:userId').get(servicesuppliers.serviceSupplierByUserID);
+    app.route('/servicesupplier-by-username/:userName').get(servicesuppliers.serviceSupplierByUsername);
 };

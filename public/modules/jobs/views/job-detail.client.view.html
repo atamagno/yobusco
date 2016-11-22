@@ -1,4 +1,4 @@
-<section data-ng-init="findOne()">
+<section data-ng-controller="UserJobDetailsController"  data-ng-init="findOne()">
 
     <uib-alert type="{{alerts.type}}" close="alerts.close()" ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
 
@@ -6,19 +6,13 @@
         <div class="col-lg-12">
             <h1>
                 Detalle de trabajo
-                <a data-ng-show="(job.initial_approval_status.keyword == 'approved' &&
-                            (job.subsequent_approval_status.keyword == null || job.subsequent_approval_status.keyword == 'approved')) &&
-                            (authentication.user &&
-                            ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))) &&
-                            ((!job.status.finished && !job.status.post_finished) ||
-                            (job.status.finished && authentication.user._id === job.user._id) ||
-                            (job.status.post_finished && authentication.user._id === job.user._id))"
+                <a data-ng-show="isJobApproved && isJobParticipant && hasJobNextStatuses &&
+                                (!isJobInFinishedStatus ||
+                                (isJobInFinishedStatus && isJobUser))"
                    ui-sref="jobs.edit({ jobId: job._id })" class="btn btn-success pull-right">Actualizar trabajo</a>
 
 
-                <div class="btn-group" data-ng-show="(job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword == 'pending')
-                                                      && authentication.user && (authentication.user._id === job.approver)"
-                                                      uib-dropdown>
+                <div class="btn-group" data-ng-show="isJobWaitingApproval && isJobApprover" uib-dropdown>
                     <button type="button" class="btn btn-default pull-right btn-report" uib-dropdown-toggle>
                         Aprovar/Rechazar trabajo<span class="caret"></span>
                     </button>
@@ -32,35 +26,34 @@
                     </ul>
                 </div>
 
-                <div class="btn-group" data-ng-show="(job.initial_approval_status.keyword == 'challenged' || job.subsequent_approval_status.keyword == 'challenged')
-                                                      && authentication.user && isAdmin"
+                <div class="btn-group" data-ng-show="isJobChallenged && isAdmin"
                      uib-dropdown>
                     <button type="button" class="btn btn-default pull-right btn-report" uib-dropdown-toggle>
                         Resolver trabajo<span class="caret"></span>
                     </button>
                     <ul class="uib-dropdown-menu" role="menu">
                         <li>
-                            <a class="dropdown-item" data-ng-click="openResolveJobModal('target')">Aceptar estado a aprobar</a>
+                            <a class="dropdown-item" data-ng-click="openResolveJobModal('target')">Aceptar estado solicitado</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" data-ng-click="openResolveJobModal('challenge')">Aceptar challenge</a>
+                            <a class="dropdown-item" data-ng-click="openResolveJobModal('challenge')">Aceptar estado desafiado</a>
                         </li>
                     </ul>
                 </div>
 
-
-                <a data-ng-disabled="true" ng-show="(job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword == 'pending')
-                                                    && authentication.user && (authentication.user._id === job.last_updated_by._id)"
+                <a data-ng-disabled="true" ng-show="isJobWaitingApproval && isUserLastUpdater"
                    class="btn btn-info pull-right">Esperando aprobaci&#243;n</a>
 
                 <!-- TODO: this should be displayed to both user and supplier only -->
                 <!-- challenged jobs (unless with initial_approval_status == approved) should not be displayed to other users -->
                 <a data-ng-disabled="true"
-                   ng-show="(job.initial_approval_status.keyword == 'challenged' || job.subsequent_approval_status.keyword == 'challenged') &&
-                           ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))"
+                   ng-show="isJobChallenged && (isJobParticipant || isAdmin)"
                    class="btn btn-danger pull-right">Pendiente de resoluci&#243;n</a>
 
+                <a data-ng-show="isJobApproved && isJobUser && !isJobReviewed && isJobInFinishedStatus"
+                   data-ng-click="openReviewModal()" class="btn btn-success pull-right">Agregar calificacion</a>
                 <!-- TODO: consider different info to be displayed to other users, user and supplier -->
+
             </h1>
         </div>
         <div class="col-lg-12" style="color: gray; padding-bottom: 10px; font-size: 120%;">{{job.name}}</div>
@@ -85,10 +78,19 @@
                 <li><strong>Fecha estimada: </strong>{{job.expected_date | date: 'shortDate'}}</li>
                 <li><strong>Fecha de finalizaci&#243;n: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
                 <li><strong>Estado actual: </strong>{{job.status.name}}</li>
-                <li data-ng-show="authentication.user && ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user)) &&
-                                  (job.initial_approval_status.keyword == 'pending' || job.subsequent_approval_status.keyword =='pending')">
-                    <strong>Estado a aprobar: </strong>{{job.target_status.name}}</li>
-                <li><strong>Prestador de servicios: </strong><a ui-sref="servicesupplier.detail({ servicesupplierId: job.service_supplier._id })">{{job.service_supplier.display_name}}</a></li>
+                <li data-ng-show="(isJobParticipant || isAdmin) && (isJobWaitingApproval || isJobChallenged)">
+                    <strong>Estado solicitado: </strong>{{job.target_status.name}}
+                </li>
+                <li data-ng-show="(isJobParticipant || isAdmin) && isJobChallenged">
+                    <strong>Estado desafiado: </strong>{{job.approval_challenge_details.status.name}}
+                </li>
+                <li>
+                    <strong>Prestador de servicios: </strong>
+                    <a ui-sref="servicesupplier.detail({ servicesupplierId: job.service_supplier._id })">{{job.service_supplier.display_name}}</a>
+                </li>
+                <li>
+                    <strong>Cliente: </strong> {{job.user.displayName}}
+                </li>
             </ul>
         </div>
 
@@ -101,10 +103,7 @@
             <div class="upload-image-header-container">
                 <div class="pull-right btn-upload-image">
                     <button data-ng-click="openUploadImagesModal()" type="button" class="btn btn-primary"
-                            data-ng-show="(job.initial_approval_status.keyword == 'approved' &&
-                            (job.subsequent_approval_status.keyword == null ||
-                             job.subsequent_approval_status.keyword == 'approved')) &&
-                             authentication.user && ((authentication.user._id === job.user._id) || (authentication.user._id === job.service_supplier.user))">
+                            data-ng-show="isJobApproved && isJobParticipant">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Agregar im&#225;genes
                     </button>
                 </div>
@@ -122,17 +121,14 @@
 
     </div>
 
-    <div class="well" ng-show="!job.pictures.length">No hay im&#225;genes</div>
+    <div class="well" data-ng-show="!hasJobPictures">No hay im&#225;genes</div>
 
     <div class="row">
 
         <div class="col-lg-12">
             <br>
             <div class="service-supplier-header-container">
-                <!--<div class="pull-right leave-review-button-container" ng-show="job.status.finished && authentication.user && (authentication.user.username === job.user.username)">
-                    <a data-ng-click="openReviewModal()" class="btn btn-success">Deja un comentario</a>
-                </div>-->
-                <div class="reviews-label-container">Comentarios recientes</div>
+                <div class="reviews-label-container">Calificacion</div>
             </div>
             <br>
         </div>
@@ -140,23 +136,21 @@
     </div>
 
     <div class="well">
-
-        <div data-ng-hide="reviews.length">No hay comentarios</div>
-
-        <div class="row" data-ng-repeat="review in reviews">
+        <div data-ng-show="!isJobReviewed">El trabajo no ha sido calificado</div>
+        <div class="row" data-ng-show="isJobReviewed">
             <div class="col-md-12">
                 <br>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star-empty"></span>
-                An&#243;nimo
+                <p>{{job.user.displayName}}
                 <span class="pull-right">
                     <span class="glyphicon glyphicon-time"></span>
-                    {{ review.created | date: 'medium' }}
+                    {{ job.review[0].created | date: 'medium' }}
                 </span>
-                <p>{{review.comment}}</p>
+                </p>
+                <p>
+                    <uib-rating data-ng-model="job.review[0].ratingsAvg" max="max" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
+                    <span>({{job.review[0].ratingsAvg}})</span>
+                </p>
+                <p>{{job.review[0].comment}}</p>
             </div>
         </div>
     </div>
@@ -239,7 +233,8 @@
                         </li>
                     </ul>
                 </div>
-
+                <br>
+                <br>
                 <textarea data-ng-model="challengecomment" class="form-control comments-text-area" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
 
             </div>

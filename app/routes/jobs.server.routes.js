@@ -26,8 +26,9 @@ module.exports = function(app) {
 
 	// TODO: we should probably change these routes to use query parameters --> /jobs?xx=yy&zz=xx to avoid
 	// having different routes just to query jobs...
-	// E.g.: /jobs?user=xxxx&supplier&status&etc... (doing this will require changes on the client services too)
-	app.route('/jobs-by-user/:jobUserId/:isServiceSupplier/:status/:currentPage/:itemsPerPage').get(users.requiresLogin, jobs.listByUser);
-	app.route('/jobs-by-servicesupplier/:serviceSupplierId').get(jobs.listByServiceSupplier);
-	app.route('/jobs-for-review/:serviceSupplierId/:userId').get(jobs.listForReview);
+	// E.g.: /jobs?user=xxxx&supplier=yyy&status=zzz&etc... (doing this will require changes on the client services too)
+	app.route('/jobs-by-user/:status/:currentPage/:itemsPerPage').get(users.requiresLogin, jobs.listByUser);
+	app.route('/jobs-by-servicesupplier/:serviceSupplierId/:currentPage/:itemsPerPage').get(jobs.listByServiceSupplier);
+	app.route('/reviews-by-servicesupplier/:serviceSupplierId/:currentPage/:itemsPerPage').get(jobs.listReviewsByServiceSupplier);
+	app.route('/jobs-for-review/:serviceSupplierId/:userId').get(users.requiresLogin,jobs.listForReview);
 };

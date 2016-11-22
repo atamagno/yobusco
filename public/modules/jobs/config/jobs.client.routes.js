@@ -21,19 +21,14 @@ angular.module('jobs').config(
 			}).
 			state('jobs.viewDetail', {
 				url: '/detail/:jobId',
-				templateUrl: 'modules/jobs/views/job-detail.client.view.html',
-				// NOTE: controller declaration is needed here, so as the resolve on parent '/jobs' status works.
-				// data-ng-controller attribute also needs to be removed from the associated view file.
-				controller: 'UserJobDetailsAndEditController'
+				templateUrl: 'modules/jobs/views/job-detail.client.view.html'//,
 			}).
 			state('jobs.create', {
 				url: '/create/:servicesupplierId',
-				templateUrl: 'modules/jobs/views/job-create.client.view.html',
-				controller: 'UserJobCreateController'
+				templateUrl: 'modules/jobs/views/job-create.client.view.html'//,
 			}).
 			state('jobs.edit', {
 				url: '/edit/:jobId',
-				templateUrl: 'modules/jobs/views/job-edit.client.view.html',
-				controller: 'UserJobDetailsAndEditController'
+				templateUrl: 'modules/jobs/views/job-edit.client.view.html'//,
 			});
 	});

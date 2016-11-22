@@ -1,18 +1,18 @@
-{ 
-    "_id" : ObjectId("57bdee69e16d218103905605"), 
-    "description" : "El trabajo esta a la espera de aprobación por parte del usuario/prestador de servicios", 
-    "keyword" : "pending", 
+{
+    "_id" : ObjectId("57bdee69e16d218103905605"),
+    "description" : "El trabajo esta a la espera de aprobación por parte del usuario/prestador de servicios",
+    "keyword" : "pending",
     "name" : "Pendiente"
 }
-{ 
-    "_id" : ObjectId("57bdee97e16d218103905607"), 
-    "description" : "El trabajo -en su estado actual- ha sido previamente aprobado", 
-    "keyword" : "approved", 
-    "name" : "Aprobado"
+{
+"_id" : ObjectId("57bdee97e16d218103905607"),
+"description" : "El trabajo -en su estado actual- ha sido previamente aprobado",
+"keyword" : "approved",
+"name" : "Aprobado"
 }
-{ 
-    "_id" : ObjectId("57bdee9de16d218103905609"), 
-    "description" : "El trabajo ha sido reportado, y su estado será resuelto por un administrador del sistema", 
-    "keyword" : "challenged", 
-    "name" : "Reportado"
+{
+"_id" : ObjectId("57bdee9de16d218103905609"),
+"description" : "El trabajo ha sido reportado, y su estado será resuelto por un administrador del sistema",
+"keyword" : "challenged",
+"name" : "Reportado"
 }

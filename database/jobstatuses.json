@@ -16,11 +16,11 @@
 }
 {
 "_id" : ObjectId("56bd52f78b2d42938751aa5e"),
-"keyword" : "notguaranteed",
-"name" : "No garantizado",
+"keyword" : "abandoned",
+"name" : "Abandonado",
 "points" : -0.8,
 "possible_next_statuses" : [
-ObjectId("56bd52bb8b2d42938751aa5d")
+
 ],
 "post_finished" : true,
 "requires_approval_by" : [
@@ -31,29 +31,10 @@ ObjectId("56bd52bb8b2d42938751aa5d")
 ]
 }
 {
-"_id" : ObjectId("56269183455f11b0b2a6dd88"),
-"keyword" : "paused",
-"name" : "Pausado",
-"possible_next_statuses" : [
-ObjectId("56269183477f11b0b2a99d88"),
-ObjectId("56269183477f11b662a6dd88"),
-ObjectId("56264483477f11b0b2a6dd88"),
-ObjectId("56263383477f11b0b2a6dd88")
-],
-"requires_approval_by" : [
-
-],
-"roles" : [
-"servicesupplier",
-"user"
-]
-}
-{
 "_id" : ObjectId("57bdf9d8e16d21810390560a"),
 "keyword" : "created",
 "name" : "Creado",
 "possible_next_statuses" : [
-ObjectId("56269183455f11b0b2a6dd88"),
 ObjectId("56263383477f11b0b2a6dd88"),
 ObjectId("56269183477f11b662a6dd88"),
 ObjectId("56264483477f11b0b2a6dd88")
@@ -90,29 +71,11 @@ ObjectId("56269183477f11b662a6dd88")
 "_id" : ObjectId("56263383477f11b0b2a6dd88"),
 "finished" : true,
 "initial" : true,
-"keyword" : "abandoned",
-"name" : "Abandonado",
+"keyword" : "incomplete",
+"name" : "Incompleto",
 "points" : -1.0,
 "possible_next_statuses" : [
 ObjectId("56bd52bb8b2d42938751aa5d")
-],
-"requires_approval_by" : [
-"servicesupplier"
-],
-"roles" : [
-"servicesupplier",
-"user"
-]
-}
-{
-"_id" : ObjectId("56269183477f11b0b2a99d88"),
-"keyword" : "delayed",
-"name" : "Demorado",
-"possible_next_statuses" : [
-ObjectId("56269183455f11b0b2a6dd88"),
-ObjectId("56269183477f11b662a6dd88"),
-ObjectId("56264483477f11b0b2a6dd88"),
-ObjectId("56263383477f11b0b2a6dd88")
 ],
 "requires_approval_by" : [
 "servicesupplier"
@@ -129,8 +92,6 @@ ObjectId("56263383477f11b0b2a6dd88")
 "keyword" : "active",
 "name" : "En Progreso",
 "possible_next_statuses" : [
-ObjectId("56269183455f11b0b2a6dd88"),
-ObjectId("56269183477f11b0b2a99d88"),
 ObjectId("56264483477f11b0b2a6dd88"),
 ObjectId("56263383477f11b0b2a6dd88")
 ],

@@ -1,4 +1,4 @@
-<section data-ng-init="findOne()">
+<section data-ng-controller="UserJobEditController" data-ng-init="findOne()">
     <div class="job-details-header-container">
         <h1>Editar trabajo</h1>
     </div>
@@ -17,9 +17,9 @@
                             <p class="input-group">
                                 <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" data-ng-model="job.start_date"
                                        min-date="today" show-button-bar="false" is-open="startDateOpened"
-                                       data-ng-required="true" />
+                                       data-ng-required="true" data-ng-disabled="isJobInFinishedStatus"/>
                                 <span class="input-group-btn">
-                                    <button id="startDateButton" type="button" class="btn btn-default" data-ng-click="openStartDatePicker($event)">
+                                    <button id="startDateButton" type="button" class="btn btn-default" data-ng-click="openStartDatePicker($event)" data-ng-disabled="isJobInFinishedStatus">
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </button>
                                   </span>
@@ -31,9 +31,9 @@
                             <p class="input-group">
                                 <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" data-ng-model="job.expected_date"
                                        min-date="start_date" show-button-bar="false" is-open="expectedDateOpened"
-                                       data-ng-required="true" />
+                                       data-ng-required="true" data-ng-disabled="isJobInFinishedStatus" />
                                 <span class="input-group-btn">
-                                    <button id="expectedDateButton" type="button" class="btn btn-default" data-ng-click="openExpectedDatePicker($event)">
+                                    <button id="expectedDateButton" type="button" class="btn btn-default" data-ng-click="openExpectedDatePicker($event)" data-ng-disabled="isJobInFinishedStatus">
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </button>
                                   </span>
@@ -45,9 +45,9 @@
                             <p class="input-group">
                                 <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" data-ng-model="job.finish_date"
                                        min-date="start_date" show-button-bar="false" is-open="finishDateOpened"
-                                       data-ng-required="true" />
+                                       data-ng-required="true" data-ng-disabled="isJobInFinishedStatus" />
                                 <span class="input-group-btn">
-                                    <button id="finishDateButton" type="button" class="btn btn-default" data-ng-click="openFinishDatePicker($event)">
+                                    <button id="finishDateButton" type="button" class="btn btn-default" data-ng-click="openFinishDatePicker($event)" data-ng-disabled="isJobInFinishedStatus">
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </button>
                                   </span>
@@ -72,18 +72,29 @@
                         </div>
                     </div>
 
-                    <label class="control-label" for="name">Prestador de servicios</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="job.service_supplier.display_name" class="form-control" data-ng-disabled="true">
+                    <div ng-show="isServiceSupplier">
+                        <label class="control-label" for="name">Cliente</label>
+                        <div class="controls">
+                            <input type="text" data-ng-model="job.user.displayName" class="form-control" data-ng-disabled="true">
+                        </div>
                     </div>
 
-                    <label class="control-label" for="name">Nombre</label>
+                    <div ng-show="!isServiceSupplier">
+                        <label class="control-label" for="name">Prestador de servicios</label>
+                        <div class="controls">
+                            <input type="text" data-ng-model="job.service_supplier.display_name" class="form-control" data-ng-disabled="true">
+                        </div>
+                    </div>
+
+                    <label class="control-label" for="name">Nombre del trabajo</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="job.name" id="name" class="form-control" placeholder="Nombre">
+                        <input type="text" data-ng-model="job.name" id="name" class="form-control" placeholder="Nombre del trabajo"
+                               data-ng-disabled="isJobInFinishedStatus">
                     </div>
                     <label class="control-label" for="description">Descripci&#243;n</label>
                     <div class="controls">
-                        <textarea name="description" data-ng-model="job.description" id="description" class="form-control" cols="30" rows="5" placeholder="Descripci&#243;n"></textarea>
+                        <textarea name="description" data-ng-model="job.description" id="description" class="form-control comments-text-area" cols="30" rows="5" placeholder="Descripci&#243;n"
+                                  data-ng-disabled="isJobInFinishedStatus"></textarea>
                     </div>
                 </div>
                 <div class="form-group">

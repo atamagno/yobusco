@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
     errorHandler = require('./errors.server.controller'),
     ServiceSupplier = mongoose.model('ServiceSupplier'),
+    User = mongoose.model('User'),
     _ = require('lodash');
 
 /**
@@ -92,14 +93,15 @@ exports.list = function(req, res) {
  * ServiceSupplier middleware
  */
 exports.serviceSupplierByID = function(req, res, next, id) {
-    // Looks like we're using the display_name field from the supplier on the client side,
-    // so no need to populate the associated user...
-    ServiceSupplier.findById(id).populate('services').exec(function(err, servicesupplier){
-        // ServiceSupplier.findById(id).populate('user', 'displayName').populate('services').exec(function(err, servicesupplier) {
-        if (err) return next(err);
-        if (!servicesupplier) return next(new Error('Error al cargar prestador de servicios ' + id));
-        req.servicesupplier = servicesupplier ;
-        next();
+
+    ServiceSupplier.findById(id)
+        .populate([{path: 'services'},
+                  {path: 'job_counts.jobstatus', select: 'keyword'}])
+        .exec(function(err, servicesupplier){
+            if (err) return next(err);
+            if (!servicesupplier) return next(new Error('Error al cargar prestador de servicios ' + id));
+            req.servicesupplier = servicesupplier ;
+            next();
     });
 };
 
@@ -130,6 +132,7 @@ exports.listByPage = function(req, res) {
     }
 };
 
+// TODO: update this...jobCount does not apply any more...
 function buildSearchQuery(queryString, serviceId) {
 
     var query = serviceId ? { services: serviceId } : {};
@@ -188,15 +191,17 @@ exports.serviceSupplierByUserID = function(req, res) {
 
     var userId = req.params.userId;
 
-    ServiceSupplier.findOne({ user: userId }).exec(function(err, servicesupplier) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            res.jsonp(servicesupplier);
-        }
-    });
+    ServiceSupplier.findOne({ user: userId })
+        .populate('services')
+        .exec(function(err, servicesupplier) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.jsonp(servicesupplier);
+            }
+        });
 };
 
 function buildErrorResponse(res, err, status, errorMessage) {
@@ -204,4 +209,37 @@ function buildErrorResponse(res, err, status, errorMessage) {
     return res.status(status).send({
         message: message
     });
+};
+
+exports.serviceSupplierByUsername = function(req, res) {
+
+    // TODO: if username is unique, we probably don't need to check for roles...
+    var userName = req.params.userName;
+    User.findOne({username: userName, roles: 'servicesupplier'}).exec(function (err, user) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+                if(user){
+                    ServiceSupplier.findOne({user: user._id})
+                                   .populate('services')
+                                   .exec(function(err, servicesupplier){
+                                        if (err) {
+                                            return res.status(400).send({
+                                            message: errorHandler.getErrorMessage(err)
+                                            });
+                                        }
+                                        else{
+                                            res.jsonp(servicesupplier);
+                                        }
+                        });
+                }
+                else{
+                    res.jsonp({}); // TODO: return error here stating that supplier was not found?
+                                   // Maybe not needed, since client code is checking for object with _id property..
+                }
+        }
+    });
+
 };

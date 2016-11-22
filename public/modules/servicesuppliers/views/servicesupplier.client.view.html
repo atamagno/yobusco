@@ -4,9 +4,9 @@
 
             <p class="lead">Prestador de Servicios</p>
             <div class="list-group">
-                <a ui-sref=".detail({ servicesupplierId: servicesupplier._id })" class="list-group-item">Detalles</a>
-                <a ui-sref=".jobs({ servicesupplierId: servicesupplier._id })" class="list-group-item">Trabajos</a>
-                <a ui-sref=".reviews({ servicesupplierId: servicesupplier._id })" class="list-group-item">Comentarios</a>
+                <a ui-sref=".detail({ servicesupplierId: servicesupplier._id })" ui-sref-opts="{reload: true}" class="list-group-item">Detalles</a>
+                <a ui-sref=".jobs({ servicesupplierId: servicesupplier._id, currentPage: 1})" ui-sref-opts="{reload: true}" class="list-group-item">Trabajos</a>
+                <a ui-sref=".reviews({ servicesupplierId: servicesupplier._id, currentPage: 1})" ui-sref-opts="{reload: true}" class="list-group-item">Calificaciones</a>
             </div>
 
         </div>
@@ -25,38 +25,51 @@
 
 <script type="text/ng-template" id="addSupplierReviewModal">
     <div class="modal-header">
-        <h3 class="modal-title">Agregar Comentario</h3>
+        <h3 class="modal-title">Calificacion del prestador de servicios</h3>
     </div>
     <div class="modal-body">
 
         <uib-alert type="{{alerts.type}}" close="alerts.close()" data-ng-show="alerts.visible">{{alerts.msg}}</uib-alert>
 
-        <div data-ng-show="jobsforreview.length">
+        <!--div data-ng-show="jobsforreview.length">
             <h4 class="review-services-title">Calificar un trabajo existente</h4>
             <input type="text" data-ng-model="selectedjob" class="form-control"
                    uib-typeahead="job as job.name  for job in jobsforreview | filter:{name: $viewValue} | limitTo:8"
                    placeholder="Selecciona un trabajo." typeahead-template-url="jobTypeaheadTemplate.html"
-                   typeahead-on-select="setJobServices()">
+                   typeahead-on-select="setJobProperties()">
+        </div-->
+        <div data-ng-show="jobsforreview.length">
+            <h4 class="review-services-title">Calificar un trabajo existente</h4>
+            <div class="btn-group" uib-dropdown>
+                <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                    {{selectedjob.name}} <span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" role="menu">
+                    <li data-ng-repeat="jobforreview in jobsforreview">
+                        <a class="dropdown-item" data-ng-click="setJobProperties(jobforreview)">{{jobforreview.name}}</a>
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-danger" type="button" data-ng-show="selectedjob._id" data-ng-click="removeJobSelection()">
+                <span class="glyphicon glyphicon-remove"></span> Cancelar seleccion
+            </button>
         </div>
         <br>
-
 
         <h4 class="review-services-title">Servicios</h4>
         <input type="text" data-ng-model="selectedservice" class="form-control review-service-selector" typeahead-on-select="selectService($item)"
                uib-typeahead="servicesubcategory.name for servicesubcategory in servicesubcategories | filter:{name: $viewValue} | limitTo:8"
-               placeholder="Selecciona un servicio." data-ng-disabled="selectedjob">
+               placeholder="Selecciona un servicio." data-ng-show="!selectedjob._id">
 
         <div data-ng-show="selectedservices.length" class="review-selected-services">
             <button data-ng-click="deleteSelectedService($index)" type="button" class="btn btn-default review-selected-service"
-                    data-ng-repeat="selectedservice in selectedservices" data-ng-disabled="selectedjob">
+                    data-ng-repeat="selectedservice in selectedservices" data-ng-disabled="selectedjob._id">
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{selectedservice.name}}</button>
         </div>
 
-
-
         <h4 class="review-ratings-title">Resultado del trabajo</h4>
-        <div class="btn-group" uib-dropdown data-ng-disabled="selectedjob">
-            <button type="button" class="btn btn-default" uib-dropdown-toggle>
+        <div class="btn-group" uib-dropdown>
+            <button type="button" class="btn btn-default" uib-dropdown-toggle data-ng-disabled="statusdisabled">
                 {{jobstatus.name}} <span class="caret"></span>
             </button>
             <ul class="uib-dropdown-menu" role="menu">
@@ -83,7 +96,7 @@
             <input type="radio" data-ng-model="recommend" value="false">No</input>
         </div>
 
-        <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
+        <textarea data-ng-model="comment" class="form-control comments-text-area" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>

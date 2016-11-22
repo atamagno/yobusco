@@ -14,16 +14,11 @@ angular.module('servicesuppliers').config(
 				templateUrl: 'modules/servicesuppliers/views/servicesupplier-detail.client.view.html'
 			}).
 			state('servicesupplier.jobs', {
-				url: '/jobs/:servicesupplierId',
+				url: '/jobs/:servicesupplierId/:currentPage',
 				templateUrl: 'modules/servicesuppliers/views/servicesupplier-jobs.client.view.html'
 			}).
 			state('servicesupplier.reviews', {
-				url: '/reviews/:servicesupplierId',
+				url: '/reviews/:servicesupplierId/:currentPage',
 				templateUrl: 'modules/servicesuppliers/views/servicesupplier-reviews.client.view.html'
-			}).
-			state('servicesupplier.viewJobDetail', {
-				url: '/:servicesupplierId/job-detail/:jobId',
-				templateUrl: 'modules/jobs/views/job-detail.client.view.html',
-				controller: 'UserJobDetailsAndEditController'
 			});
 	});

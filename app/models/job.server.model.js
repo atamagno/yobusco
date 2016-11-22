@@ -120,20 +120,8 @@ mongoose.model('Review', ReviewSchema);
 
 /**
  * Start Jobs related section
- * Testing JobPoints schema (in case needed)
-
-var JobPointsSchema = new Schema({
-	points: {
-		type: Number,
-		default: 0
-	},
-	status: {
-		type: Schema.ObjectId,
-		ref: 'JobStatus'
-	}
-},  {_id: false});
+ *
 */
-
 var ApprovalChallengeDetails = new Schema({
 	status: {
 		type: Schema.ObjectId,
@@ -153,14 +141,6 @@ var JobSchema = new Schema({
 	created_by: {
 		type: Schema.ObjectId,
 		ref: 'User'
-	},
-	createdByUser: { // TODO: can this be a virtual field by checking created_by.roles?
-					 // Currently the app seems not to to manage a user that has both
-					 // user and servicesupplier roles, but we should think about that.
-					 // E.g.: change role from nav bar at the top and selecting default role
-					 // at login from profile.
-		type: Boolean,
-		default: true
 	},
 	user: {
 		type: Schema.ObjectId,
@@ -265,7 +245,6 @@ JobSchema.virtual('approver').get(function(){
 JobSchema.methods.setJobDefaultsForReview = function(){
 
 	this.name = 'Trabajo';
-	this.description = '.';
 	this.finish_date = this.start_date;
 	this.expected_date = this.start_date;
 
@@ -327,23 +306,29 @@ JobSchema.post('save',function postSave(job){
 
 
 			// We'll update job counts and supplier points from job status only if the job is being approved,
-			// or the update requires no approval.
-			if(job.approval || job.no_approval_required) {
+			// or the update requires no approval, and the job status has changed...
+			// Maybe use job.updating_status is easier since this check should be already done?
+			// (note: updating_status it not probably being set for new jobs....)
+			if(!job.status.equals(job.previous_status) &&
+			   (job.approval || !job.approval_required)) {
 				// NOTE: job.previous_status is set from schema post init hook (function above)
 				job.service_supplier.updateJobCounts(job.previous_status, job.status);
 				var job_status_config = config.staticdata.jobStatuses.getByProperty('_id', job.status);
 				job.service_supplier.updatePoints(job_status_config.points * job.services.length);
 			}
 
-
+			// TODO: if we should always account for reviews submitted, should we really check for the
+			// status? If not, then we can probably remove the call to getJobStatusForReview and
+			// the checks for job_review_status_config in the if below...
 			var job_review_status_config = config.staticdata.jobStatuses.getByProperty('_id',job.getJobStatusForReview());
 			// We'll account for a review submitted only if:
 			// - There was no review added for the job
 			// + A review has been submitted with this last update
 			// + The status submitted as part of this update (based on operation performed --> job approval or update)
 			//   is a finished one.
-			if(!job.review_already_existed && job.review[0]
-				&& job_review_status_config && job_review_status_config.finished){
+			if(!job.review_already_existed && job.review[0] &&
+				   (job_review_status_config &&
+				   (job_review_status_config.finished || job_review_status_config.post_finished))){
 
 					job.service_supplier.updatePoints(job.review[0].getPoints());
 					job.constructor.getServiceSupplierRatingsAverage(job.service_supplier._id, function(err, ratingsAvg) {
@@ -394,7 +379,7 @@ JobSchema.pre('save',function validate(next){
 
 
 	if(!job.isNew) {
-		switch(job.update_action){
+		switch(job.action){
 
 			// TODO:Is it better to add validation inline/functions within job schema for some of these?
 			case 'approval':
@@ -544,7 +529,7 @@ JobSchema.pre('save',function validate(next){
 				}
 
 				// Checking that use is adding a review, when creating the job using a finished status
-				if(job.review[0] && job_status_config.finished && job.created_by.roles.indexOf('user') != 1){
+				if(!job.review[0] && job_status_config.finished && job.created_by.roles.indexOf('user') != -1){
 					return next(new Error('Es necesario agregar una calificacion al ' +
 										  'crear el trabajo con el estado seleccionado'));
 				}
@@ -580,20 +565,21 @@ JobSchema.pre('save',function preSave(next){
 				job.setApprovalStatus('pending');
 				job.target_status = job.status;
 				job.status = config.staticdata.jobStatuses.getByProperty('keyword', 'created');
+				job.approval_required = true;
 			}
 			else{
 				// If no approval is required, we'll set the approval status to approved (true).
-				// And set the no_approval_required flag so as the post save hook knows how to proceed.
+				// And set the approval_required flag so as the post save hook knows how to proceed.
 				job.setApprovalStatus(true);
-				job.no_approval_required = true;
+				job.approval_required = false;
 			}
-			job.subsequent_approval_status = null;
+			job.subsequent_approval_status = null; // TODO: is this really needed if default in schema is null?
 			return next();
 		});
 	}
 	else {
 
-		switch(job.update_action){
+		switch(job.action){
 			case 'approval':
 				job.setApprovalStatus(job.approval);
 				if(job.approval){ // If effectively approved, set status to target status,
@@ -624,22 +610,21 @@ JobSchema.pre('save',function preSave(next){
 				}
 				job.approval_challenge_details = null;
 				job.target_status = null;
-				job.no_approval_required = true;
+				job.approval_required = false;
 				break;
 
 			case 'update':
-				// If an update is being done: keep the previous status, and set the target_status
-				// to the desired one, so it gets approved afterwards...
-				// Set approval status to pending as well.
-				if(job.updating_status){
-					if(job.isApprovalRequired()){
+				// If status is being updated and approval is required:
+				// 1- Keep the previous status and set the target_status to the desired one
+				// so it gets approved afterwards...
+				// 2- Set approval status to pending as well.
+				// 3- Set approval_required flag so post save hook knows how to proceed.
+				job.approval_required = false;
+				if(job.updating_status && job.isApprovalRequired()){
 						job.setApprovalStatus('pending');
 						job.target_status = job.status;
 						job.status = job.previous_status;
-					}
-					else{
-						job.no_approval_required = true;
-					}
+						job.approval_required = true;
 				}
 				break;
 		}
@@ -650,43 +635,31 @@ JobSchema.pre('save',function preSave(next){
 });
 
 /**
- * Get jobs with a status that can be used to add a review.
+ * Get jobs that can be used to add a review.
+ * TODO: maybe move this to jobs controller?
  */
 JobSchema.statics.getJobsForReview = function(serviceSupplierId, userId, callback){
 
-	this.find({user: userId, service_supplier: serviceSupplierId})
-		.populate([{path: 'services', select: 'name'}, {path: 'status'}])
-		.exec(
-		function(err, jobs){
-			if(err)
-			{
-				// TODO: add and return specific error logging here... / or maybe just return an empty array?
-				callback(err,null)
+	var jobApprovedStatusConfig = config.staticdata.jobApprovalStatuses.getByProperty('keyword', 'approved');
 
-			}
-			else
-			{
-				var jobsForReview = [];
-				if(jobs.length)
-				{
-					// Getting Id of completed status from static data
-					// var completedJobStatusConfig = _.find(config.staticdata.jobStatuses, _.matchesProperty('keyword', 'finished'));
-					var completedJobStatusConfig = config.staticdata.jobStatuses.getByProperty('keyword', 'finished');
-
-					// Checking if completed status Id is present on the list of possible next statuses for each job
-					for(var i = 0;i<jobs.length;i++)
-					{
-						var completedStatusPossible = _.find(jobs[i].status.possible_next_statuses,
-							_.matchesProperty('id', completedJobStatusConfig._id.id))
-						if(completedStatusPossible){
-							jobsForReview.push(jobs[i])
+	this.find({user: userId,
+			   service_supplier: serviceSupplierId,
+			   $or: [{$and: [{initial_approval_status: jobApprovedStatusConfig._id, subsequent_approval_status: null}]},
+							 {subsequent_approval_status: jobApprovedStatusConfig._id}],
+			   review: []
+			   }).populate([{path: 'services', select: 'name'}, {path: 'status'}])
+			     .exec(function(err, jobs){
+						if(err)
+						{
+							// TODO: add and return specific error logging here... / or maybe just return an empty array?
+							callback(err,null)
 						}
-					}
-				}
-				callback(null, jobsForReview)
+						else
+						{
+							callback(null, jobs)
 
-			}
-		});
+						}
+					});
 
 }
 
@@ -815,46 +788,34 @@ JobSchema.methods.getApprovalStatus = function(){
 
 }
 
-/** Get the status to be checked when a review is being submitted
+/**
+ *  Get the status to be checked when a review is being submitted
  *  NOTE: reviews can be submitted in different ways:
  *  - When updating a job to a completed status
  *  - When approving/rejecting a job.
  *  - Submitting a review from service supplier details.
- *  TODO: Should we consider creation as a different scenario?
+ *  - Submitting a review from job details (when admin approved a challenged job to a finished status)
+ *    and approver/challenger was the service supplier.
  * */
 JobSchema.methods.getJobStatusForReview = function(){
 
 	var job = this;
-
-	switch (job.update_action){
-
-			case 'approval':
-				if(job.approval){
-					return job.status;
-				}
-				else{
-					return job.approval_challenge_details.status;
-				}
-				break;
-
-			case 'update':
-				if(job.updating_status){
-					if(job.no_approval_required){
-						return job.status;
-					}
-					else{
-						return job.target_status;
-					}
-
-				}
-				break;
-
-			default:
-				return job.status;
+	if (job.action == 'approval') {
+		if (job.approval) {
+			return job.status;
+		}
+		else {
+			return job.approval_challenge_details.status;
+		}
 	}
-
-
-
+	else{
+		if(!job.approval_required){
+			return job.status;
+		}
+		else{
+			return job.target_status;
+		}
+	}
 }
 
 /**

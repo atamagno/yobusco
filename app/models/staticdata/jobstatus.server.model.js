@@ -70,7 +70,13 @@ module.exports = function(config){
 		config.staticdata.jobStatuses = {};
 		config.staticdata.jobStatuses.getAll = getAll;
 		config.staticdata.jobStatuses.getByProperty = getByProperty;
+		// config.staticdata.jobStatuses.getStatusesForReview = getStatusesForReview;
+		config.staticdata.jobStatuses.getMultipleByProperty = getMultipleByProperty;
 		config.staticdata.jobStatuses.isNextPossible = isNextPossible;
+
+		// TODO: should we cache the different statuses and use enums for them to avoid having to search for them
+		// from different sections of the application?
+		// E.g.: config.staticdata.jobStatuses.FINISHED, config.staticdata.jobStatuses.INCOMPLETE, etc.??
 	})
 
 }
@@ -79,10 +85,37 @@ var getByProperty = function(propertyName, propertyValue)
 	return _.find(JobStatuses,_.matchesProperty(propertyName,propertyValue));
 }
 
+var getMultipleByProperty = function(propertyName, propertyValue)
+{
+	return _.filter(JobStatuses,[propertyName, propertyValue]);
+}
+
 var getAll = function()
 {
 	return JobStatuses;
 }
+
+// NOTE: currently this returns all job statuses, since between the finished and post finished +
+// those that can transition to finished, we are getting all.
+// Is this really needed?
+// Commenting for now....
+
+/* var getStatusesForReview = function()
+{
+
+	var statusesForReview = [];
+	statusesForReview = statusesForReview.concat(getMultipleByProperty('finished', true));
+	statusesForReview = statusesForReview.concat(getMultipleByProperty('post_finished', true));
+
+	for(var i= 0;i < JobStatuses.length;i++){
+		if(_.find(JobStatuses[i].possible_next_statuses,['keyword','finished'])){
+			statusesForReview.push(JobStatuses[i]);
+		}
+	}
+
+	return statusesForReview;
+
+} */
 
 var isNextPossible = function(currentStatus, nextStatus)
 {

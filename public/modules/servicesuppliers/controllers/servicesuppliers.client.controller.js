@@ -6,6 +6,9 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
 
         $scope.jobs = [];
         $scope.authentication = Authentication;
+        $scope.rate = 3;
+        $scope.max = 5;
+
 
         if ($scope.authentication.user) {
             $scope.isServiceSupplier = $scope.authentication.user.roles.indexOf('servicesupplier') != -1;
@@ -15,28 +18,20 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
             servicesupplierId: $stateParams.servicesupplierId
         }).$promise.then(function (servicesupplier) {
                 $scope.servicesupplier = servicesupplier;
+                getReviewsForSupplier($stateParams.servicesupplierId);
+        });
 
-                // TODO: move this to the servicesupplier.jobs state
-                // since other jobs can be added by other users or the supplier itself
-                // while the current user is using the app and moved to the 'Trabajos' list from the
-                // supplier view...
-                // Do the same with reviews view ('Comentarios')
-                ServiceSuppliersDetails.jobs.query({
-                    serviceSupplierId: $scope.servicesupplier._id
-                }).$promise.then(function (jobs) {
-                        $scope.jobs = jobs;
-                    });
-            });
+        function getReviewsForSupplier(servicesupplierId) {
 
-        $scope.navigateToJobDetails = function (jobId) {
-            $state.go('servicesupplier.viewJobDetail', {
-                servicesupplierId: $stateParams.servicesupplierId,
-                jobId: jobId
-            });
+            ServiceSuppliersDetails.reviews.query({
+                serviceSupplierId: servicesupplierId,
+                currentPage: 1,
+                itemsPerPage: 6
+            }).$promise.then(function (response) {
+                    $scope.jobs = response.jobs;
+                });
         };
 
-        $scope.rate = 3;
-        $scope.max = 5;
 
         $scope.hoveringOver = function (value) {
             $scope.overStar = value;
@@ -69,47 +64,10 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
             });
 
             modalInstance.result.then(function (job) {
-                $scope.addJob(job);
-                $scope.servicesupplier.overall_rating = $scope.getUpdatedOverallRating();
+                $state.reload();
             });
         };
 
-        $scope.addJob = function (job) {
-
-            var found = false;
-            for (var i = 0; i < $scope.jobs.length; i++) {
-                if (job._id == $scope.jobs[i]._id) {
-                    $scope.jobs[i] = job;
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                $scope.jobs.push(job);
-            }
-
-        }
-
-        $scope.jobHasReview = function (job) {
-            return job.review.length > 0;
-        }
-
-
-        $scope.getUpdatedOverallRating = function () {
-
-            var ratingsAvgSum = 0;
-            var reviewsCount = 0;
-            for (var i = 0; i < $scope.jobs.length; i++) {
-                // if job has a review associated...this will change if we modify job model
-                // to use a single review instead of array
-                if ($scope.jobs[i].review[0]) {
-                    ratingsAvgSum += parseFloat($scope.jobs[i].review[0].ratingsAvg);
-                    reviewsCount++;
-                }
-            }
-            return (ratingsAvgSum / reviewsCount).toFixed(2);
-        }
     });
 
 angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
@@ -118,8 +76,10 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
         $scope.alerts = Alerts;
         $scope.jobsforreview = jobsforreview;
         $scope.jobstatus = {name: '[Seleccione un resultado]'};
+        $scope.selectedjob = {name: '[Seleccione un trabajo]'};
         $scope.servicesubcategories = $scope.servicesupplier.services;
         $scope.selectedservices = [];
+        $scope.statusdisabled = false;
         $scope.rate = 3;
 
         $scope.jobstatuses = [];
@@ -142,17 +102,28 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                 rate: 3 });
         }
 
+        $scope.removeJobSelection = function(){
+            $scope.clearServices();
+            $scope.selectedjob = {name: '[Seleccione un trabajo]'};
+            $scope.jobstatus = {name: '[Seleccione un resultado]'};
+            $scope.statusdisabled = false;
+        }
 
-        // TODO: need to clear services if job is selected and then unselected/removed...
-        /*$scope.watch('selectedjob', function(newvalue, oldvalue){
-            if(newvalue.length == 0)
-            {$scope.clearServices();}
-        })*/
+        $scope.setJobProperties = function(jobforreview) {
 
-        $scope.setJobServices = function() {
+            $scope.selectedjob = jobforreview;
             $scope.clearServices();
             for (var i = 0; i< $scope.selectedjob.services.length; i++) {
                 $scope.selectedservices.push($scope.selectedjob.services[i])
+            }
+
+            if($scope.selectedjob.status.finished || $scope.selectedjob.status.post_finished){
+                $scope.statusdisabled = true;
+                $scope.jobstatus = $scope.selectedjob.status;
+            }
+            else{
+                $scope.jobstatus = {name: '[Seleccione un resultado]'}
+                $scope.statusdisabled = false;
             }
 
         }
@@ -239,18 +210,15 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
             // If an existing job was selected for the review, we'll just update it
             var job = new Jobs({
                 status: jobinfo.status,
-                review: [reviewinfo],
-                jobpath: 'fromReview'
+                review: [reviewinfo]
             });
 
             if(jobinfo.job){
 
                 job._id = jobinfo.job;
-
                 job.$update(function(job){
                     $uibModalInstance.close(job)
                 }, function (errorResponse) {
-                    // TODO: after clicking OK to submit we lose the rating types for next input...
                     $scope.error = errorResponse.data.message;
                     Alerts.show('danger', $scope.error);
                 });
@@ -263,13 +231,14 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                     jobservices.push(jobinfo.services[i]._id);
                 }
 
+                job.jobpath = 'fromReview';
                 job.services = jobservices;
                 job.service_supplier = $scope.servicesupplier._id;
+                job.user = $scope.authentication.user._id;
 
                 job.$save(function(job){
                     $uibModalInstance.close(job)
                 }, function (errorResponse) {
-                    // TODO: after clicking OK to submit we lose the rating types for next input...
                     $scope.error = errorResponse.data.message;
                     Alerts.show('danger', $scope.error);
                 });

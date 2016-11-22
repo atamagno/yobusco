@@ -1,0 +1,64 @@
+    <div id="resultsContainer" data-ng-show="showList" ng-cloak>
+        <div>
+            Trabajos: {{ ((currentPage-1)*itemsPerPage) + 1 }}-{{ (currentPage-1)*itemsPerPage + jobs.length}} de {{totalItems}}
+        </div>
+        <!-- TODO: make job container to have the same height regardless the amount of services, if it has a review or not, etc -->
+        <!-- TODO: also verify that jobs are displayed following columns in order...E.g.: try adding 5 jobs having one of them with a review... -->
+        <div data-ng-repeat="job in jobs" class="col-sm-4 col-lg-4 col-md-4 no-padding-left">
+            <div class="thumbnail">
+                <img src="/images/job.png" alt=""> <!-- TODO: replace this with thumbnail of first job image, if available -->
+                <div class="job-details-container">
+
+                    <!-- TODO: consider adding indicator for approval needed if user using the app is the approver...
+                         Consider also displaying a different indicator if job is challenged...-->
+                    <span ng-show="job.status.keyword == 'finished'" class="pull-right status-label label label-success">{{job.status.name}}</span>
+                    <span ng-show="job.status.keyword == 'incomplete'" class="pull-right status-label label label-default">{{job.status.name}}</span>
+                    <span ng-show="job.status.keyword == 'active'" class="pull-right status-label label label-primary">{{job.status.name}}</span>
+                    <!-- TODO: change colors for created, guaranteed and abandoned-->
+                    <!-- TODO: evaluate possibility to use a single element, and just change the class based on the status.keyword
+                         since all elements are the same -use ng-class maybe? -->
+
+                    <span ng-show="job.status.keyword == 'created'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+                    <span ng-show="job.status.keyword == 'guaranteed'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+                    <span ng-show="job.status.keyword == 'abandoned'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+
+                    <div class="job-name-container">
+                        <a href="" data-ng-click="navigateToJobDetails(job._id)">{{job.name}}</a>
+                    </div>
+
+                    <div class="job-description-container">{{job.description}}</div>
+
+                    <strong>Servicios:</strong>
+                    <div data-ng-repeat="service in job.services">
+                        <span>{{ service.name }}</span> <!-- TODO: replace this with an icon representing each service -->
+                    </div>
+
+                    <div data-ng-show="showServiceSupplier">
+                        <strong>Prestador de servicios:</strong>
+                        <a ui-sref="servicesupplier.detail({ servicesupplierId: job.service_supplier._id })">{{job.service_supplier.display_name}}</a>
+                        <!--span>{{ job.service_supplier.display_name }}</span><br-->
+                    </div>
+
+                    <div data-ng-show="showUser">
+                        <strong>Cliente:</strong>
+                        <span>{{ job.user.displayName }}</span>
+                    </div>
+                </div>
+
+                <div class="ratings" data-ng-show="job.review[0]">
+                    <p>
+                        <uib-rating data-ng-model="job.review[0].ratingsAvg" max="5" readonly="true" on-hover="hoveringOver(value)" on-leave="overStar=null"></uib-rating>
+                        <span>({{job.review[0].ratingsAvg}})</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pagination-container" ng-show="totalItems > itemsPerPage">
+        <uib-pagination boundary-links="true" total-items="$parent.totalItems" data-ng-model="$parent.currentPage" class="pagination-sm" max-size="$parent.maxPages"
+                        items-per-page="$parent.itemsPerPage" data-ng-click="navigateToResults()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></uib-pagination>
+    </div>
+
+

@@ -3,14 +3,13 @@
 
         <p class="lead">Mis Trabajos</p>
         <div class="list-group">
-            <!-- commenting option to create a job from outside a supplier - for now -->
-            <!-- need to decide how to narrow down the list of suppliers during search -->
-            <!--a ui-sref=".create" class="list-group-item">Crear trabajo</a-->
-            <a ui-sref=".list({ status: 'all', currentPage: 1 })" class="list-group-item">Todos los trabajos</a>
-            <a ui-sref=".list({ status: 'active', currentPage: 1 })" class="list-group-item">Activos</a>
-            <a ui-sref=".list({ status: 'finished', currentPage: 1 })" class="list-group-item">Terminados</a>
-            <a ui-sref=".list({ status: 'pending', currentPage: 1 })" class="list-group-item">Pendientes de aprobaci&#243;n</a>
-            <a ng-show="reportedJobs" ui-sref=".list({ status: 'reported', currentPage: 1 })" class="list-group-item">Reportados</a>
+            <a ui-sref=".list({ status: 'all', currentPage: 1})" class="list-group-item">Todos los trabajos</a>
+            <a ui-sref=".list({ status: 'active', currentPage: 1})" class="list-group-item">Activos</a>
+            <a ui-sref=".list({ status: 'finished', currentPage: 1})" class="list-group-item">Finalizados</a>
+            <a ui-sref=".list({ status: 'incomplete', currentPage: 1})" class="list-group-item">Incompletos</a>
+            <a ui-sref=".list({ status: 'pending-self', currentPage: 1})" class="list-group-item">Pendientes de mi aprobaci&#243;n</a>
+            <a ui-sref=".list({ status: 'pending-other', currentPage: 1})" class="list-group-item">Pendientes de aprobaci&#243;n de otros</a>
+            <a ui-sref=".list({ status: 'challenged', currentPage: 1})" class="list-group-item">Pendientes de resoluci&#243;n</a>
         </div>
 
     </div>
@@ -20,7 +19,7 @@
 
     <script type="text/ng-template" id="addReviewModal">
         <div class="modal-header">
-            <h3 class="modal-title">Agrega un comentario</h3>
+                <h3 class="modal-title">Calificacion del trabajo</h3>
         </div>
         <div class="modal-body">
 
@@ -42,7 +41,7 @@
                 <input type="radio" data-ng-model="recommend" value="false">No</input>
             </div>
 
-            <textarea data-ng-model="comment" class="form-control" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
+            <textarea data-ng-model="comment" class="form-control comments-text-area" cols="30" rows="4" placeholder="Deja un comentario aqui."></textarea>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" data-ng-click="ok()">OK</button>

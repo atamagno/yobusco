@@ -1,4 +1,4 @@
-<section>
+<section data-ng-controller="UserJobCreateController">
     <div class="job-details-header-container">
         <h1>Nuevo trabajo</h1>
     </div>
@@ -10,7 +10,6 @@
             <fieldset>
 
                 <div class="form-group">
-
                     <div class="row">
                         <div class="col-md-3">
                             <label class="control-label">Fecha de inicio</label>
@@ -56,23 +55,37 @@
 
                             </div>
                         </div>
-
-
                     </div>
 
                     <div ng-show="isServiceSupplier">
-                        <label class="control-label" for="name">Nombre de usuario</label>
+                        <label class="control-label" for="name">Nombre de usuario del cliente</label>
                         <div class="controls">
                             <input type="text" data-ng-model="selectedUserName" class="form-control" required placeholder="Nombre de usuario">
                         </div>
                     </div>
 
-                    <div ng-show="!isServiceSupplier">
+                    <div ng-show="!isServiceSupplier && selectedServiceSupplier">
                         <label class="control-label">Prestador de servicios</label>
-                        <div class="controls">
-                            <input type="text" data-ng-model="selectedServiceSupplier" class="form-control"
-                                   uib-typeahead="servicesupplier as servicesupplier.display_name for servicesupplier in servicesuppliers | filter:$viewValue | limitTo:8">
+                        <div class="input-group controls">
+                            <input type="text" data-ng-model="selectedServiceSupplier.display_name" class="form-control" required data-ng-disabled="true">
+                            <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" data-ng-click="clearServiceSupplier()">
+                                        <span class="glyphicon glyphicon-pencil"></span> Modificar
+                                    </button>
+                            </span>
                         </div>
+                    </div>
+
+                    <div ng-show="!isServiceSupplier && !selectedServiceSupplier">
+                            <label class="control-label">Nombre de usuario del prestador de servicios</label>
+                            <div class="input-group controls">
+                                <input type="text" data-ng-model="selectedServiceSupplierUserName" class="form-control" required placeholder="Nombre de usuario">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" data-ng-click="searchServiceSupplierByUsername()">
+                                        <span class="glyphicon glyphicon-search"></span> Buscar
+                                    </button>
+                                </span>
+                            </div>
                     </div>
 
                     <label class="control-label">Servicios</label>
@@ -93,7 +106,7 @@
                     </div>
                     <label class="control-label" for="description">Descripci&#243;n</label>
                     <div class="controls">
-                        <textarea name="description" data-ng-model="description" id="description" class="form-control" cols="30" rows="5" placeholder="Descripci&#243;n"></textarea>
+                        <textarea name="description" data-ng-model="description" id="description" class="form-control comments-text-area" cols="30" rows="5" placeholder="Descripci&#243;n"></textarea>
                     </div>
                 </div>
                 <div class="form-group">
