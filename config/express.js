@@ -18,10 +18,10 @@ module.exports = function(db) {
         require(path.resolve(modelPath));
     });
 
-    // globbing model files with static data
+
     // TODO: move more files to staticdata folder (e.g.: jobstatuses, ratingtypes, etc), so they are retrieved
     // only once by the application.
-    config.staticdata = [{}];
+    // globbing model files with static data
     config.getGlobbedFiles('./app/models/staticdata/*.js').forEach(function(modelPath) {
         require(path.resolve(modelPath))(config);
     });
@@ -63,7 +63,12 @@ module.exports = function(db) {
     app.use(passport.initialize());
     app.use(passport.session());
 
+    // TODO: add compression here?
+    // Check: http://stackoverflow.com/questions/28406068/express-4-x-compression
     // set the static files location /public/img will be /img for users
+    // Need to add header? "Accept-Encoding: gzip, deflate, sdhc" (sdhc?)
+    // Is this the same? https://github.com/expressjs/compression
+    // Check this too: http://expressjs.com/es/advanced/best-practice-performance.html
     app.use(express.static(path.resolve('./public')));
 
     // globbing routing files

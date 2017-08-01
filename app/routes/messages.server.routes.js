@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = function(app) {
-	var users = require('../../app/controllers/users.server.controller');
-	var messages = require('../../app/controllers/messages.server.controller');
+	var users = require(__base + 'app/controllers/users.server.controller');
+	var messages = require(__base + 'app/controllers/messages.server.controller');
 
 	// Messages Routes
 	app.route('/messages').post(users.requiresLogin, messages.create);

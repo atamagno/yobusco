@@ -11,6 +11,8 @@ var _ = require('lodash'),
 
 /**
  * Update user details
+ * TODO: do we need to check that the logged user is actually updating his own profile?
+ * Or that is implicitly done by passport setting req.user to the actual user submitting the request...?
  */
 exports.update = function(req, res) {
 	// Init Variables

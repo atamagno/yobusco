@@ -40,9 +40,19 @@ module.exports = function(config){
 		config.staticdata.jobApprovalStatuses = {};
 		config.staticdata.jobApprovalStatuses.getAll = getAll;
 		config.staticdata.jobApprovalStatuses.getByProperty = getByProperty;
-
+		config.staticdata.jobApprovalStatuses.enums = getJobApprovalStatusEnums(jobApprovalStatuses);
 	})
 }
+
+function getJobApprovalStatusEnums(jobApprovalStatuses){
+
+	var enums = {};
+	for(var i=0; i< jobApprovalStatuses.length;i++){
+		enums[jobApprovalStatuses[i].keyword.toUpperCase()] = jobApprovalStatuses[i]._id;
+	}
+	return enums;
+}
+
 
 var getByProperty = function(propertyName, propertyValue)
 {

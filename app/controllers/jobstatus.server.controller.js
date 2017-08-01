@@ -7,7 +7,7 @@ var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	JobStatus = mongoose.model('JobStatus'),
 	_ = require('lodash'),
-	config = require('../../config/config');
+	config = require(__base + 'config/config');
 
 /**
  * Create a JobStatus
@@ -84,7 +84,7 @@ exports.list = function(req, res) {
  */
 exports.jobstatusByID = function(req, res, next, id) {
 
-
+	// TODO: return from cached (config) list here?
 	JobStatus.findById(id).exec(function(err, jobstatus) {
 		if (err) return next(err);
 	 	if (!jobstatus) return next(new Error('Error al cargar estado de trabajo ' + id));

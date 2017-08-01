@@ -1,7 +1,6 @@
 {
     "_id": ObjectId("564f560ca8df043c1db478c6"),
     "user": ObjectId("564f5531a8df043c1db478c5"),
-    "expected_date": ISODate("2015-11-30T03:00:00.000+0000"),
     "status": ObjectId("56269183477f11b0b2a99d88"),
     "service_supplier": ObjectId("56269584477f11b0b2a6dd91"),
     "start_date": ISODate("2015-11-20T17:17:55.577+0000"),
@@ -37,8 +36,7 @@
 { 
     "_id" : ObjectId("564f5895a8df443c1db478c7"), 
     "user" : ObjectId("564f5531a8df043c1db478c5"), 
-    "expected_date" : ISODate("2015-12-25T03:00:00.000+0000"), 
-    "status" : ObjectId("56264483477f11b0b2a6dd88"), 
+    "status" : ObjectId("56264483477f11b0b2a6dd88"),
     "service_supplier" : ObjectId("562e3d3c477f0817f38d3078"), 
     "start_date" : ISODate("2015-11-23T17:30:06.685+0000"), 
     "finish_date" : ISODate("2015-11-27T17:30:06.685+0000"), 
@@ -77,8 +75,7 @@
 { 
     "_id" : ObjectId("564f58f4a855543c1d0178c7"), 
     "user" : ObjectId("564f5531a8df043c1db478c5"), 
-    "expected_date" : ISODate("2015-12-25T03:00:00.000+0000"), 
-    "status" : ObjectId("56264483477f11b0b2a6dd88"), 
+    "status" : ObjectId("56264483477f11b0b2a6dd88"),
     "service_supplier" : ObjectId("562e3d3c477f0817f38d3078"), 
     "start_date" : ISODate("2015-11-23T17:30:06.685+0000"), 
     "finish_date" : ISODate("2015-11-28T17:30:06.685+0000"), 
@@ -117,7 +114,6 @@
 {
     "_id" : ObjectId("5671cd95704142f81750c2ee"),
     "user" : ObjectId("564e5a0cdcea1d4c0e61bdc8"),
-    "expected_date" : ISODate("2015-12-31T03:00:00.000+0000"),
     "status" : ObjectId("56269183477f11b662a6dd88"),
     "service_supplier" : ObjectId("56269584477f11b552a6dd91"),
     "pictures" : [
@@ -161,7 +157,6 @@
 {
     "_id" : ObjectId("5671d114704142f81750c2f0"),
     "user" : ObjectId("564e5a0cdcea1d4c0e61bdc8"),
-    "expected_date" : ISODate("2016-02-25T03:00:00.000+0000"),
     "status" : ObjectId("56269183477f11b662a6dd88"),
     "service_supplier" : ObjectId("562e3d3c477f0817f38d3072"),
     "pictures" : [
@@ -201,7 +196,6 @@
 {
     "_id" : ObjectId("5671d79c704142f81750c2f2"),
     "user" : ObjectId("564f5531a8df043c1db478c5"),
-    "expected_date" : ISODate("2016-01-20T03:00:00.000+0000"),
     "status" : ObjectId("56269183477f11b662a6dd88"),
     "service_supplier" : ObjectId("562e3d3c477f0817f38d3069"),
     "pictures" : [

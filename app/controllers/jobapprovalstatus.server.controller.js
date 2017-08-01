@@ -7,7 +7,7 @@ var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	JobApprovalStatus = mongoose.model('JobApprovalStatus'),
 	_ = require('lodash'),
-	config = require('../../config/config');
+	config = require(__base + 'config/config');
 
 /**
  * TODO: add create, delete and update for job approval statuses (copy from job statuses controller)

@@ -11,7 +11,11 @@ angular.module('jobs').controller('UserJobDetailsController',
 			}).$promise.then(function (job) {
 					$scope.job = job;
 					$scope.isJobInFinishedStatus = isJobInFinishedStatus();
+					$scope.isJobInNotHiredStatus = isJobInNotHiredStatus();
 					$scope.hasJobNextStatuses = hasJobNextStatuses();
+					$scope.hasJobTargetStatusReason = hasJobTargetStatusReason();
+					$scope.hasJobStatusReason = hasJobStatusReason();
+					$scope.isJobChallengedWithStatusReason = isJobChallengedWithStatusReason();
 					$scope.isJobWaitingApproval = isJobWaitingApproval();
 					$scope.isJobChallenged = isJobChallenged();
 					$scope.isJobApproved = isJobApproved();
@@ -24,6 +28,9 @@ angular.module('jobs').controller('UserJobDetailsController',
 				});
 		};
 
+		function hasJobStatusReason(){
+			return $scope.job.status_reason;
+		}
 		function hasJobPictures(){
 			return $scope.job.pictures.length;
 		}
@@ -33,9 +40,18 @@ angular.module('jobs').controller('UserJobDetailsController',
 					|| ($scope.job.subsequent_approval_status && $scope.job.subsequent_approval_status.keyword == 'challenged'));
 		}
 
+		function isJobChallengedWithStatusReason(){
+			return (isJobChallenged() && $scope.job.approval_challenge_details.status_reason);
+
+		}
+
 		function isJobApproved(){
 			return (($scope.job.initial_approval_status.keyword == 'approved' && !$scope.job.subsequent_approval_status)
 				   || ($scope.job.subsequent_approval_status && $scope.job.subsequent_approval_status.keyword == 'approved'));
+		}
+
+		function hasJobTargetStatusReason(){
+			return $scope.job.target_status_reason;
 		}
 
 		function isUserLastUpdater(){
@@ -44,7 +60,6 @@ angular.module('jobs').controller('UserJobDetailsController',
 				   ($scope.authentication.user._id === $scope.job.last_updated_by._id));
 
 		}
-
 		function isJobReviewed(){
 			return ($scope.job.review.length);
 
@@ -71,6 +86,10 @@ angular.module('jobs').controller('UserJobDetailsController',
 			return $scope.job.status.finished || $scope.job.status.post_finished;
 		}
 
+		function isJobInNotHiredStatus(){
+			return $scope.job.status.keyword == 'nothired';
+		}
+
 		function hasJobNextStatuses(){
 			return $scope.job.status.possible_next_statuses.length;
 		}
@@ -81,7 +100,7 @@ angular.module('jobs').controller('UserJobDetailsController',
 
 		$scope.openReviewModal = function () {
 
-			var modalInstance = $scope.showReviewModal();
+			var modalInstance = $scope.showReviewModal($scope.job.status);
 			modalInstance.result.then(function (reviewinfo) {
 				$scope.addReview(reviewinfo)
 
@@ -104,7 +123,11 @@ angular.module('jobs').controller('UserJobDetailsController',
 
 		$scope.addImages = function (imagePaths) {
 
-			var job = $scope.job;
+			//var job = $scope.job;
+			var job = new Jobs();
+			job._id = $scope.job._id;
+			job.pictures = $scope.job.pictures;
+
 			for (var i = 0; i < imagePaths.length; i++) {
 				if (job.pictures.indexOf(imagePaths[i]) === -1) {
 					job.pictures.push(imagePaths[i]);
@@ -121,7 +144,12 @@ angular.module('jobs').controller('UserJobDetailsController',
 
 		$scope.deleteImage = function (image) {
 
-			var job = $scope.job, index = job.pictures.indexOf(image);
+			// var job = $scope.job;
+			var job = new Jobs();
+			job._id = $scope.job._id;
+			job.pictures = $scope.job.pictures;
+
+			var index = job.pictures.indexOf(image);
 			if (index > -1) {
 				job.pictures.splice(index, 1);
 			}
@@ -179,10 +207,14 @@ angular.module('jobs').controller('UserJobDetailsController',
 			});
 
 			approveRejectModalInstance.result.then(function (challengeDetails) {
+
+				var approveRejectStatus = $scope.approvalAction == 'approved' ?
+										  $scope.job.target_status : challengeDetails.status;
+
 				if((!$scope.isServiceSupplier && !$scope.job.review[0]) &&
-				   (($scope.approvalAction == 'approved' && $scope.job.target_status.finished) ||
-				   ($scope.approvalAction == 'rejected' && challengeDetails.status.finished))){
-						var modalInstance = $scope.showReviewModal();
+				   (($scope.approvalAction == 'approved' && approveRejectStatus.finished) ||
+				   ($scope.approvalAction == 'rejected' && approveRejectStatus.finished))){
+						var modalInstance = $scope.showReviewModal(approveRejectStatus);
 						modalInstance.result.then(function (reviewInfo) {
 							$scope.approveRejectJob(approvalAction,challengeDetails, reviewInfo);
 						});
@@ -203,12 +235,14 @@ angular.module('jobs').controller('UserJobDetailsController',
 				job.approval = true;
 			}
 			else{
+				//challengeDetails.status_reason = challengeDetails.status_reason._id; // TODO, check this since status reason
+																					 // is not always required...
 				challengeDetails.status = challengeDetails.status._id;
 				job.approval_challenge_details = challengeDetails;
 				job.approval = false;
 			}
 
-			if(reviewInfo) {job.approval_review = reviewInfo;}
+			if(reviewInfo) {job.review = [reviewInfo];}
 
 			job.$update(function() {
 					if (approvalAction == 'approved') {

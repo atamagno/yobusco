@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = function(app) {
-	var servicecategories = require('../../app/controllers/servicecategories.server.controller'),
-		users = require('../../app/controllers/users.server.controller');
+	var servicecategories = require(__base + 'app/controllers/servicecategories.server.controller'),
+		users = require(__base + 'app/controllers/users.server.controller');
 
 	// ServiceCategories admin routes
 	app.route('/servicecategories-admin')

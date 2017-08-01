@@ -2,6 +2,8 @@ var init = require('./config/init')(),
     config = require('./config/config'),
     mongoose = require('mongoose');
 
+global.__base = __dirname + '/'
+
 // Bootstrap db connection
 var db = mongoose.connect(config.dbConnectionString(), function(err) {
     if (err) {

@@ -10,8 +10,11 @@ angular.module('jobs').config(
 				templateUrl: 'modules/jobs/views/jobs.client.view.html',
 				controller: 'UserJobsController',
 				resolve: {
-					JobStatuses: function (JobStatus) {
+					jobstatuses: function (JobStatus) {
 						return JobStatus.query().$promise;
+					},
+					jobstatusreasons: function(JobStatusReasons){
+						return JobStatusReasons.query().$promise;
 					}
 				}
 			}).

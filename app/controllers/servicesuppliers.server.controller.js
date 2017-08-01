@@ -52,7 +52,8 @@ exports.create = function(req, res) {
  * Show the current ServiceSupplier
  */
 exports.read = function(req, res) {
-    res.jsonp(req.servicesupplier);
+    //res.jsonp(req.servicesupplier);
+    res.jsonp(req.servicesupplier.toJSON());
 };
 
 /**

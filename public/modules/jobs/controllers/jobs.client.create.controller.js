@@ -4,10 +4,14 @@
 // TODO: we should probably merge ServiceSuppliers and ServiceSuppliersDetails into a single service.
 angular.module('jobs').controller('UserJobCreateController',
 	function($scope, $stateParams, $state, Jobs, ServiceSuppliers, ServiceSuppliersDetails,
-			 Alerts, $uibModal, UserSearch) {
+			 Alerts, $uibModal, UserSearch, JobStatusReasonsHelper) {
+
+		$scope.selectedservices.splice(0,$scope.selectedservices.length);
 
 		// Getting statuses that can be used to create a job.
 		$scope.initialjobstatuses = [];
+		$scope.statusreasons = [];
+
 		$scope.status = {name: '[Seleccione un estado]'};
 		for(var i = 0;i<$scope.jobstatuses.length;i++){
 			if($scope.jobstatuses[i].initial){
@@ -34,6 +38,15 @@ angular.module('jobs').controller('UserJobCreateController',
 						$scope.servicesubcategories = $scope.selectedServiceSupplier.services;
 				});
 			}
+		}
+
+		function setJobStatusReasonsFromStatus(status){
+			$scope.statusreason = {description: '[Seleccione una opcion]'};
+			$scope.statusreasons = JobStatusReasonsHelper.getReasons($scope.jobstatusreasons,status,$scope.authentication.user.roles);
+		}
+
+		$scope.changeStatusReason = function(statusReason){
+			$scope.statusreason = statusReason;
 		}
 
 		$scope.searchServiceSupplierByUsername = function(){
@@ -67,6 +80,7 @@ angular.module('jobs').controller('UserJobCreateController',
 
 		$scope.changeStatus = function (status) {
 			$scope.status = status;
+			setJobStatusReasonsFromStatus(status);
 		};
 
 		$scope.openCreateJobModal = function () {
@@ -78,7 +92,7 @@ angular.module('jobs').controller('UserJobCreateController',
 
 			modalInstance.result.then(function () {
 				if($scope.status.finished && !$scope.isServiceSupplier){
-					var modalInstance = $scope.showReviewModal();
+					var modalInstance = $scope.showReviewModal($scope.status);
 					modalInstance.result.then(function (reviewinfo) {
 						$scope.create(reviewinfo);
 					});
@@ -103,6 +117,13 @@ angular.module('jobs').controller('UserJobCreateController',
 				}
 			}
 
+
+			if($scope.statusreasons.length && !$scope.statusreason._id){
+				Alerts.show('danger','Debes seleccionar una opcion de razon del estado');
+				return;
+
+			}
+
 			if ($scope.selectedServiceSupplier && $scope.selectedServiceSupplier._id) {
 
 				// TODO: add validation for selected services here.
@@ -117,10 +138,10 @@ angular.module('jobs').controller('UserJobCreateController',
 					name: this.name,
 					description: this.description,
 					start_date: this.start_date,
-					expected_date: this.expected_date,
 					status: $scope.status._id,
 					service_supplier: $scope.selectedServiceSupplier._id,
-					services: services
+					services: services,
+					status_reason: $scope.statusreason && $scope.statusreason._id ? $scope.statusreason._id : null
 				});
 
 				if(reviewinfo){job.review = [reviewinfo];}
@@ -158,39 +179,12 @@ angular.module('jobs').controller('UserJobCreateController',
 				$scope.clearServiceSupplier();
 				$scope.name = '';
 				$scope.description = '';
-				$scope.expected_date = '';
 			},  function (errorResponse) {
 				$scope.error = errorResponse.data.message;
 				Alerts.show('danger', $scope.error);
 			});
 
 		}
-
-		/*$scope.dateFormats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-		$scope.dateFormat = $scope.dateFormats[0];
-		$scope.today = new Date();
-		$scope.start_date = $scope.today;*/
-
-		/*$scope.openStartDatePicker = function ($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-
-			$scope.startDateOpened = true;
-		};
-
-		$scope.openExpectedDatePicker = function ($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-
-			$scope.expectedDateOpened = true;
-		};
-
-		$scope.openFinishDatePicker = function ($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-
-			$scope.finishDateOpened = true;
-		};*/
 
 
 });

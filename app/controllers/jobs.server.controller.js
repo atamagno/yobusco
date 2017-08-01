@@ -11,24 +11,66 @@ var mongoose = require('mongoose'),
 	User = mongoose.model('User'),
 	async = require('async'),
 	_ = require('lodash'),
-	config = require('../../config/config'),
+	config = require(__base + 'config/config'),
 	prohibitedJobPaths = ['initial_approval_status'
 						 ,'subsequent_approval_status', 'target_status',
-						 'user', 'service_supplier', 'last_updated_date', 'last_updated_by'];
+						 'user', 'service_supplier', 'last_updated_date', 'last_updated_by',
+						 'target_status_reason', 'created_by', 'created_date', 'challenges', 'start_date'],
+	// TODO: Isn't it better to only include the
+	// path names of the fields that can be updated here?.
+	// So if there are some that don't match, we just
+	// exclude them? Considering that there are more
+	// non updateable fields than updateable?
+	// (use Object.keys?...or lodash?)
+	// Maybe just accept specific elements.
+	// - For job updates & reviews from job:
+	// --- status, status_reason, finish date, pictures & review
+	// --- For updates, may need to nullify certain items if not passed:
+	//     -- E.g.: status_reason (
+	// - For approvals:
+	// --- just get specific elements (don't extend)
+	// - For resolutions
+	// --- just get specific elements (don't extend)
+	jobReturnPaths = ['_id', 'created_date', 'start_date', 'status', 'target_status',
+					  'created_by', 'status_reason','target_status_reason'];
 
+	// TODO: what data we need to prevent from being added on create?
+	// E.g.: approval challenge details? Target status, others?
 
 /**
  * Create a Job
  */
 exports.create = function(req, res) {
+
+	// Preventing from setting dates that will be automatically set by Job model.
+	// What happens on updates...?
+	delete req.body.created_date;
+	delete req.body.last_updated_date;
+
 	var job = new Job(req.body);
 
-	job.created_by = req.user;
-	job.last_updated_by = req.user;
+	//job.created_by = req.user;
+	//job.last_updated_by = req.user;
+
+	job.created_by = new User(_.pick(req.user, ['_id','roles']));
+	// This seems to work, but creates an object with empty and default data.
+	// Such as user.password = '', profile_picture = 'modules/users/img/profile/default.png', etc.
+	// Does it really matter? This can be optimized by updating the deserialize/serialize passport functions,
+	// to keep specific data elements associated to the session (and not the full user data)
+
+	job.last_updated_by = job.created_by;
 
 	if(req.body.jobpath == 'fromReview'){
 		job.setJobDefaultsForReview();
 	}
+
+	// TODO: check that - from client, we're changing state to job details (which triggers a query for the job)
+	// after it's created. So see if it makes sense to return the job back.
+	// Maybe we can just return the job id...(since being checked from tests)
+
+	// Also (this applies to updates as well), the object returned includes created_by and last_updated_by
+	// which include big data elements such as profile picture encoded.
+	// See attempt above. Definitely reduces response size, but adds some extra -default- elements not needed.
 
 	async.waterfall([
 		function saveJob (done) {
@@ -38,6 +80,12 @@ exports.create = function(req, res) {
 						message: errorHandler.getErrorMessage(err)
 					});
 				} else {
+					// Testing returning specific paths...
+					// Maybe not needed, now that we've reduced the data under created_by and last_updated_by
+					// res.jsonp(_.pick(job, jobReturnPaths));  // NOTE: virtuals may not be
+					                                            // returned (use toJSON() on job?
+															    // or set toObject flag on schema?
+
 					res.jsonp(job);
 					var jobCopy = new Job(job); // Copying job so as populate in the next function is not overridden by
 												// job population performed in job post save hook
@@ -123,26 +171,37 @@ exports.update = function(req, res) {
 	var job = req.job;
 	var jobDataSubmitted = req.body;
 
+	// TODO: check that - we're changing state to job details/reloading details state (which triggers a query for the job)
+	// after it's updated. So see if it makes sense to return the job back, or just a success indicator...
 
 	job.action = getJobUpdateAction(jobDataSubmitted);
 	switch (job.action){
-
 		case 'approval':
 			job.approval = jobDataSubmitted.approval;
 			job.approval_challenge_details = jobDataSubmitted.approval_challenge_details;
-			job.approval_review = jobDataSubmitted.approval_review;
+			if(jobDataSubmitted.review)
+				job.review = jobDataSubmitted.review;
+
 			job.approval_user = req.user;
 			break;
 
 		case 'resolution':
-			job.resolution = jobDataSubmitted.resolution;
-			job.resolution_user = req.user;
+			if(canResolve(req.user)){
+				job.resolution = jobDataSubmitted.resolution;
+			}
+			else{
+				return res.status(400).send({
+					message: 'El usuario no esta autorizado a resolver el estado del trabajo.'
+				});
+			}
 			break;
 
 		case 'update':
 			// TODO: is it better to do this (remove paths that cannot be updated from client) from route middleware?
 			job = _.extend(job , removeProhibitedJobPaths(jobDataSubmitted));
-			job.last_updated_by = req.user;
+			job.last_updated_by = req.user; // TODO: need to take the same approach than approvals and resolutions here?
+			                                // Maybe not possible to remove job.last_updated_by - since it's used
+											// in query from my jobs....
 			break;
 
 		default:
@@ -160,7 +219,13 @@ exports.update = function(req, res) {
 						message: errorHandler.getErrorMessage(err)
 					});
 				} else {
-					res.jsonp(job);
+					res.jsonp(job); // TODO: we are re-querying the job from update controller on the client side,
+									// once we get a successful job created, so maybe we don't need to return the object here
+									// Especially since created_by and last_updated_by elements are set to req.user,
+									// which includes the profile picture encoded image which can get too big...
+									// Same applies on job creation...
+									// We can probably just return the job._id?
+
 					var jobCopy = new Job(job); // Copying job so as populate in the next function is not overridden by
 									  			// job population performed in job post save hook
 					 					        // Note that in the functions below, we're only getting supplier and user
@@ -252,9 +317,8 @@ exports.update = function(req, res) {
 };
 
 /**
- * Delete an Job
+ * Delete a Job
  */
-// TODO: we shouldn't delete jobs, right?
 exports.delete = function(req, res) {
 	var job = req.job ;
 
@@ -264,7 +328,12 @@ exports.delete = function(req, res) {
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			ServiceSupplier.findById(job.service_supplier).exec(function(err, servicesupplier) {
+			return res.status(200).send({
+				message: 'Trabajo eliminado exitosamente.'
+			});
+			// TODO: add pre and post remove hooks to job, so as service supplier job counts and points
+			// are re-calculated...Or maybe just update service supplier directly?
+			/*ServiceSupplier.findById(job.service_supplier).exec(function(err, servicesupplier) {
 				if (err) {
 					return res.status(400).send({
 						message: errorHandler.getErrorMessage(err)
@@ -282,7 +351,7 @@ exports.delete = function(req, res) {
 						}
 					});
 				}
-			});
+			});*/
 		}
 	});
 };
@@ -315,13 +384,16 @@ exports.findJobByID = function(req, res, next, id) {
 							   {path: 'initial_approval_status'},
 							   {path: 'subsequent_approval_status'},
 								{path: 'status',
-							     populate: {path: 'possible_next_statuses', select: 'keyword name finished post_finished'}},
+							     populate: {path: 'possible_next_statuses', select: 'keyword name finished post_finished requires_reason'}},
 							   {path: 'target_status', select: 'name keyword finished'},
+							   {path: 'status_reason', select: 'description'},
+							   //{path: 'target_status_reason', select: 'description'},
 							   {path: 'review'},
 							   {path: 'services', select: 'name'},
 							   {path: 'approval_challenge_details.status', select: 'name'},
-							   {path: 'last_updated_by', select: 'roles'}])
-
+							   {path: 'approval_challenge_details.status_reason', select: 'description'},
+							   {path: 'last_updated_by', select: 'roles'},
+							   {path: 'target_status_reason', select: 'description'}])
 					.exec(function(err, job) {
 						if (err) return next(err); // TODO: check here if job is not found, it seems there's no 'next'
 									   			   // handler capturing the error and this is breaking...
@@ -517,77 +589,12 @@ exports.canUpdate = function(req, res, next) {
 	next();
 };
 
-/**
- * Checks several conditions that need to be met for job creation.
- * - User and supplier should exist.
- * - User and supplier should create a job only for themselves (not for a different user/supplier).
- * - Services included in the job should be serviced by the service supplier.
- */
-exports.canCreate = function(req, res, next) {
 
-	var user = req.user;
-	var job = req.body;
-	var error;
+function canResolve(user){
 
-	async.parallel([
-		function(done){
-			User.findOne({'_id': job.user, roles: 'user'}).exec(function(err, foundUser){
-				if(err) return done(new Error());
+	return (user.roles.indexOf('admin') != -1);
 
-				// Checking that user exists.
-				if(!foundUser) {
-					return done(new Error('El usuario no existe'));
-				}
-				// Checking user is not creating a job for a different user...
-				if(user.roles.indexOf('user') != -1 && user._id.toString() != job.user){
-					error = new Error('El usuario no est\u00e1 autorizado');
-					error.code = 401;
-					return done(error);
-				}
-				done();
-
-			});
-
-		},
-		function(done){
-
-			ServiceSupplier.findById(job.service_supplier).exec(function(err, servicesupplier){
-				if(err)	return done(new Error());
-
-				// Checking that service supplier exists...
-				if(!servicesupplier) {
-					return done(new Error('El prestador de servicios no existe'));
-				}
-
-				// Checking service supplier is not creating a job for a different supplier...
-				if(user.roles.indexOf('servicesupplier') != -1 && !user.equals(servicesupplier.user)){
-							error = new Error('El usuario no est\u00e1 autorizado');
-							error.code = 401;
-							return done(error);
-				}
-
-				// Checking that services submitted are offered by service supplier
-				for(var i=0;i<job.services.length;i++){
-					if(!mongoose.Types.ObjectId.isValid(job.services[i]) ||
-					   !_.find(servicesupplier.services, mongoose.Types.ObjectId(job.services[i]))){
-						return done(new Error('Uno o mas servicios seleccionados ' +
-						'no son validos para el prestador de servicios'));
-					}
-				}
-				done();
-			});
-
-
-		}
-	], function(err){
-		if(err){
-			err.code = err.code || 400;
-			return res.status(err.code).send({message: errorHandler.getErrorMessage(err, true)});
-		}
-		next();
-	});
-
-};
+}
 
 exports.listForReview = function(req, res) {
 
@@ -601,15 +608,17 @@ exports.listForReview = function(req, res) {
 			res.jsonp(jobs);
 		}
 	});
-}
+};
 
 function getJobUpdateAction(jobDataSubmitted){
 
-	if(typeof jobDataSubmitted.action == 'undefined') { // user is resolving job challenge...
+
+	if(typeof jobDataSubmitted.action == 'undefined') { // if no action is specified, we'll consider update as default...
 		return 'update'
 	}
 	else{
-			 return jobDataSubmitted.action;
+		return jobDataSubmitted.action; // otherwise we'll get the action value
+			 								 // (should be either 'approval' or 'resolution')
 	}
 
 }
@@ -687,6 +696,11 @@ function buildJobSearchQuery(queryParams){
 	}
 
 	// Removing $and property of query if no conditions have been added to it...
+	// TODO: is it really needed to add query.$and from the buildJobSearchQueryByStatus
+	// if and is the default operand between parameters when multiple are provided?
+	// If an or is added directly at the query level, would that mean that between the top level query
+	// parameters the operand is and, and the or will only be evaluated within the specific parameter?
+	// Search for 'mongoose multiple or' conditions...
 	if(query.$and.length == 0){
 		delete query.$and;
 	}
@@ -697,43 +711,62 @@ function buildJobSearchQueryByStatus(queryParams, query){
 
 	switch (queryParams.status)
 	{
+		/*case 'all':
+			var jobNotHiredStatusId = config.staticdata.jobStatuses.getByProperty('keyword','nothired')._id;
+			query.status = {$ne : jobNotHiredStatusId};
+			break;*/
+		case 'nothired':
+			//var jobNotHiredStatusId = config.staticdata.jobStatuses.getByProperty('keyword','nothired')._id;
+			//query.status = jobNotHiredStatusId;
+			query.status = config.staticdata.jobStatuses.enums.NOTHIRED;
+			break;
+
 		case 'approved':
-			var jobApprovedApprovalStatusId = config.staticdata.jobApprovalStatuses.getByProperty('keyword','approved')._id;
-			query.initial_approval_status = jobApprovedApprovalStatusId;
+			//var jobApprovedApprovalStatusId = config.staticdata.jobApprovalStatuses.getByProperty('keyword','approved')._id;
+			//query.initial_approval_status = jobApprovedApprovalStatusId;
+			query.initial_approval_status = config.staticdata.jobApprovalStatuses.enums.APPROVED;
 			break;
 
 		case 'finished':
 			var finishedStatuses = [];
-			finishedStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'finished')._id);
-			finishedStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'guaranteed')._id);
+			//finishedStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'finished')._id);
+			//finishedStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'guaranteed')._id);
+			finishedStatuses.push(config.staticdata.jobStatuses.enums.FINISHED);
+			finishedStatuses.push(config.staticdata.jobStatuses.enums.GUARANTEED);
 			query.status = { $in: finishedStatuses};
 			break;
 		case 'incomplete':
 			var incompleteStatuses = [];
-			incompleteStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'incomplete')._id);
-			incompleteStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'abandoned')._id)
+			//incompleteStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'incomplete')._id);
+			//incompleteStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'abandoned')._id)
+			incompleteStatuses.push(config.staticdata.jobStatuses.enums.INCOMPLETE);
+			incompleteStatuses.push(config.staticdata.jobStatuses.enums.ABANDONED);
 			query.status = { $in: incompleteStatuses};
 			break;
 		case 'active':
-			var jobInProgressStatusId = config.staticdata.jobStatuses.getByProperty('keyword', 'active')._id;
-			query.status = jobInProgressStatusId;
+			//var jobInProgressStatusId = config.staticdata.jobStatuses.getByProperty('keyword', 'active')._id;
+			//query.status = jobInProgressStatusId;
+			query.status = config.staticdata.jobStatuses.enums.ACTIVE;
 			break;
 		case 'pending-self':
-			var jobPendingApprovalStatusId = config.staticdata.jobApprovalStatuses.getByProperty('keyword','pending')._id;
-			query.$and.push({$or: 	[{initial_approval_status: jobPendingApprovalStatusId},
-									 {subsequent_approval_status: jobPendingApprovalStatusId}]});
+			//var jobPendingApprovalStatus = config.staticdata.jobApprovalStatuses.getByProperty('keyword','pending')._id;
+			var jobPendingApprovalStatus = config.staticdata.jobApprovalStatuses.enums.PENDING;
+			query.$and.push({$or: 	[{initial_approval_status: jobPendingApprovalStatus},
+									 {subsequent_approval_status: jobPendingApprovalStatus}]});
 			query.last_updated_by = {$ne: queryParams.user._id};
 			break;
 		case 'pending-other':
-			var jobPendingApprovalStatusId = config.staticdata.jobApprovalStatuses.getByProperty('keyword','pending')._id;
-			query.$and.push({$or: 	[{initial_approval_status: jobPendingApprovalStatusId},
-									 {subsequent_approval_status: jobPendingApprovalStatusId}]});
+			//var jobPendingApprovalStatus = config.staticdata.jobApprovalStatuses.getByProperty('keyword','pending')._id;
+			var jobPendingApprovalStatus = config.staticdata.jobApprovalStatuses.enums.PENDING;
+			query.$and.push({$or: 	[{initial_approval_status: jobPendingApprovalStatus},
+									 {subsequent_approval_status: jobPendingApprovalStatus}]});
 			query.last_updated_by = queryParams.user._id;
 			break;
 		case 'challenged':
-			var jobChallengedApprovalStatusId = config.staticdata.jobApprovalStatuses.getByProperty('keyword','challenged')._id;
-			query.$and.push({$or: [{initial_approval_status: jobChallengedApprovalStatusId},
-									 {subsequent_approval_status: jobChallengedApprovalStatusId}]});
+			//var jobChallengedApprovalStatus = config.staticdata.jobApprovalStatuses.getByProperty('keyword','challenged')._id;
+			var jobChallengedApprovalStatus = config.staticdata.jobApprovalStatuses.enums.CHALLENGED;
+			query.$and.push({$or: [{initial_approval_status: jobChallengedApprovalStatus},
+									 {subsequent_approval_status: jobChallengedApprovalStatus}]});
 			break;
 	}
 	return query;

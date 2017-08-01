@@ -11,7 +11,6 @@
 	<h3>Detalles</h3>
 	<ul class="job-detail-list-container">
 		<li><strong>Fecha de inicio: </strong>{{job.start_date | date: 'shortDate'}}</li>
-		<li><strong>Fecha estimada: </strong>{{job.expected_date | date: 'shortDate'}}</li>
 		<li><strong>Fecha de finalizaci&#243;n: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
 		<li><strong>Estado: </strong>{{job.status.name}}</li>
 		<li><strong>Prestador de servicios: </strong>{{job.service_supplier.display_name}}</li>

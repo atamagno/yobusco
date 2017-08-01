@@ -2,12 +2,16 @@
 
 // UserJobs controller
 angular.module('jobs').controller('UserJobsController',
-	function($scope, $stateParams, $state, Authentication, Jobs, JobStatuses, ServiceSuppliers, $uibModal, Alerts) {
+	function($scope, $stateParams, $state, Authentication, Jobs, ServiceSuppliers, $uibModal, Alerts, jobstatuses,
+			 jobstatusreasons) {
 
 		$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 		$scope.selectedservices = [];
-		$scope.jobstatuses = JobStatuses;
+		$scope.jobstatuses = jobstatuses;
+		$scope.jobstatusreasons = jobstatusreasons;
+		$scope.startDatePicker = {};
+		$scope.finishDatePicker = {};
 
 		// If user is not signed in then redirect back home
 		if (!$scope.authentication.user) {
@@ -18,7 +22,7 @@ angular.module('jobs').controller('UserJobsController',
 		}
 
 		// TODO: maybe move this function, deleteSelectedService function and selectedservices array declaration above
-		// to the detailsandedit controller? It may not be required here...
+		// to the edit controller? It may not be required here...
 		$scope.selectService = function ($item) {
 
 			var alreadySelected = false;
@@ -46,25 +50,11 @@ angular.module('jobs').controller('UserJobsController',
 		$scope.today = new Date();
 		$scope.start_date = $scope.today;
 
-		$scope.openStartDatePicker = function($event) {
+		$scope.openDatePicker = function($event, datePicker) {
 			$event.preventDefault();
 			$event.stopPropagation();
 
-			$scope.startDateOpened = true;
-		};
-
-		$scope.openExpectedDatePicker = function($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-
-			$scope.expectedDateOpened = true;
-		};
-
-		$scope.openFinishDatePicker = function($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-
-			$scope.finishDateOpened = true;
+			datePicker.opened = true;
 		};
 
 		$scope.navigateToJobDetails = function(jobId) {
@@ -72,15 +62,16 @@ angular.module('jobs').controller('UserJobsController',
 		};
 
 
-		$scope.showReviewModal = function(){
+		$scope.showReviewModal = function(jobstatus){
 
 			return $uibModal.open({
 				templateUrl: 'addReviewModal',
 				controller: 'ReviewModalInstanceCtrl',
 				resolve: {
-					RatingTypes: function(RatingTypes){
+					ratingtypes: function(RatingTypes){
 						return RatingTypes.query().$promise;
-					}
+					},
+					jobstatus: jobstatus
 				}
 			});
 
@@ -88,22 +79,24 @@ angular.module('jobs').controller('UserJobsController',
 });
 
 angular.module('jobs').controller('ReviewModalInstanceCtrl',
-	function ($scope, Alerts, $uibModalInstance, RatingTypes) {
+	function ($scope, Alerts, $uibModalInstance, ratingtypes, jobstatus) {
 
 		$scope.alerts = Alerts;
-		// Mapping rating types obtained from service (see resolve item in modal controller configuration)
-		// to the rating objects used by the uib-rating directive
-		// TODO: What if we just add a 'defaultRate' property/virtual to the object on the database/model,
-		// would we still need this mapping?
-		$scope.ratings = [];
-		for (var i = 0; i < RatingTypes.length; i++) {
-			$scope.ratings.push({ 	_id: RatingTypes[i]._id,
-				name: RatingTypes[i].name,
-				description: RatingTypes[i].description,
-				rate: 3 });
-		}
-
+		setRatingTypesFromStatus(jobstatus);
 		$scope.rate = 3;
+
+		function setRatingTypesFromStatus(status){
+			$scope.ratings = [];
+			for (var i = 0; i < ratingtypes.length; i++) {
+				if(ratingtypes[i].jobstatuses.indexOf(status._id) != -1){
+					$scope.ratings.push({ _id: ratingtypes[i]._id,
+						name: ratingtypes[i].name,
+						description: ratingtypes[i].description,
+						rate: 3 });
+				}
+
+			}
+		}
 
 		$scope.ok = function () {
 

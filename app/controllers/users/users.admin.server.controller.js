@@ -9,7 +9,8 @@ var _ = require('lodash'),
 	User = mongoose.model('User');
 
 /**
- * Create a User
+ * Create a User -
+ * TODO: we should probably restrict creation of admins (role) to admin users only....
  */
 exports.create = function(req, res) {
 	var user = new User(req.body);

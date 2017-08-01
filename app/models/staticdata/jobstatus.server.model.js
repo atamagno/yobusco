@@ -59,6 +59,10 @@ var JobStatusSchema = new Schema({
 			type: String,
 			enum: ['user', 'servicesupplier', 'admin']
 		}]
+	},
+	requires_reason: {
+		type: Boolean,
+		default: false
 	}
 });
 
@@ -70,16 +74,23 @@ module.exports = function(config){
 		config.staticdata.jobStatuses = {};
 		config.staticdata.jobStatuses.getAll = getAll;
 		config.staticdata.jobStatuses.getByProperty = getByProperty;
-		// config.staticdata.jobStatuses.getStatusesForReview = getStatusesForReview;
 		config.staticdata.jobStatuses.getMultipleByProperty = getMultipleByProperty;
 		config.staticdata.jobStatuses.isNextPossible = isNextPossible;
-
-		// TODO: should we cache the different statuses and use enums for them to avoid having to search for them
-		// from different sections of the application?
-		// E.g.: config.staticdata.jobStatuses.FINISHED, config.staticdata.jobStatuses.INCOMPLETE, etc.??
-	})
+		config.staticdata.jobStatuses.enums = getJobStatusEnums(jobStatuses);
+	});
 
 }
+
+function getJobStatusEnums(jobStatuses){
+
+	var enums = {};
+	for(var i=0; i< jobStatuses.length;i++){
+		enums[jobStatuses[i].keyword.toUpperCase()] = jobStatuses[i]._id;
+	}
+	return enums;
+}
+
+
 var getByProperty = function(propertyName, propertyValue)
 {
 	return _.find(JobStatuses,_.matchesProperty(propertyName,propertyValue));
@@ -95,31 +106,9 @@ var getAll = function()
 	return JobStatuses;
 }
 
-// NOTE: currently this returns all job statuses, since between the finished and post finished +
-// those that can transition to finished, we are getting all.
-// Is this really needed?
-// Commenting for now....
-
-/* var getStatusesForReview = function()
-{
-
-	var statusesForReview = [];
-	statusesForReview = statusesForReview.concat(getMultipleByProperty('finished', true));
-	statusesForReview = statusesForReview.concat(getMultipleByProperty('post_finished', true));
-
-	for(var i= 0;i < JobStatuses.length;i++){
-		if(_.find(JobStatuses[i].possible_next_statuses,['keyword','finished'])){
-			statusesForReview.push(JobStatuses[i]);
-		}
-	}
-
-	return statusesForReview;
-
-} */
-
 var isNextPossible = function(currentStatus, nextStatus)
 {
-	if(currentStatus.equals(nextStatus)){
+	if(!currentStatus || currentStatus.equals(nextStatus)){
 		return true;
 	}
 	else{
@@ -143,6 +132,7 @@ JobStatusSchema.post('remove', function(){
 
 	JobStatus.find({}).populate('possible_next_statuses').lean().exec(function(err, jobStatuses){
 		JobStatuses = jobStatuses;
+		setJobStatusEnums(config.staticdata.jobStatuses, jobStatuses);
 	});
 
 });
@@ -151,6 +141,7 @@ JobStatusSchema.post('save', function(){
 
 	JobStatus.find({}).populate('possible_next_statuses').lean().exec(function(err, jobStatuses){
 		JobStatuses = jobStatuses;
+		setJobStatusEnums(config.staticdata.jobStatuses, jobStatuses);
 	});
 
 });

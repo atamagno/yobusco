@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = function(app) {
-	var ratingtypes = require('../../app/controllers/ratingtypes.server.controller'),
-		users = require('../../app/controllers/users.server.controller');
+	var ratingtypes = require(__base + 'app/controllers/ratingtypes.server.controller'),
+		users = require(__base + 'app/controllers/users.server.controller');
 
 	// RatingType admin routes
 	app.route('/ratingtypes-admin')

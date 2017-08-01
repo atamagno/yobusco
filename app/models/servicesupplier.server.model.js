@@ -6,7 +6,7 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     _ = require('lodash'),
-    config = require('../../config/config');
+    config = require(__base + 'config/config');
 
 var JobCount = new Schema({
     jobstatus: {
@@ -92,13 +92,25 @@ ServiceSupplierSchema.methods.updatePoints = function(points)
         this.updateCategory();
     }
 
-}
+};
+
+
+ServiceSupplierSchema.set('toJSON', {virtuals: true});
+
+// need to add virtuals toJSON == true here? Just like in jobs?
+// E.g: ServiceSupplierSchema.set('toJSON', {virtuals: true});?
+// Need to use toJSON when returning supplier just like in jobs here to reflect virtual?
+ServiceSupplierSchema.virtual('effectiveness').get(function(){
+
+    return this.getEffectiveness();
+
+});
 
 ServiceSupplierSchema.methods.updateCategory = function(){
 
     this.category = this.constructor.getCategory(this.points)._id;
 
-}
+};
 
 ServiceSupplierSchema.methods.updateJobCounts = function(previousJobStatusId, jobStatusId)
 {
@@ -127,7 +139,7 @@ ServiceSupplierSchema.methods.updateJobCounts = function(previousJobStatusId, jo
                 this.job_counts[jobStatusJobCountIndex].count++;
             }
     }
-}
+};
 
 
 ServiceSupplierSchema.statics.getCategory = function(points)
@@ -140,6 +152,47 @@ ServiceSupplierSchema.statics.getCategory = function(points)
             return points <= category.min && points >= category.max
         }
     });
-}
+};
+
+
+ServiceSupplierSchema.methods.getEffectiveness = function()
+{
+
+    var serviceSupplier = this;
+    var totalJobs = _.sumBy(serviceSupplier.job_counts, 'count') ; // TODO: test with new supplier (job counts array length == 0 / [])
+    // use sumBy?? https://stackoverflow.com/questions/38448740/sum-up-object-properties-in-array-of-objects-into-a-single-object-lodash
+    // maybe check !serviceSupplier.job_counts || !serviceSupplier.job_counts.length first?
+    // before calculating totalJobs using sumBy as above?
+
+    // TODO: check supplier without jobs, for short circuit. Verify from client to not display effectiveness when null / []?
+    if(!totalJobs){
+        return null;
+        // return []?;
+    }
+    else{
+        //var supplierJobsFinished = _.filter(serviceSupplier.job_counts, function(jobs){
+        //    return jobs.jobstatus._id == config.staticdata.jobStatuses.enums.GUARANTEED ||
+        //                             config.staticdata.jobStatuses.enums.FINISHED;
+        // });
+        // TODO: try querying for pintores from home page...breaking...maybe due to not finished/guaranteed jobs..???
+        // need extra condition here???
+        var supplierJobsFinished = _.find(serviceSupplier.job_counts,
+                                          ['jobstatus', config.staticdata.jobStatuses.enums.FINISHED]) || {count: 0};
+        var supplierJobsGuaranteed = _.find(serviceSupplier.job_counts,
+                                          ['jobstatus', config.staticdata.jobStatuses.enums.GUARANTEED]) || {count: 0};
+
+        // TODO: look for cleaner way to check for empty results (other than using || {} )
+        // TODO: if no finished, guaranteed, .count below is messing up the math...
+        // Maybe use a count function from lodash directly?
+        // maybe cast to number/int/float? Check for null values...
+        return (supplierJobsFinished.count + supplierJobsGuaranteed.count) / totalJobs;
+        // .count as null for cetain suppliers is making this to break...
+        // need to add extra condition here...
+        // need to factor in nothired jobs here???
+        // Maybe not - probably nothired is part of total...
+    }
+
+};
+
 
 mongoose.model('ServiceSupplier', ServiceSupplierSchema);

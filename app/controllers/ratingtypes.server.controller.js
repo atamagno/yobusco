@@ -6,7 +6,10 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	RatingType = mongoose.model('RatingType'),
-	_ = require('lodash');
+	_ = require('lodash'),
+	config = require(__base + 'config/config');
+
+// TODO: adapt functions just like in job status server controller to use cached (config) values.
 
 /**
  * Create a RatingType
@@ -72,15 +75,7 @@ exports.delete = function(req, res) {
  * List of RatingTypes
  */
 exports.list = function(req, res) {
-	RatingType.find().exec(function(err, ratingtypes) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(ratingtypes);
-		}
-	});
+	res.jsonp(config.staticdata.ratingTypes.getAll());
 };
 
 /**

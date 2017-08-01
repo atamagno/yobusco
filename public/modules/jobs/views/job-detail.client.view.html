@@ -1,4 +1,5 @@
 <section data-ng-controller="UserJobDetailsController"  data-ng-init="findOne()">
+<section data-ng-controller="UserJobDetailsController"  data-ng-init="findOne()">
 
     <uib-alert type="{{alerts.type}}" close="alerts.close()" ng-show="alerts.visible" class="custom-alert">{{alerts.msg}}</uib-alert>
 
@@ -61,7 +62,7 @@
 
     <div class="row">
 
-        <div class="col-md-8" data-ng-show="job.pictures.length">
+        <div class="col-md-6" data-ng-show="job.pictures.length">
             <uib-carousel interval="0" no-wrap="false" class="job-big-img">
                 <uib-slide data-ng-repeat="slide in job.pictures" style="min-height: 260px;">
                     <img data-ng-src="{{slide}}" class="slide-container">
@@ -69,21 +70,29 @@
             </uib-carousel>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
             <h3>Descripci&#243;n</h3>
             <p>{{job.description}}</p>
             <h3>Detalles</h3>
             <ul class="job-detail-list-container">
-                <li><strong>Fecha de inicio: </strong>{{job.start_date | date: 'shortDate'}}</li>
-                <li><strong>Fecha estimada: </strong>{{job.expected_date | date: 'shortDate'}}</li>
-                <li><strong>Fecha de finalizaci&#243;n: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
+                <li data-ng-hide="isJobInNotHiredStatus"><strong>Fecha de inicio: </strong>{{job.start_date | date: 'shortDate'}}</li>
+                <li data-ng-hide="isJobInNotHiredStatus || !isJobInFinishedStatus"><strong>Fecha de finalizaci&#243;n: </strong>{{job.finish_date ? job.finish_date : '-' | date: 'shortDate'}}</li>
                 <li><strong>Estado actual: </strong>{{job.status.name}}</li>
+                <li data-ng-show="hasJobStatusReason"><strong>Razon de estado: </strong>{{job.status_reason.description}}</li>
                 <li data-ng-show="(isJobParticipant || isAdmin) && (isJobWaitingApproval || isJobChallenged)">
                     <strong>Estado solicitado: </strong>{{job.target_status.name}}
+                </li>
+                <li data-ng-show="(isJobParticipant || isAdmin) && (isJobWaitingApproval || isJobChallenged)
+                                  && hasJobTargetStatusReason">
+                    <strong>Razon de estado solicitada: </strong>{{job.target_status_reason.description}}
                 </li>
                 <li data-ng-show="(isJobParticipant || isAdmin) && isJobChallenged">
                     <strong>Estado desafiado: </strong>{{job.approval_challenge_details.status.name}}
                 </li>
+                <li data-ng-show="(isJobParticipant || isAdmin) && isJobChallengedWithStatusReason">
+                    <strong>Razon de estado desafiada: </strong>{{job.approval_challenge_details.status_reason.description}}
+                </li>
+                <!-- TODO: add status reason challenged here: job.approval_challenge_details.status_reason.description -->
                 <li>
                     <strong>Prestador de servicios: </strong>
                     <a ui-sref="servicesupplier.detail({ servicesupplierId: job.service_supplier._id })">{{job.service_supplier.display_name}}</a>

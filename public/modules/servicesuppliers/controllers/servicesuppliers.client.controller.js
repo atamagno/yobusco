@@ -59,6 +59,9 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
                     },
                     jobstatuses: function (JobStatus) {
                         return JobStatus.query().$promise;
+                    },
+                    jobstatusreasons: function(JobStatusReasons){
+                        return JobStatusReasons.query().$promise;
                     }
                 }
             });
@@ -71,7 +74,7 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
     });
 
 angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
-    function ($scope, $uibModalInstance, Alerts, Jobs, jobsforreview, ratingtypes, jobstatuses) {
+    function ($scope, $uibModalInstance, Alerts, Jobs, JobStatusReasonsHelper, jobsforreview, ratingtypes, jobstatuses, jobstatusreasons) {
 
         $scope.alerts = Alerts;
         $scope.jobsforreview = jobsforreview;
@@ -80,12 +83,14 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
         $scope.servicesubcategories = $scope.servicesupplier.services;
         $scope.selectedservices = [];
         $scope.statusdisabled = false;
+        $scope.jobsforreviewvisible = true;
+        $scope.reviewservicesvisible = true;
         $scope.rate = 3;
 
         $scope.jobstatuses = [];
         for(var i=0; i<jobstatuses.length;i++)
         {
-            if(jobstatuses[i].finished){
+            if(jobstatuses[i].finished || jobstatuses[i].keyword == 'nothired'){
                 $scope.jobstatuses.push(jobstatuses[i])
             }
         }
@@ -106,12 +111,15 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
             $scope.clearServices();
             $scope.selectedjob = {name: '[Seleccione un trabajo]'};
             $scope.jobstatus = {name: '[Seleccione un resultado]'};
+            $scope.jobstatusreason = {description: '[Seleccione una opcion]'};
             $scope.statusdisabled = false;
+            $scope.jobstatuses.push(jobstatuses[getNotHiredStatusIndex(jobstatuses)]);
         }
 
         $scope.setJobProperties = function(jobforreview) {
 
             $scope.selectedjob = jobforreview;
+            $scope.jobstatuses.splice(getNotHiredStatusIndex($scope.jobstatuses),1);
             $scope.clearServices();
             for (var i = 0; i< $scope.selectedjob.services.length; i++) {
                 $scope.selectedservices.push($scope.selectedjob.services[i])
@@ -120,12 +128,43 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
             if($scope.selectedjob.status.finished || $scope.selectedjob.status.post_finished){
                 $scope.statusdisabled = true;
                 $scope.jobstatus = $scope.selectedjob.status;
+                setRatingTypesFromStatus($scope.jobstatus);
+                setJobStatusReasonsFromStatus($scope.jobstatus);
             }
             else{
-                $scope.jobstatus = {name: '[Seleccione un resultado]'}
+                $scope.jobstatus = {name: '[Seleccione un resultado]'};
                 $scope.statusdisabled = false;
             }
 
+        };
+
+        function getNotHiredStatusIndex(array){
+
+            for(var i=0; i<array.length;i++)
+            {
+                if(array[i].keyword == 'nothired'){
+                    return i;
+                }
+            }
+        }
+
+        function setJobStatusReasonsFromStatus(status){
+            $scope.statusreason = {description: '[Seleccione una opcion]'};
+            $scope.statusreasons = JobStatusReasonsHelper.getReasons(jobstatusreasons,status,$scope.authentication.user.roles);
+        }
+
+
+        function setRatingTypesFromStatus(status){
+            $scope.ratings = [];
+            for (var i = 0; i < ratingtypes.length; i++) {
+                if(ratingtypes[i].jobstatuses.indexOf(status._id) != -1){
+                    $scope.ratings.push({ _id: ratingtypes[i]._id,
+                        name: ratingtypes[i].name,
+                        description: ratingtypes[i].description,
+                        rate: 3 });
+                }
+
+            }
         }
 
         $scope.clearServices = function(){
@@ -133,50 +172,74 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
             $scope.selectedservice = '';
         }
 
+        $scope.changeStatusReason = function(statusReason){
+            $scope.statusreason = statusReason;
+        }
+
         $scope.changeStatus = function(status){
             $scope.jobstatus = status;
+            setRatingTypesFromStatus(status);
+            setJobStatusReasonsFromStatus(status);
+            if(status.keyword == 'nothired'){
+                $scope.jobsforreviewvisible = false;
+                $scope.reviewservicesvisible = false;
+                $scope.clearServices();
+            }
+            else{
+                $scope.jobsforreviewvisible = true;
+                $scope.reviewservicesvisible = true;
+            }
         }
 
         $scope.ok = function () {
 
             // TODO: add client validation like Agus is doing with user registration.
             // to avoid this nested conditions...
-            if ($scope.selectedservices.length) {
-                if ($scope.comment) {
-                    if($scope.jobstatus._id){
-
-                        var jobinfo = {
-                            job: $scope.selectedjob && $scope.selectedjob._id ? $scope.selectedjob._id : null,
-                            services: $scope.selectedservices,
-                            status: $scope.jobstatus._id
-
-                        }
-
-                        // Converting review ratings in the format used by server.
-                        var ratings = [];
-                        for (var i = 0; i < $scope.ratings.length; i++) {
-                            ratings.push({ type: $scope.ratings[i]._id, rate: $scope.ratings[i].rate });
-                        }
-
-                        var reviewinfo = {
-                            comment: $scope.comment,
-                            ratings: ratings,
-                            recommend: $scope.recommend
-                        };
-
-                        $scope.addReview(jobinfo, reviewinfo);
-                    }
-                    else {
-                        Alerts.show('danger', 'Debes seleccionar un resultado...');
-                    }
-
-
-                } else {
-                    Alerts.show('danger', 'Debes dejar un comentario');
-                }
-            } else {
-                Alerts.show('danger','Debes seleccionar al menos un servicio');
+            if (!$scope.comment) {
+                Alerts.show('danger', 'Debes dejar un comentario');
+                return;
             }
+
+            if(!$scope.jobstatus._id){
+                Alerts.show('danger', 'Debes seleccionar un resultado');
+                return;
+            }
+
+            if(!$scope.selectedservices.length && $scope.jobstatus.keyword != 'nothired'){
+                Alerts.show('danger','Debes seleccionar al menos un servicio');
+                return;
+            }
+
+            if($scope.statusreasons.length && !$scope.statusreason._id){
+                Alerts.show('danger','Debes seleccionar una opcion de razon del resultado');
+                return;
+
+            }
+
+            var jobinfo = {
+                job: $scope.selectedjob && $scope.selectedjob._id ? $scope.selectedjob._id : null,
+                services: $scope.selectedservices,
+                status: $scope.jobstatus._id,
+                status_reason: $scope.statusreason._id ? $scope.statusreason._id : null
+
+            }
+
+            // Converting review ratings in the format used by server.
+            var ratings = [];
+            for (var i = 0; i < $scope.ratings.length; i++) {
+                ratings.push({ type: $scope.ratings[i]._id, rate: $scope.ratings[i].rate });
+            }
+
+            var reviewinfo = {
+                comment: $scope.comment,
+                ratings: ratings,
+                recommend: $scope.recommend
+            };
+
+            $scope.addReview(jobinfo, reviewinfo);
+
+
+
         };
 
         $scope.cancel = function () {
@@ -210,7 +273,8 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
             // If an existing job was selected for the review, we'll just update it
             var job = new Jobs({
                 status: jobinfo.status,
-                review: [reviewinfo]
+                review: [reviewinfo],
+                status_reason: jobinfo.status_reason
             });
 
             if(jobinfo.job){

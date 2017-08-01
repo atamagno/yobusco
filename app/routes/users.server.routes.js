@@ -1,28 +1,28 @@
 'use strict';
 
 module.exports = function(app) {
-	var users = require('../../app/controllers/users.server.controller');
+	var users = require(__base + 'app/controllers/users.server.controller');
 
 	// Setting up the users admin api
 	app.route('/users-admin')
-		.get(users.list)
+		.get(users.list) // TODO: protect this route with login too
 		.post(users.requiresLogin, users.isAdmin, users.create);
 
 	app.route('/users-admin/:userId')
-		.get(users.read)
+		.get(users.read) // TODO: protect this route with login too
 		.put(users.requiresLogin, users.isAdmin, users.updateForAdmin)
 		.delete(users.requiresLogin, users.isAdmin, users.delete);
 
 	app.param('userId', users.userForAdminByID);
 	
-	app.route('/users-admin/:currentPage/:itemsPerPage').get(users.listByPage);
+	app.route('/users-admin/:currentPage/:itemsPerPage').get(users.listByPage); // TODO: this probably requires admin login too
 
-	app.route('/user-by-username/:userName').get(users.findByUserName);
+	app.route('/user-by-username/:userName').get(users.findByUserName); // // TODO: this probably requires login too
 
 	// Setting up the users profile api
 	app.route('/users/me').get(users.me);
 	app.route('/users')
-		.get(users.list)
+		.get(users.list) // TODO: this probably requires login too
 		.put(users.requiresLogin, users.update);
 
 	// Setting up the users password api

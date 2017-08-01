@@ -1,8 +1,10 @@
 'use strict';
 
 module.exports = function(app) {
-    var servicesuppliers = require('../../app/controllers/servicesuppliers.server.controller'),
-        users = require('../../app/controllers/users.server.controller');
+    var servicesuppliers = require(__base + 'app/controllers/servicesuppliers.server.controller'),
+        users = require(__base + 'app/controllers/users.server.controller');
+
+    // TODO: protect these routes with login here, as appropriate...
 
     // ServiceSuppliers admin routes
     app.route('/servicesuppliers-admin')

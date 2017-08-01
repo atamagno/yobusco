@@ -46,6 +46,10 @@ angular.module('jobs').controller('ListJobsController',
                     $scope.jobListTitle = 'Trabajos pendientes de resolucion';
                     $scope.jobStatusLabel = ' pendiente de resolucion.';
                     break;
+                case 'nothired':
+                    $scope.jobListTitle = 'Trabajos no contratados';
+                    $scope.jobStatusLabel = ' no contratado.';
+                    break;
             }
 
             // TODO: maybe hit the server only when querying for all jobs...

@@ -89,7 +89,6 @@ angular.module('admin').controller('JobsController',
 					name: this.name,
 					description: this.description,
 					start_date: this.start_date,
-					expected_date: this.expected_date,
 					status: $scope.defaultStatus._id,
 					service_supplier: $scope.selectedServiceSupplier._id
 				});
@@ -103,7 +102,6 @@ angular.module('admin').controller('JobsController',
 					$scope.name = '';
 					$scope.description = '';
 					$scope.start_date = '';
-					$scope.expected_date = '';
 				}, function (errorResponse) {
 					$scope.error = errorResponse.data.message;
 					Alerts.show('danger', $scope.error);

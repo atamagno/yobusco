@@ -1,5 +1,5 @@
 angular.module('jobs').controller('UserJobEditController',
-	function ($scope, $rootScope, $stateParams, $state, Jobs, $uibModal, Alerts) {
+	function ($scope, $rootScope, $stateParams, $state, Jobs, $uibModal, Alerts, JobStatusReasonsHelper) {
 
 		$scope.possibleNextStatuses = [];
 
@@ -10,9 +10,11 @@ angular.module('jobs').controller('UserJobEditController',
 			}).$promise.then(function (job) {
 					$scope.job = job;
 					$scope.jobOriginalStatus = job.status;
+					$scope.jobOriginalStatusReason = job.status_reason;
 					$scope.isJobInFinishedStatus = isJobInFinishedStatus();
 					$scope.possibleNextStatuses.push(job.status);
 					$scope.possibleNextStatuses = $scope.possibleNextStatuses.concat(job.status.possible_next_statuses);
+					setJobStatusReasonsFromStatus(job.status);
 				});
 		};
 
@@ -22,7 +24,33 @@ angular.module('jobs').controller('UserJobEditController',
 
 		$scope.changeStatus = function (status) {
 			$scope.job.status = status;
+			setJobStatusReasonsFromStatus(status);
 		};
+
+		$scope.changeStatusReason = function(statusReason){
+			$scope.job.status_reason = statusReason;
+		}
+
+		function setJobStatusReasonsFromStatus(selectedStatus){
+
+			if(selectedStatus._id == $scope.jobOriginalStatus._id){
+					$scope.job.status_reason = $scope.jobOriginalStatusReason;
+					$scope.statusreasons = $scope.jobOriginalStatusReason ? [$scope.jobOriginalStatusReason] : [];
+					$scope.statusreasonsdisabled = true;
+			}
+			else{
+				$scope.statusreasons = JobStatusReasonsHelper.getReasons($scope.jobstatusreasons,selectedStatus,$scope.authentication.user.roles);
+				if($scope.statusreasons.length){
+					$scope.job.status_reason = {description: '[Seleccione una opcion]'};
+				}
+				else{
+					$scope.job.status_reason = null;
+				}
+				$scope.statusreasonsdisabled = false;
+			}
+
+
+		}
 
 		$scope.openEditJobModal = function () {
 
@@ -36,6 +64,7 @@ angular.module('jobs').controller('UserJobEditController',
 			});
 		};
 
+
 		// Update existing Job
 		$scope.update = function () {
 
@@ -44,6 +73,12 @@ angular.module('jobs').controller('UserJobEditController',
 			if(job.status._id === $scope.jobOriginalStatus._id && $scope.isJobInFinishedStatus){
 				Alerts.show('warning', 'Debes seleccionar un estado diferente al actual');
 				return;
+			}
+
+			if($scope.statusreasons.length && !$scope.job.status_reason._id){
+				Alerts.show('danger','Debes seleccionar una opcion de razon del estado');
+				return;
+
 			}
 
 			// TODO: is this really needed if service supplier is read only now?
@@ -58,8 +93,8 @@ angular.module('jobs').controller('UserJobEditController',
 					}
 					else {
 							job.$update(function () {
-								Alerts.show('success', 'Trabajo actualizado exitosamente');
-								$state.go('jobs.viewDetail', {jobId: job._id});
+							Alerts.show('success', 'Trabajo actualizado exitosamente');
+							$state.go('jobs.viewDetail', {jobId: job._id});
 						}, function (errorResponse) {
 								$scope.error = errorResponse.data.message;
 								Alerts.show('danger', $scope.error);
@@ -75,7 +110,7 @@ angular.module('jobs').controller('UserJobEditController',
 
 		$scope.openReviewModal = function () {
 
-			var modalInstance = $scope.showReviewModal();
+			var modalInstance = $scope.showReviewModal($scope.job.status);
 			modalInstance.result.then(function (reviewinfo) {
 				$scope.addReview(reviewinfo)
 

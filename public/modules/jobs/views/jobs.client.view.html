@@ -10,6 +10,7 @@
             <a ui-sref=".list({ status: 'pending-self', currentPage: 1})" class="list-group-item">Pendientes de mi aprobaci&#243;n</a>
             <a ui-sref=".list({ status: 'pending-other', currentPage: 1})" class="list-group-item">Pendientes de aprobaci&#243;n de otros</a>
             <a ui-sref=".list({ status: 'challenged', currentPage: 1})" class="list-group-item">Pendientes de resoluci&#243;n</a>
+            <a data-ng-show="isServiceSupplier" ui-sref=".list({ status: 'nothired', currentPage: 1})" class="list-group-item">Perdidos/Descartados</a>
         </div>
 
     </div>

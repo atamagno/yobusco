@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-var config = require('../../config/config'),
+var config = require(__base + 'config/config'),
     nodemailer = require('nodemailer');
 
 var smtpTransport = nodemailer.createTransport(config.mailer.options);

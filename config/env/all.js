@@ -38,5 +38,6 @@ module.exports = {
 			'public/modules/*/*.js',
 			'public/modules/*/**/*.js'
 		]
-	}
+	},
+	staticdata: {}
 };

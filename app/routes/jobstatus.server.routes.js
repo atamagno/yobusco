@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = function(app) {
-	var jobstatus = require('../../app/controllers/jobstatus.server.controller'),
-		users = require('../../app/controllers/users.server.controller');
+	var jobstatus = require(__base + 'app/controllers/jobstatus.server.controller'),
+		users = require(__base + 'app/controllers/users.server.controller');
 
 	// JobStatus admin routes
 	app.route('/jobstatus-admin')

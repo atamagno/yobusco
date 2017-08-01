@@ -1,4 +1,4 @@
-var config = require('../config/env/development'),
+var config = require(__base + 'config/env/development'),
 //mailer = require('../app/controllers/mailer.server.controller'),
     mongoose = require('mongoose');
 
@@ -25,7 +25,7 @@ var approveJobApp = function() {
     var self = this;
 
     self.initialize = function() {
-        require('../app/models/job.server.model.js');
+        require(__base + 'app/models/job.server.model.js');
     };
 
     self.start = function() {

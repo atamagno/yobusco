@@ -11,16 +11,17 @@
 
                     <!-- TODO: consider adding indicator for approval needed if user using the app is the approver...
                          Consider also displaying a different indicator if job is challenged...-->
+                    <!-- TODO: define classes with specific color for each status-->
                     <span ng-show="job.status.keyword == 'finished'" class="pull-right status-label label label-success">{{job.status.name}}</span>
                     <span ng-show="job.status.keyword == 'incomplete'" class="pull-right status-label label label-default">{{job.status.name}}</span>
                     <span ng-show="job.status.keyword == 'active'" class="pull-right status-label label label-primary">{{job.status.name}}</span>
-                    <!-- TODO: change colors for created, guaranteed and abandoned-->
                     <!-- TODO: evaluate possibility to use a single element, and just change the class based on the status.keyword
                          since all elements are the same -use ng-class maybe? -->
 
                     <span ng-show="job.status.keyword == 'created'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
                     <span ng-show="job.status.keyword == 'guaranteed'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
                     <span ng-show="job.status.keyword == 'abandoned'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+                    <span ng-show="job.status.keyword == 'nothired'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
 
                     <div class="job-name-container">
                         <a href="" data-ng-click="navigateToJobDetails(job._id)">{{job.name}}</a>
@@ -28,7 +29,7 @@
 
                     <div class="job-description-container">{{job.description}}</div>
 
-                    <strong>Servicios:</strong>
+                    <strong data-ng-show="job.services.length">Servicios:</strong>
                     <div data-ng-repeat="service in job.services">
                         <span>{{ service.name }}</span> <!-- TODO: replace this with an icon representing each service -->
                     </div>

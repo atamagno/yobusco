@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function(app) {
-	var jobapprovalstatus = require('../../app/controllers/jobapprovalstatus.server.controller');
+	var jobapprovalstatus = require(__base + 'app/controllers/jobapprovalstatus.server.controller');
 		//users = require('../../app/controllers/users.server.controller');
 
 	/* JobStatus admin routes TODO: add this routes and controllers for admin...
