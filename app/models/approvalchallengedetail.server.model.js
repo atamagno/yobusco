@@ -42,6 +42,9 @@ var ApprovalChallengeDetailSchema = new Schema({
 				{validator: ApprovalChallengeDetailModelValidator.validateStatusReasonValue,msg: 'Por favor seleccione una opcion valida de razon de estado/resultado para rechazar el trabajo.' },
 				{validator: ApprovalChallengeDetailModelValidator.validateStatusReasonPermission,msg: 'La razon de estado/resultado no esta permitida para el usuario.' }
 			]
+		},
+		finish_date:{
+			type:Date
 		}
 	},
 	{_id: false}

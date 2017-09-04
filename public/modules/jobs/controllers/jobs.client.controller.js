@@ -13,6 +13,12 @@ angular.module('jobs').controller('UserJobsController',
 		$scope.startDatePicker = {};
 		$scope.finishDatePicker = {};
 
+        // TODO: needed here? Or only on create + edit + details (maybe fine, so it's inherited)?
+        $scope.dateFormats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+        $scope.dateFormat = $scope.dateFormats[0];
+        $scope.today = new Date();
+
+
 		// If user is not signed in then redirect back home
 		if (!$scope.authentication.user) {
 			$state.go('home');
@@ -43,12 +49,6 @@ angular.module('jobs').controller('UserJobsController',
 		$scope.deleteSelectedService = function (index) {
 			$scope.selectedservices.splice(index, 1);
 		};
-
-		// TODO: needed here? Or only on create + edit?
-		$scope.dateFormats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-		$scope.dateFormat = $scope.dateFormats[0];
-		$scope.today = new Date();
-		$scope.start_date = $scope.today;
 
 		$scope.openDatePicker = function($event, datePicker) {
 			$event.preventDefault();

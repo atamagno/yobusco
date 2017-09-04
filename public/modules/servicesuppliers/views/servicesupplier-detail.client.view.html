@@ -25,11 +25,11 @@
                 <label class="control-label">Trabajos</label>
                 <strong>
                     <p>
-                        <span class="label label-success">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'finished'} })[0].count || 0}} Finalizados</span>
-                        <span class="label label-primary">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'active'} })[0].count || 0}} Activos</span>
+                        <span class="label label-success">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'finished'} })[0].count +
+                                                            (servicesupplier.job_counts | filter: {jobstatus: {keyword: 'finished_guaranteed'} })[0].count || 0}} Terminados</span>
+                        <span class="label label-primary">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'active'} })[0].count || 0}} En progreso</span>
                         <span class="label label-primary">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'incomplete'} })[0].count || 0}} Incompletos</span>
-                        <span class="label label-primary">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'guaranteed'} })[0].count || 0}} Garantizados</span>
-                        <span class="label label-primary">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'abandoned'} })[0].count || 0}} Abandonados</span>
+                        <span class="label label-primary">{{(servicesupplier.job_counts | filter: {jobstatus: {keyword: 'finished_guarantee_claimed'} })[0].count || 0}} Con arreglos/reparaciones pendientes</span>
                     </p>
                 </strong>
             </div>

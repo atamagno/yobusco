@@ -186,7 +186,7 @@ JobSchema.virtual('approver').get(function(){
 JobSchema.methods.setJobDefaultsForReview = function(){
 
 	this.name = 'Trabajo';
-	this.finish_date = this.start_date;
+	// this.finish_date = this.start_date; --> submitted from client too. Need to add validator for it, depending on job status being submitted.
 
 };
 
@@ -452,6 +452,7 @@ JobSchema.pre('validate',function prevalidateSecond(next){
 												  // Try schema.path('appro_ch_...').validate() && schema.path.(....).required()
 				return next(new Error('Por favor ingrese los parametros necesarios para rechazar el trabajo.'));
 			}
+
 			job.approval_challenge_details_status_config = config.staticdata.jobStatuses
 				.getByProperty('_id', job.approval_challenge_details.status) || {};
 			job.approval_challenge_details_status_reason_config = config.staticdata.jobStatusReasons
@@ -707,6 +708,7 @@ JobSchema.pre('save',function presaveFirst(next){
 			// - If there are active jobs or a previous not hired review was created before
 			// 	  - we'll allow only one not hired job per user for the same supplier (1)
 			// - Or any jobs recently created (regardless their status and services) (2)
+			// TODO: maybe set flag here, to know the path, and display a different error below?
 			searchCondition.$or = [{status:{$in: [jobCreatedStatus, jobInProgressStatus, jobNotHiredStatus]}}, // (1)
 				{created_date: {$gte: recentJobLimitDate}}]; // (2)
 		}
@@ -816,6 +818,20 @@ JobSchema.pre('save',function presaveSecond(next){
 				else{
 					job.status = job.populated('approval_challenge_details.status');
 					job.status_reason = job.populated('approval_challenge_details.status_reason');
+					// If a finish date was received during challenge, set job finish date to that one.
+					if(job.approval_challenge_details.finish_date){
+                            job.finish_date = job.approval_challenge_details.finish_date;
+					}
+					else{
+						// Otherwise, check if finished date entered originally does not apply due to the challenge being resolved
+						// in favor of a non finished status (e.g.: job was updated/created to/as finished, but challenged to in progress), and nullify the date
+						// if that's the case.
+						if(job.target_status_config.finished && job.finish_date && !job.approval_challenge_details.status.post_finished &&
+                           !job.approval_challenge_details.status.finished){
+							job.finish_date = null;
+						}
+					}
+
 				}
 				job.approval_challenge_details = null;
 				job.target_status = null;
@@ -840,16 +856,23 @@ JobSchema.pre('save',function presaveSecond(next){
 						if(job.isStatusReasonRequired){
 							// setting target value for approval, and maintaining previous status reason
 							job.target_status_reason = job.status_reason;
-							job.status_reason = job.previous_status_reason;
 						}
-						else{
+                        job.status_reason = job.previous_status_reason;
+						//else{
+							// Testing here...
+							//	job.status_reason = job.previous_status_reason;
+
+                            // Original code -
 							// Clearing value if status reason is not required for the new status
-							// (in case there was one for the previous status)
-							job.status_reason = null;
+                            // (in case there was one for the previous status)
+							// NOTE: this is probably wrong, since it will nullify the previous status reason
+							// and the new status requires approval, so the previous status reason should still no
+							// transition to null.
+							// job.status_reason = null;
 							// TODO: need to set target_status_reason to null here as well?
 							// Maybe not, as it is not allowed for updates and should be null from previous
 							// approvals/resolutions..
-						}
+						// }
 					}
 					else{
 						// NOTE: we don't need to set job status and status reason when there's no approval required here.
@@ -909,7 +932,9 @@ JobSchema.statics.getJobsForReview = function(serviceSupplierId, userId, callbac
 							 {subsequent_approval_status: jobApprovedStatus}],
 			   review: []
 			   }).populate([{path: 'services', select: 'name'},
-						    {path: 'status'}
+        					{path: 'status',
+            					populate: {path: 'possible_next_statuses', select: 'keyword name finished post_finished requires_reason roles'}},
+							{path: 'status_reason'}
 				  ])
 			     .exec(function(err, jobs){
 						if(err)

@@ -1,11 +1,12 @@
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-4">
 
         <p class="lead">Mis Trabajos</p>
         <div class="list-group">
             <a ui-sref=".list({ status: 'all', currentPage: 1})" class="list-group-item">Todos los trabajos</a>
-            <a ui-sref=".list({ status: 'active', currentPage: 1})" class="list-group-item">Activos</a>
-            <a ui-sref=".list({ status: 'finished', currentPage: 1})" class="list-group-item">Finalizados</a>
+            <a ui-sref=".list({ status: 'active', currentPage: 1})" class="list-group-item">En progreso</a>
+            <a ui-sref=".list({ status: 'finished', currentPage: 1})" class="list-group-item">Terminados</a>
+            <a ui-sref=".list({ status: 'finished_guarantee_claimed', currentPage: 1})" class="list-group-item">Con arreglos/reparaciones pendientes</a>
             <a ui-sref=".list({ status: 'incomplete', currentPage: 1})" class="list-group-item">Incompletos</a>
             <a ui-sref=".list({ status: 'pending-self', currentPage: 1})" class="list-group-item">Pendientes de mi aprobaci&#243;n</a>
             <a ui-sref=".list({ status: 'pending-other', currentPage: 1})" class="list-group-item">Pendientes de aprobaci&#243;n de otros</a>
@@ -14,7 +15,7 @@
         </div>
 
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8">
         <section data-ui-view></section>
     </div>
 

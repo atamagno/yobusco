@@ -58,11 +58,11 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3" data-ng-show="(job.status.finished)">
+                        <div class="col-md-3" data-ng-show="job.status.finished">
                             <label class="control-label">Fecha de finalizaci&#243;n</label>
                             <p class="input-group">
                                 <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" data-ng-model="job.finish_date"
-                                       min-date="start_date" show-button-bar="false" is-open="finishDatePicker.opened"
+                                       min-date="job.start_date" show-button-bar="false" is-open="finishDatePicker.opened"
                                        data-ng-required="true" data-ng-disabled="isJobInFinishedStatus" />
                                 <span class="input-group-btn">
                                     <button id="finishDateButton" type="button" class="btn btn-default" data-ng-click="openDatePicker($event, finishDatePicker)" data-ng-disabled="isJobInFinishedStatus">

@@ -4,20 +4,16 @@
 // TODO: we should probably merge ServiceSuppliers and ServiceSuppliersDetails into a single service.
 angular.module('jobs').controller('UserJobCreateController',
 	function($scope, $stateParams, $state, Jobs, ServiceSuppliers, ServiceSuppliersDetails,
-			 Alerts, $uibModal, UserSearch, JobStatusReasonsHelper) {
+			 Alerts, $uibModal, UserSearch, JobStatusHelper,JobStatusReasonsHelper) {
 
 		$scope.selectedservices.splice(0,$scope.selectedservices.length);
+        $scope.finish_date = $scope.start_date = $scope.today;
 
 		// Getting statuses that can be used to create a job.
-		$scope.initialjobstatuses = [];
+		$scope.initialjobstatuses = JobStatusHelper.getInitialStatuses($scope.jobstatuses,$scope.authentication.user.roles);
 		$scope.statusreasons = [];
-
 		$scope.status = {name: '[Seleccione un estado]'};
-		for(var i = 0;i<$scope.jobstatuses.length;i++){
-			if($scope.jobstatuses[i].initial){
-				$scope.initialjobstatuses.push($scope.jobstatuses[i]);
-			}
-		}
+
 
 		if($stateParams.servicesupplierId){
 			// TODO: maybe we can pass the service supplier object if we come from the supplier details view?
@@ -124,6 +120,11 @@ angular.module('jobs').controller('UserJobCreateController',
 
 			}
 
+			if($scope.status.finished && !$scope.finish_date) {
+                Alerts.show('danger', 'Debes seleccionar una fecha de finalizaci\u00f3n');
+                return;
+			}
+
 			if ($scope.selectedServiceSupplier && $scope.selectedServiceSupplier._id) {
 
 				// TODO: add validation for selected services here.
@@ -141,7 +142,8 @@ angular.module('jobs').controller('UserJobCreateController',
 					status: $scope.status._id,
 					service_supplier: $scope.selectedServiceSupplier._id,
 					services: services,
-					status_reason: $scope.statusreason && $scope.statusreason._id ? $scope.statusreason._id : null
+					status_reason: $scope.statusreason && $scope.statusreason._id ? $scope.statusreason._id : null, // TODO: look for a cleaner way for this
+					finish_date: $scope.status.finished ? $scope.finish_date : null // and this too...
 				});
 
 				if(reviewinfo){job.review = [reviewinfo];}

@@ -76,10 +76,10 @@
                         </ul>
                     </div>
             </div>
-            <div class="col-md-6 col-sm-6 col-xs-6 pull-right" data-ng-show="statusreasons.length">
+            <div class="col-md-6 col-sm-6 col-xs-6 pull-right" data-ng-show="statusreasonsvisible">
                 <h4 class="review-ratings-title">Razon del resultado</h4>
                 <div class="btn-group" uib-dropdown>
-                    <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                    <button type="button" class="btn btn-default" uib-dropdown-toggle data-ng-disabled="statusreasonsdisabled">
                         {{statusreason.description}} <span class="caret"></span>
                     </button>
                     <ul class="uib-dropdown-menu" role="menu">
@@ -88,6 +88,22 @@
                         </li>
                     </ul>
                 </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-6" data-ng-show="jobfinishdatevisible">
+                <h4 class="review-ratings-title">Fecha de finalizaci&#243;n</h4>
+                <p class="input-group">
+                    <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" data-ng-model="jobfinishdate"
+                           min-date="selectedjob.start_date || today" max-date="today" show-button-bar="false" is-open="finishDatePicker.opened"
+                           data-ng-required="true"/>
+                    <span class="input-group-btn">
+                                    <button id="finishDateButton" type="button" class="btn btn-default" data-ng-click="openDatePicker($event, finishDatePicker)">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                  </span>
+                </p>
             </div>
         </div>
 

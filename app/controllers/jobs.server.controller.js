@@ -384,13 +384,13 @@ exports.findJobByID = function(req, res, next, id) {
 							   {path: 'initial_approval_status'},
 							   {path: 'subsequent_approval_status'},
 								{path: 'status',
-							     populate: {path: 'possible_next_statuses', select: 'keyword name finished post_finished requires_reason'}},
-							   {path: 'target_status', select: 'name keyword finished'},
+							     populate: {path: 'possible_next_statuses', select: 'keyword name finished post_finished requires_reason roles'}},
+							   {path: 'target_status', select: 'name keyword finished requires_reason'},
 							   {path: 'status_reason', select: 'description'},
 							   //{path: 'target_status_reason', select: 'description'},
 							   {path: 'review'},
 							   {path: 'services', select: 'name'},
-							   {path: 'approval_challenge_details.status', select: 'name'},
+							   {path: 'approval_challenge_details.status', select: 'name finished post_finished'},
 							   {path: 'approval_challenge_details.status_reason', select: 'description'},
 							   {path: 'last_updated_by', select: 'roles'},
 							   {path: 'target_status_reason', select: 'description'}])
@@ -398,7 +398,7 @@ exports.findJobByID = function(req, res, next, id) {
 						if (err) return next(err); // TODO: check here if job is not found, it seems there's no 'next'
 									   			   // handler capturing the error and this is breaking...
 						if (!job) return next(new Error('Error al cargar trabajo ' + id));
-							req.job = job ;
+							req.job = job ; // TODO: is this even being executed?
 							next();
 					});
 };
@@ -716,54 +716,43 @@ function buildJobSearchQueryByStatus(queryParams, query){
 			query.status = {$ne : jobNotHiredStatusId};
 			break;*/
 		case 'nothired':
-			//var jobNotHiredStatusId = config.staticdata.jobStatuses.getByProperty('keyword','nothired')._id;
-			//query.status = jobNotHiredStatusId;
 			query.status = config.staticdata.jobStatuses.enums.NOTHIRED;
 			break;
 
 		case 'approved':
-			//var jobApprovedApprovalStatusId = config.staticdata.jobApprovalStatuses.getByProperty('keyword','approved')._id;
-			//query.initial_approval_status = jobApprovedApprovalStatusId;
 			query.initial_approval_status = config.staticdata.jobApprovalStatuses.enums.APPROVED;
 			break;
 
 		case 'finished':
 			var finishedStatuses = [];
-			//finishedStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'finished')._id);
-			//finishedStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'guaranteed')._id);
 			finishedStatuses.push(config.staticdata.jobStatuses.enums.FINISHED);
-			finishedStatuses.push(config.staticdata.jobStatuses.enums.GUARANTEED);
+			finishedStatuses.push(config.staticdata.jobStatuses.enums.FINISHED_GUARANTEED);
 			query.status = { $in: finishedStatuses};
 			break;
+
+        case 'finished_guarantee_claimed':
+            query.status = config.staticdata.jobStatuses.enums.FINISHED_GUARANTEE_CLAIMED;
+            break;
+
 		case 'incomplete':
-			var incompleteStatuses = [];
-			//incompleteStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'incomplete')._id);
-			//incompleteStatuses.push(config.staticdata.jobStatuses.getByProperty('keyword', 'abandoned')._id)
-			incompleteStatuses.push(config.staticdata.jobStatuses.enums.INCOMPLETE);
-			incompleteStatuses.push(config.staticdata.jobStatuses.enums.ABANDONED);
-			query.status = { $in: incompleteStatuses};
+            query.status = config.staticdata.jobStatuses.enums.INCOMPLETE;
 			break;
 		case 'active':
-			//var jobInProgressStatusId = config.staticdata.jobStatuses.getByProperty('keyword', 'active')._id;
-			//query.status = jobInProgressStatusId;
 			query.status = config.staticdata.jobStatuses.enums.ACTIVE;
 			break;
 		case 'pending-self':
-			//var jobPendingApprovalStatus = config.staticdata.jobApprovalStatuses.getByProperty('keyword','pending')._id;
 			var jobPendingApprovalStatus = config.staticdata.jobApprovalStatuses.enums.PENDING;
 			query.$and.push({$or: 	[{initial_approval_status: jobPendingApprovalStatus},
 									 {subsequent_approval_status: jobPendingApprovalStatus}]});
 			query.last_updated_by = {$ne: queryParams.user._id};
 			break;
 		case 'pending-other':
-			//var jobPendingApprovalStatus = config.staticdata.jobApprovalStatuses.getByProperty('keyword','pending')._id;
 			var jobPendingApprovalStatus = config.staticdata.jobApprovalStatuses.enums.PENDING;
 			query.$and.push({$or: 	[{initial_approval_status: jobPendingApprovalStatus},
 									 {subsequent_approval_status: jobPendingApprovalStatus}]});
 			query.last_updated_by = queryParams.user._id;
 			break;
 		case 'challenged':
-			//var jobChallengedApprovalStatus = config.staticdata.jobApprovalStatuses.getByProperty('keyword','challenged')._id;
 			var jobChallengedApprovalStatus = config.staticdata.jobApprovalStatuses.enums.CHALLENGED;
 			query.$and.push({$or: [{initial_approval_status: jobChallengedApprovalStatus},
 									 {subsequent_approval_status: jobChallengedApprovalStatus}]});

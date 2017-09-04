@@ -7,12 +7,15 @@ var config = require(__base + 'config/config'),
 // the validators are executed more than once.
 // It may be related to this mongoose bug: https://github.com/Automattic/mongoose/issues/2617
 
+// NOTE2: for some reason, status and statusReason parameters, in some cases are incorrectly set.
+// (see bugs #1,#2 & 3 on bugs tab) - so using job.approval_challenge_details.status and job.approval_challenge_details.status_reason instead
 
-exports.validateStatusValue = function validateStatusValue(status){
+
+exports.validateStatusValue = function validateStatusValue(){
 
     var job = this.ownerDocument();
 
-    if(job.isChallenged && !config.staticdata.jobStatuses.getByProperty('_id', status))
+    if(job.isChallenged && !config.staticdata.jobStatuses.getByProperty('_id', job.approval_challenge_details.status))
         return false;
 
     return true;
@@ -20,7 +23,7 @@ exports.validateStatusValue = function validateStatusValue(status){
 };
 
 
-exports.validateStatusChallenged = function validateStatusChallenged(status){
+exports.validateStatusChallenged = function validateStatusChallenged(){
 
     var job = this.ownerDocument();
 
@@ -31,15 +34,20 @@ exports.validateStatusChallenged = function validateStatusChallenged(status){
     // --- There should be a challenged status_reason
     // --- And it should be different than the challenged one.
 
+    // Testing, for some reason status parameter is set to a status that is not the one used from challenge...
+    // WTF! Trying with using status from a diff place..
+    // Maybe can also use job.approval_challenge_details.status...? (and just ignore status parameter which seems to have a wrong value?)
+
     if(job.isChallenged &&
-        ((!config.staticdata.jobStatuses.isNextPossible(job.status, status)) ||
-        (!job.target_status_reason && job.target_status.equals(status)) ||
-        (job.target_status_reason && job.target_status.equals(status) &&
-        (!job.approval_challenge_details.status_reason ||
-        job.target_status_reason.equals(job.approval_challenge_details.status_reason)))))
+        ((!config.staticdata.jobStatuses.isNextPossible(job.status, job.approval_challenge_details.status)) ||
+         (!job.target_status_reason && job.target_status.equals(job.approval_challenge_details.status)) ||
+         (job.target_status_reason && job.target_status.equals(job.approval_challenge_details.status) &&
+            (!job.approval_challenge_details.status_reason ||
+             job.target_status_reason.equals(job.approval_challenge_details.status_reason)))))
       return false;
 
     return true;
+
 
 };
 
@@ -73,8 +81,8 @@ exports.validateReviewNotAllowedByStatus = function validateReviewNotAllowedBySt
 
     var job = this.ownerDocument();
 
-    if(job.isChallenged && !job.approval_challenge_details_status_config.finished &&
-       !job.approval_challenge_details_status_config.post_finished && job.review.length)
+    if(job.isChallenged && !job.review_already_existed && !job.approval_challenge_details_status_config.finished &&
+       !job.approval_challenge_details_status_config.post_finished  && job.review.length)
         return false;
 
     return true;
@@ -150,13 +158,13 @@ exports.validateStatusReasonRequired = function validateStatusReasonRequired(){
 
 
 
-exports.validateStatusReasonValue = function validateStatusReasonValue(statusReason){
+exports.validateStatusReasonValue = function validateStatusReasonValue(){
 
     var job = this.ownerDocument();
     // Read pn code posta txt (search for '- Challenge modal') for details...
 
-    if(job.isChallenged && statusReason &&
-        (!config.staticdata.jobStatusReasons.getByProperty('_id', statusReason)
+    if(job.isChallenged && job.approval_challenge_details.status_reason &&
+        (!config.staticdata.jobStatusReasons.getByProperty('_id', job.approval_challenge_details.status_reason)
         || !job.approval_challenge_details_status_reason_config.jobstatus.equals(job.approval_challenge_details.status)))
             return false;
 
@@ -165,11 +173,11 @@ exports.validateStatusReasonValue = function validateStatusReasonValue(statusRea
 
 };
 
-exports.validateStatusReasonPermission = function validateStatusReasonPermission(statusReason){
+exports.validateStatusReasonPermission = function validateStatusReasonPermission(){
 
     var job = this.ownerDocument();
 
-    if(job.isChallenged && statusReason &&
+    if(job.isChallenged && job.approval_challenge_details.status_reason &&
        job.approval_challenge_details_status_reason_config.role &&
        job.approval_user.roles.indexOf(job.approval_challenge_details_status_reason_config.role) == -1)
             return false;

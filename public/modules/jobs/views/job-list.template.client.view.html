@@ -4,6 +4,7 @@
         </div>
         <!-- TODO: make job container to have the same height regardless the amount of services, if it has a review or not, etc -->
         <!-- TODO: also verify that jobs are displayed following columns in order...E.g.: try adding 5 jobs having one of them with a review... -->
+        <!-- TODO: also, ensure jobs follow bootstrap rows consistently. E.g.: 4 jobs are displayed differently on my jobs (all) vs. supplier jobs view-->
         <div data-ng-repeat="job in jobs" class="col-sm-4 col-lg-4 col-md-4 no-padding-left">
             <div class="thumbnail">
                 <img src="/images/job.png" alt=""> <!-- TODO: replace this with thumbnail of first job image, if available -->
@@ -12,16 +13,16 @@
                     <!-- TODO: consider adding indicator for approval needed if user using the app is the approver...
                          Consider also displaying a different indicator if job is challenged...-->
                     <!-- TODO: define classes with specific color for each status-->
-                    <span ng-show="job.status.keyword == 'finished'" class="pull-right status-label label label-success">{{job.status.name}}</span>
-                    <span ng-show="job.status.keyword == 'incomplete'" class="pull-right status-label label label-default">{{job.status.name}}</span>
-                    <span ng-show="job.status.keyword == 'active'" class="pull-right status-label label label-primary">{{job.status.name}}</span>
+                    <span data-ng-show="job.status.keyword == 'finished' || job.status.keyword == 'finished_guaranteed'" class="pull-right status-label label label-success">{{job.status.name}}</span>
+                    <span data-ng-show="job.status.keyword == 'incomplete'" class="pull-right status-label label label-default">{{job.status.name}}</span>
+                    <span data-ng-show="job.status.keyword == 'active'" class="pull-right status-label label label-primary">{{job.status.name}}</span>
                     <!-- TODO: evaluate possibility to use a single element, and just change the class based on the status.keyword
                          since all elements are the same -use ng-class maybe? -->
 
-                    <span ng-show="job.status.keyword == 'created'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
-                    <span ng-show="job.status.keyword == 'guaranteed'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
-                    <span ng-show="job.status.keyword == 'abandoned'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
-                    <span ng-show="job.status.keyword == 'nothired'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+                    <span data-ng-show="job.status.keyword == 'created'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+                    <!--span data-ng-show="job.status.keyword == 'finished_guaranteed'" class="pull-right status-label label label-warning">{{job.status.name}}</span-->
+                    <span data-ng-show="job.status.keyword == 'finished_guarantee_claimed'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
+                    <span data-ng-show="job.status.keyword == 'nothired'" class="pull-right status-label label label-warning">{{job.status.name}}</span>
 
                     <div class="job-name-container">
                         <a href="" data-ng-click="navigateToJobDetails(job._id)">{{job.name}}</a>

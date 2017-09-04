@@ -1,5 +1,5 @@
 angular.module('jobs').controller('UserJobDetailsController',
-	function ($scope, $rootScope, $stateParams, $state, Jobs, $uibModal, Alerts) {
+	function ($scope, $rootScope, $stateParams, $state, Jobs, $uibModal, Alerts, $sce, JobStatusHelper) {
 
 
 		$scope.max = 5;
@@ -28,6 +28,7 @@ angular.module('jobs').controller('UserJobDetailsController',
 				});
 		};
 
+		// TODO: move these functions to a job helper...
 		function hasJobStatusReason(){
 			return $scope.job.status_reason;
 		}
@@ -90,8 +91,14 @@ angular.module('jobs').controller('UserJobDetailsController',
 			return $scope.job.status.keyword == 'nothired';
 		}
 
-		function hasJobNextStatuses(){
-			return $scope.job.status.possible_next_statuses.length;
+		function hasJobNextStatuses(){ // rename function to canUpdate/canUpdateStatus??
+			var possibleNextStatuses =  JobStatusHelper.getPossibleNextStatuses($scope.job.status, $scope.authentication.user.roles);
+			if(possibleNextStatuses.length == 1 && possibleNextStatuses[0]._id == $scope.job.status._id){
+			    return false;
+            }
+            else{
+			    return true;
+            }
 		}
 
 		function isJobApprover(){
@@ -235,9 +242,9 @@ angular.module('jobs').controller('UserJobDetailsController',
 				job.approval = true;
 			}
 			else{
-				//challengeDetails.status_reason = challengeDetails.status_reason._id; // TODO, check this since status reason
-																					 // is not always required...
+                challengeDetails.finish_date = !$scope.job.finish_date && challengeDetails.status.finished ? challengeDetails.finish_date : null;
 				challengeDetails.status = challengeDetails.status._id;
+                challengeDetails.status_reason = challengeDetails.status_reason._id ? challengeDetails.status_reason._id : null;
 				job.approval_challenge_details = challengeDetails;
 				job.approval = false;
 			}
@@ -246,16 +253,16 @@ angular.module('jobs').controller('UserJobDetailsController',
 
 			job.$update(function() {
 					if (approvalAction == 'approved') {
-						Alerts.show('success', 'Trabajo aprobado exitosamente');
+						Alerts.show('success', $sce.trustAsHtml('Trabajo aprobado exitosamente.'));
 					}
 					else {
-						Alerts.show('success', 'El estado del trabajo ser&#225; resuelto por un administrador del sistema \n' +
-						'Ser&#225;s contactado en caso de que se requiera mas informaci&#243;n.');
+						Alerts.show('success', $sce.trustAsHtml('El estado del trabajo ser\u00e1 resuelto por un administrador del sistema. <br/>' +
+                            'Ser\u00e1s contactado en caso de que se requiera mas informaci\u00f3n.'));
 					}
 					$state.reload();
 				},function(errorResponse) {
 							$scope.error = errorResponse.data.message;
-							Alerts.show('danger',$scope.error);
+							Alerts.show('danger',$sce.trustAsHtml($scope.error));
 				});
 		};
 
@@ -361,7 +368,7 @@ angular.module('jobs').controller('OpenImagesModalInstanceCtrl',
 	});
 
 angular.module('jobs').controller('ApproveRejectJobModalInstanceCtrl',
-	function ($scope, $uibModalInstance, Alerts) {
+	function ($scope, $uibModalInstance, Alerts, JobStatusReasonsHelper, JobStatusHelper) {
 
 		if($scope.approvalAction == 'approved'){
 			$scope.approvalActionString = 'aprobar';
@@ -369,9 +376,15 @@ angular.module('jobs').controller('ApproveRejectJobModalInstanceCtrl',
 		else
 		{
 			$scope.approvalActionString = 'rechazar';
-			$scope.possiblechallengestatuses = getChallengeStatuses($scope.job);
+            $scope.possiblechallengestatuses = JobStatusHelper.getPossibleChallengeStatuses($scope.job.status, $scope.job.status_reason,$scope.job.target_status,
+																							$scope.job.target_status_reason, $scope.jobstatusreasons,
+																							$scope.authentication.user.roles);
 			$scope.challengestatus = {name: '[Seleccione un estado]'};
 		}
+
+		$scope.challengefinishdate = $scope.today; // TODO: update this to use start date as default, if start date is greater than today (see UX tab)
+										   // Anyway, would we allow setting a future start date...and if so, would the it be moved/challenged to finished
+										   // prior to current date? Will this happen too often? Probably not...
 
 		$scope.ok = function () {
 
@@ -382,7 +395,9 @@ angular.module('jobs').controller('ApproveRejectJobModalInstanceCtrl',
 				}
 				else{
 					$uibModalInstance.close({status: $scope.challengestatus,
-											 comments: $scope.challengecomment});
+											 comments: $scope.challengecomment,
+											 status_reason: $scope.challengestatusreason,
+											 finish_date: $scope.challengefinishdate});
 				}
 			}
 			else{
@@ -395,23 +410,19 @@ angular.module('jobs').controller('ApproveRejectJobModalInstanceCtrl',
 			$uibModalInstance.dismiss('cancel');
 		};
 
-		function getChallengeStatuses(job){
-
-			var possible_next_statuses = job.status.possible_next_statuses;
-			var possiblechallengestatuses = job.status.keyword == 'created' ? [] : [job.status];
-			for(var i=0;i<possible_next_statuses.length;i++)
-			{
-				if(possible_next_statuses[i]._id != job.target_status._id){
-					possiblechallengestatuses.push(possible_next_statuses[i]);
-				}
-			}
-
-			return possiblechallengestatuses;
-		}
-
 		$scope.changeChallengeStatus = function(status) {
 			$scope.challengestatus = status;
+			setJobStatusReasonsFromStatus(status);
 		}
+
+        $scope.changeChallengeStatusReason = function(challengestatusreason) {
+            $scope.challengestatusreason = challengestatusreason;
+        }
+
+        function setJobStatusReasonsFromStatus(status){
+            $scope.challengestatusreason = {description: '[Seleccione una opcion]'};
+            $scope.challengestatusreasons = JobStatusReasonsHelper.getReasons($scope.jobstatusreasons,status,$scope.authentication.user.roles);
+        }
 
 	});
 

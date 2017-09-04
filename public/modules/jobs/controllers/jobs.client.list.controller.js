@@ -17,12 +17,16 @@ angular.module('jobs').controller('ListJobsController',
             $scope.jobStatusLabel = '.';
             switch ($scope.jobstatus) {
                 case 'active':
-                    $scope.jobListTitle = 'Trabajos activos';
-                    $scope.jobStatusLabel = ' activo.';
+                    $scope.jobListTitle = 'Trabajos en progreso';
+                    $scope.jobStatusLabel = ' en progreso.';
                     break;
                 case 'finished':
                     $scope.jobListTitle = 'Trabajos terminados';
                     $scope.jobStatusLabel = ' finalizado.';
+                    break;
+                case 'finished_guarantee_claimed':
+                    $scope.jobListTitle = 'Trabajos con arreglos/reparaciones pendientes';
+                    $scope.jobStatusLabel = ' con arreglos/reparaciones pendientes.';
                     break;
                 case 'incomplete':
                     $scope.jobListTitle = 'Trabajos incompletos';

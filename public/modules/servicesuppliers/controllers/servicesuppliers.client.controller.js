@@ -74,7 +74,7 @@ angular.module('servicesuppliers').controller('ServiceSuppliersDetailController'
     });
 
 angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
-    function ($scope, $uibModalInstance, Alerts, Jobs, JobStatusReasonsHelper, jobsforreview, ratingtypes, jobstatuses, jobstatusreasons) {
+    function ($scope, $uibModalInstance, Alerts, Jobs, JobStatusReasonsHelper, JobStatusHelper, jobsforreview, ratingtypes, jobstatuses, jobstatusreasons) {
 
         $scope.alerts = Alerts;
         $scope.jobsforreview = jobsforreview;
@@ -83,17 +83,17 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
         $scope.servicesubcategories = $scope.servicesupplier.services;
         $scope.selectedservices = [];
         $scope.statusdisabled = false;
+        $scope.statusreasonsdisabled = false;
         $scope.jobsforreviewvisible = true;
         $scope.reviewservicesvisible = true;
         $scope.rate = 3;
+        $scope.dateFormats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+        $scope.dateFormat = $scope.dateFormats[0];
+        $scope.finishDatePicker = {};
+        $scope.today = new Date();
+        $scope.jobfinishdate = $scope.today;
 
-        $scope.jobstatuses = [];
-        for(var i=0; i<jobstatuses.length;i++)
-        {
-            if(jobstatuses[i].finished || jobstatuses[i].keyword == 'nothired'){
-                $scope.jobstatuses.push(jobstatuses[i])
-            }
-        }
+        $scope.jobstatuses = JobStatusHelper.getStatusesForReview(jobstatuses,$scope.authentication.user.roles);
 
         // Mapping rating types obtained from service (see resolve item in modal controller configuration)
         // to the rating objects used by the uib-rating directive
@@ -107,51 +107,65 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                 rate: 3 });
         }
 
+        $scope.openDatePicker = function($event, datePicker) {
+            $event.preventDefault();
+            $event.stopPropagation();
+
+            datePicker.opened = true;
+        };
+
         $scope.removeJobSelection = function(){
             $scope.clearServices();
             $scope.selectedjob = {name: '[Seleccione un trabajo]'};
             $scope.jobstatus = {name: '[Seleccione un resultado]'};
-            $scope.jobstatusreason = {description: '[Seleccione una opcion]'};
             $scope.statusdisabled = false;
-            $scope.jobstatuses.push(jobstatuses[getNotHiredStatusIndex(jobstatuses)]);
+
+            $scope.jobstatuses = JobStatusHelper.getStatusesForReview(jobstatuses,$scope.authentication.user.roles);
+            //$scope.jobstatuses.push(jobstatuses[getNotHiredStatusIndex(jobstatuses)]);
+            $scope.jobfinishdatevisible = false;
+            $scope.statusreasons = []; // TODO: this can be removed and populated only on status change to finished
+                                       // just like done with finish date....???
+                                       // It's being used in validatiobn prior to submitting review...
+            $scope.statusreasonsvisible = false;
+            $scope.statusreasonsdisabled = false;
+            $scope.statusreason = {description: '[Seleccione una opcion]'};
         }
 
         $scope.setJobProperties = function(jobforreview) {
 
             $scope.selectedjob = jobforreview;
-            $scope.jobstatuses.splice(getNotHiredStatusIndex($scope.jobstatuses),1);
+            $scope.jobfinishdatevisible = false;
+
+            //$scope.jobstatuses.splice(getNotHiredStatusIndex($scope.jobstatuses),1);
             $scope.clearServices();
-            for (var i = 0; i< $scope.selectedjob.services.length; i++) {
+            for (var i = 0; i< $scope.selectedjob.services.length; i++) { // TODO: isn't the same to just assign the array?
                 $scope.selectedservices.push($scope.selectedjob.services[i])
             }
 
+            $scope.statusreason = {description: '[Seleccione una opcion]'};
             if($scope.selectedjob.status.finished || $scope.selectedjob.status.post_finished){
                 $scope.statusdisabled = true;
                 $scope.jobstatus = $scope.selectedjob.status;
                 setRatingTypesFromStatus($scope.jobstatus);
-                setJobStatusReasonsFromStatus($scope.jobstatus);
+                if($scope.selectedjob.status_reason){
+                    $scope.statusreasonsdisabled = true;
+                    $scope.statusreasonsvisible = true;
+                    $scope.statusreason = $scope.selectedjob.status_reason;
+                }
+                else{
+                    $scope.statusreasonsdisabled = false;
+                    $scope.statusreasonsvisible = false;
+                }
+
             }
             else{
+                $scope.jobstatuses = JobStatusHelper.getPossibleNextStatuses($scope.selectedjob.status,$scope.authentication.user.roles,false);
                 $scope.jobstatus = {name: '[Seleccione un resultado]'};
                 $scope.statusdisabled = false;
+                $scope.statusreasonsdisabled = false;
             }
 
         };
-
-        function getNotHiredStatusIndex(array){
-
-            for(var i=0; i<array.length;i++)
-            {
-                if(array[i].keyword == 'nothired'){
-                    return i;
-                }
-            }
-        }
-
-        function setJobStatusReasonsFromStatus(status){
-            $scope.statusreason = {description: '[Seleccione una opcion]'};
-            $scope.statusreasons = JobStatusReasonsHelper.getReasons(jobstatusreasons,status,$scope.authentication.user.roles);
-        }
 
 
         function setRatingTypesFromStatus(status){
@@ -179,7 +193,7 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
         $scope.changeStatus = function(status){
             $scope.jobstatus = status;
             setRatingTypesFromStatus(status);
-            setJobStatusReasonsFromStatus(status);
+
             if(status.keyword == 'nothired'){
                 $scope.jobsforreviewvisible = false;
                 $scope.reviewservicesvisible = false;
@@ -189,6 +203,29 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                 $scope.jobsforreviewvisible = true;
                 $scope.reviewservicesvisible = true;
             }
+
+            // TODO: would the else be ever executed?
+            // Considering jobs for review should only transition to finished
+            // and statuses for reviews is the same too?
+            if(status.finished){
+                    $scope.jobfinishdatevisible = true;
+            }
+            else{
+                    $scope.jobfinishdatevisible = false;
+            }
+
+            $scope.statusreason = {description: '[Seleccione una opcion]'};
+            $scope.statusreasons = JobStatusReasonsHelper.getReasons(jobstatusreasons,status,$scope.authentication.user.roles);
+            if($scope.statusreasons.length){
+                $scope.statusreasonsvisible = true;
+                $scope.statusreasondisabled = false;
+
+            }
+            else{
+                $scope.statusreasonsvisible = false;
+                $scope.statusreasondisabled = true;
+            }
+
         }
 
         $scope.ok = function () {
@@ -210,18 +247,35 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
                 return;
             }
 
-            if($scope.statusreasons.length && !$scope.statusreason._id){
+            // TODO: Update validation rule for status reason (based on submit logic below...)
+            /*if($scope.statusreasons.length && !$scope.statusreason._id){
                 Alerts.show('danger','Debes seleccionar una opcion de razon del resultado');
                 return;
 
-            }
+            }*/
+
+            // TODO: add validation for finish date here..
 
             var jobinfo = {
-                job: $scope.selectedjob && $scope.selectedjob._id ? $scope.selectedjob._id : null,
-                services: $scope.selectedservices,
-                status: $scope.jobstatus._id,
-                status_reason: $scope.statusreason._id ? $scope.statusreason._id : null
+                job: $scope.selectedjob && $scope.selectedjob._id ? $scope.selectedjob._id : null, // TODO: is $scope.selectedjob required here? Given that it's set on controller init?
+                services: $scope.selectedservices, // TODO: are selected services here always required?
+                                                   // probably only in case a review is created without a job...
+                                                   // In case of a job, we're probably just submitting the same services as existed on the job...
+                status: $scope.jobstatus._id//,
+            }
 
+            // Submit finish date only if job was not selected (review without job) and the status selected was a finished one (different than not hired)
+            // OR job selected was not in finished status...
+            if((!jobinfo.job && $scope.jobstatus.finished) ||
+               (jobinfo.job && !$scope.selectedjob.status.finished)){
+                jobinfo.finish_date = $scope.jobfinishdate;
+            }
+
+            // Submit status reason only if job was not selected (review without job) and a status reason was selected
+            // or if a status reason was selected for a job, and it did not have one.
+            if(!jobinfo.job && $scope.statusreason._id ||
+                (jobinfo.job && !$scope.selectedjob.status_reason && $scope.statusreason._id)){
+                jobinfo.status_reason = $scope.statusreason._id;
             }
 
             // Converting review ratings in the format used by server.
@@ -274,7 +328,8 @@ angular.module('servicesuppliers').controller('SupplierReviewModalInstanceCtrl',
             var job = new Jobs({
                 status: jobinfo.status,
                 review: [reviewinfo],
-                status_reason: jobinfo.status_reason
+                status_reason: jobinfo.status_reason,
+                finish_date: jobinfo.finish_date
             });
 
             if(jobinfo.job){

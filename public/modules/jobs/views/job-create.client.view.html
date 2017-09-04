@@ -12,7 +12,7 @@
                 <div class="form-group">
                     <div class="row">
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="control-label">Fecha de inicio</label>
                             <p class="input-group">
                                 <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" data-ng-model="start_date"
@@ -27,7 +27,7 @@
                         </div>
 
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="control-label">Estado</label><br>
                             <div class="btn-group" uib-dropdown>
                                 <button type="button" class="btn btn-default" uib-dropdown-toggle>
@@ -42,10 +42,21 @@
 
                         </div>
 
+                        <div class="col-md-3" data-ng-show="status.finished">
+                            <label class="control-label">Fecha de finalizaci&#243;n</label>
+                            <p class="input-group">
+                                <input type="text" class="form-control" uib-datepicker-popup="{{dateFormat}}" data-ng-model="finish_date"
+                                       min-date="start_date" show-button-bar="false" is-open="finishDatePicker.opened"
+                                       data-ng-required="true"/>
+                                <span class="input-group-btn">
+                                    <button id="finishDateButton" type="button" class="btn btn-default" data-ng-click="openDatePicker($event, finishDatePicker)">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                  </span>
+                            </p>
+                        </div>
 
-
-
-                        <div class="col-md-4" data-ng-show="statusreasons.length">
+                        <div class="col-md-3" data-ng-show="statusreasons.length">
                             <label class="control-label">Razon del estado</label>
                             <div class="btn-group btn-block" uib-dropdown>
                                 <button type="button" class="btn btn-block btn-default" uib-dropdown-toggle>

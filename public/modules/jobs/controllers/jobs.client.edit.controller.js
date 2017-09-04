@@ -1,5 +1,5 @@
 angular.module('jobs').controller('UserJobEditController',
-	function ($scope, $rootScope, $stateParams, $state, Jobs, $uibModal, Alerts, JobStatusReasonsHelper) {
+	function ($scope, $rootScope, $stateParams, $state, Jobs, $uibModal, Alerts, JobStatusReasonsHelper, JobStatusHelper) {
 
 		$scope.possibleNextStatuses = [];
 
@@ -12,8 +12,7 @@ angular.module('jobs').controller('UserJobEditController',
 					$scope.jobOriginalStatus = job.status;
 					$scope.jobOriginalStatusReason = job.status_reason;
 					$scope.isJobInFinishedStatus = isJobInFinishedStatus();
-					$scope.possibleNextStatuses.push(job.status);
-					$scope.possibleNextStatuses = $scope.possibleNextStatuses.concat(job.status.possible_next_statuses);
+					$scope.possibleNextStatuses = JobStatusHelper.getPossibleNextStatuses($scope.job.status, $scope.authentication.user.roles);
 					setJobStatusReasonsFromStatus(job.status);
 				});
 		};
