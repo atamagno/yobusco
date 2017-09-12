@@ -1,8 +1,0 @@
-{ 
-    "_id" : ObjectId("56b19c2c809d6df1dbd79f37"), 
-    "action_name" : "recommend", 
-    "points" : {
-        "no" : -0.15, 
-        "yes" : 0.15
-    }
-}
