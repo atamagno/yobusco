@@ -1,0 +1,53 @@
+{ 
+    "_id" : ObjectId("57a50f61078548281e5f2c8b"), 
+    "__v" : NumberInt(3), 
+    "messages" : [
+        ObjectId("57a50f61078548281e5f2c8a"), 
+        ObjectId("57a50f74078548281e5f2c8c"), 
+        ObjectId("57a8e8195bb88df867eede54"), 
+        ObjectId("57bc99272fcdc3e4150c223a")
+    ], 
+    "user1" : ObjectId("56731f005300834811cddad8"), 
+    "user1Archived" : ObjectId("56731f005300834811cddad8"), 
+    "user2" : ObjectId("56731f005300834811cddad8")
+}
+{ 
+    "_id" : ObjectId("57a8e82a5bb88df867eede56"), 
+    "__v" : NumberInt(0), 
+    "messages" : [
+        ObjectId("57a8e82a5bb88df867eede55")
+    ], 
+    "user1" : ObjectId("56731f005300834811cddad8"), 
+    "user1Archived" : ObjectId("56731f005300834811cddad8"), 
+    "user2" : ObjectId("56731f005300834811cddad8")
+}
+{ 
+    "_id" : ObjectId("57fd1a89360430641a55743f"), 
+    "__v" : NumberInt(1), 
+    "messages" : [
+        ObjectId("57fd1a89360430641a55743e"), 
+        ObjectId("57fd1aa0360430641a557440")
+    ], 
+    "user1" : ObjectId("56731f005300834811cddad8"), 
+    "user2" : ObjectId("57fd16b3360430641a55743c"), 
+    "user2Archived" : ObjectId("57fd16b3360430641a55743c")
+}
+{ 
+    "_id" : ObjectId("5834bf118c21c6a55d716bee"), 
+    "__v" : NumberInt(1), 
+    "messages" : [
+        ObjectId("5834bf118c21c6a55d716bed"), 
+        ObjectId("5834bf208c21c6a55d716bef")
+    ], 
+    "user1" : ObjectId("57d243442b52a7aa3657db4d"), 
+    "user2" : ObjectId("56731f005300834811cddad8")
+}
+{ 
+    "_id" : ObjectId("585a26780466de4c8bccc4f6"), 
+    "user2" : ObjectId("56731f005300834811cddad8"), 
+    "user1" : ObjectId("57fd16b3360430641a55743c"), 
+    "messages" : [
+        ObjectId("585a26780466de4c8bccc4f5")
+    ], 
+    "__v" : NumberInt(0)
+}

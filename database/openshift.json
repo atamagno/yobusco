@@ -1,0 +1,5 @@
+{ 
+    "_id" : ObjectId("55ee169bc651a47ff619f3f2"), 
+    "application" : "meanapp", 
+    "dbhost" : "127.2.53.130"
+}

@@ -1,0 +1,64 @@
+{ 
+    "_id" : ObjectId("44269183477f11b662a6dd88"), 
+    "description" : "Quality of service description", 
+    "jobstatuses" : [
+        ObjectId("56bd52bb8b2d42938751aa5d"), 
+        ObjectId("59b8445c218e8b08fc2fccb9"), 
+        ObjectId("59b842d7218e8b08fc2fccaf"), 
+        ObjectId("59a5c897653b4a355c025b1d")
+    ], 
+    "name" : "Quality of service"
+}
+{ 
+    "_id" : ObjectId("75269183455f11b0b2a6dd88"), 
+    "description" : "Quality to price relationship description", 
+    "jobstatuses" : [
+        ObjectId("56bd52bb8b2d42938751aa5d"), 
+        ObjectId("59b8445c218e8b08fc2fccb9"), 
+        ObjectId("59b842d7218e8b08fc2fccaf"), 
+        ObjectId("59a5c897653b4a355c025b1d")
+    ], 
+    "name" : "Quality to price relationship"
+}
+{ 
+    "_id" : ObjectId("22264483477f11b0b2a6dd88"), 
+    "description" : "Commitment description", 
+    "jobstatuses" : [
+        ObjectId("56bd52bb8b2d42938751aa5d"), 
+        ObjectId("59b8445c218e8b08fc2fccb9"), 
+        ObjectId("59b842d7218e8b08fc2fccaf"), 
+        ObjectId("59a5c897653b4a355c025b1d")
+    ], 
+    "name" : "Commitment"
+}
+{ 
+    "_id" : ObjectId("56269183477f11b0b2a99d88"), 
+    "description" : "Delivery on time description", 
+    "jobstatuses" : [
+        ObjectId("56bd52bb8b2d42938751aa5d"), 
+        ObjectId("59b8445c218e8b08fc2fccb9"), 
+        ObjectId("59b842d7218e8b08fc2fccaf"), 
+        ObjectId("59a5c897653b4a355c025b1d")
+    ], 
+    "name" : "Delivery on time"
+}
+{ 
+    "_id" : ObjectId("5875ad217ed82e9aae37f520"), 
+    "description" : "Attention during job execution/evaluation", 
+    "jobstatuses" : [
+        ObjectId("58364df47ed82f4215dd3988"), 
+        ObjectId("56bd52bb8b2d42938751aa5d"), 
+        ObjectId("59b8445c218e8b08fc2fccb9"), 
+        ObjectId("59b842d7218e8b08fc2fccaf"), 
+        ObjectId("59a5c897653b4a355c025b1d")
+    ], 
+    "name" : "Attention"
+}
+{ 
+    "_id" : ObjectId("58f6521d9cc6fab56ea9829e"), 
+    "description" : "In progress rating type", 
+    "jobstatuses" : [
+        ObjectId("59b84536218e8b08fc2fccc0")
+    ], 
+    "name" : "In progress rating type"
+}

@@ -1,0 +1,24 @@
+{ 
+    "_id" : ObjectId("57bdee69e16d218103905605"), 
+    "description" : "El trabajo esta a la espera de aprobación.", 
+    "keyword" : "pending", 
+    "name" : "Aprobacion pendiente"
+}
+{ 
+    "_id" : ObjectId("57bdee97e16d218103905607"), 
+    "description" : "El trabajo -en su estado actual- ha sido previamente aprobado.", 
+    "keyword" : "approved", 
+    "name" : "Aprobado"
+}
+{ 
+    "_id" : ObjectId("57bdee9de16d218103905609"), 
+    "description" : "La ultima actualización del trabajo será resuelta por un administrador del sistema", 
+    "keyword" : "challenged", 
+    "name" : "Pendiente de resolución"
+}
+{ 
+    "_id" : ObjectId("58365b417ed82f4215dd3989"), 
+    "description" : "El trabajo no se ha concretado.", 
+    "keyword" : "nothired", 
+    "name" : "No contratado"
+}

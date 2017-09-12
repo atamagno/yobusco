@@ -1,0 +1,51 @@
+{ 
+    "_id" : ObjectId("5882654a7ed85f937795c8b2"), 
+    "description" : "Disponilidad del prestador", 
+    "jobstatus" : ObjectId("58364df47ed82f4215dd3988"), 
+    "keyword" : "supplier_avail", 
+    "role" : "user"
+}
+{ 
+    "_id" : ObjectId("588269c77ed85f937795c8b3"), 
+    "description" : "No se presento el prestador", 
+    "jobstatus" : ObjectId("58364df47ed82f4215dd3988"), 
+    "keyword" : "supplier_noshow", 
+    "role" : "user", 
+    "points" : -0.1
+}
+{ 
+    "_id" : ObjectId("588264737ed85f937795c8b0"), 
+    "description" : "Precio del prestador", 
+    "jobstatus" : ObjectId("58364df47ed82f4215dd3988"), 
+    "keyword" : "supplier_price", 
+    "role" : "user"
+}
+{ 
+    "_id" : ObjectId("595f0ab79cc66b04e1401b68"), 
+    "description" : "El cliente no respeto las condiciones del trabajo y/o el pago", 
+    "jobstatus" : ObjectId("59b8445c218e8b08fc2fccb9"), 
+    "keyword" : "client_conditions", 
+    "role" : "servicesupplier"
+}
+{ 
+    "_id" : ObjectId("58a93becff94271c8ccd51b9"), 
+    "description" : "El prestador de servicios dejo el trabajo sin terminar", 
+    "jobstatus" : ObjectId("59b8445c218e8b08fc2fccb9"), 
+    "keyword" : "supplier_abandoned", 
+    "role" : "user", 
+    "points" : -1.0
+}
+{ 
+    "_id" : ObjectId("599ddf1f653b4a206c76db25"), 
+    "description" : "Se acordo mutuamente interrumpir el trabajo", 
+    "jobstatus" : ObjectId("59b8445c218e8b08fc2fccb9"), 
+    "keyword" : "mutual_cancelled"
+}
+{ 
+    "_id" : ObjectId("599de0ec653b4a206c76db3f"), 
+    "description" : "El prestador de servicios no respeto las condiciones del trabajo y/o el precio", 
+    "jobstatus" : ObjectId("59b8445c218e8b08fc2fccb9"), 
+    "keyword" : "supplier_conditions", 
+    "role" : "user", 
+    "points" : -1.0
+}

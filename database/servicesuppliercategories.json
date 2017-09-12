@@ -1,0 +1,42 @@
+{ 
+    "_id" : ObjectId("56b105ec2c2d1661a491ba63"), 
+    "max" : 5.0, 
+    "min" : 0.0, 
+    "name" : "Comenzando"
+}
+{ 
+    "_id" : ObjectId("56b1065a2c2d1661a491ba65"), 
+    "max" : 15.0, 
+    "min" : 5.01, 
+    "name" : "Remador"
+}
+{ 
+    "_id" : ObjectId("56b106aa2c2d1661a491ba66"), 
+    "max" : 30.0, 
+    "min" : 15.01, 
+    "name" : "A paso firme"
+}
+{ 
+    "_id" : ObjectId("56b106c72c2d1661a491ba67"), 
+    "max" : 50.0, 
+    "min" : 30.01, 
+    "name" : "Reconocido"
+}
+{ 
+    "_id" : ObjectId("56b107012c2d1661a491ba68"), 
+    "max" : 75.0, 
+    "min" : 50.01, 
+    "name" : "Bien Reconocido"
+}
+{ 
+    "_id" : ObjectId("56b107292c2d1661a491ba69"), 
+    "max" : 10000.0, 
+    "min" : 75.01, 
+    "name" : "Recomendable"
+}
+{ 
+    "_id" : ObjectId("56b107a52c2d1661a491ba6a"), 
+    "max" : -10000.0, 
+    "min" : -0.01, 
+    "name" : "Bajon"
+}

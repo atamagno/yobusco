@@ -1,0 +1,122 @@
+{ 
+    "_id" : ObjectId("57bdf9d8e16d21810390560a"), 
+    "keyword" : "created", 
+    "name" : "Creado", 
+    "possible_next_statuses" : [
+        ObjectId("59b8445c218e8b08fc2fccb9"), 
+        ObjectId("59b842d7218e8b08fc2fccaf"), 
+        ObjectId("59b84536218e8b08fc2fccc0")
+    ], 
+    "requires_approval_by" : [
+
+    ], 
+    "roles" : [
+        "servicesupplier", 
+        "user"
+    ]
+}
+{ 
+    "_id" : ObjectId("58364df47ed82f4215dd3988"), 
+    "keyword" : "nothired", 
+    "name" : "No contratado", 
+    "possible_next_statuses" : [
+
+    ], 
+    "requires_approval_by" : [
+
+    ], 
+    "requires_reason" : true, 
+    "roles" : [
+        "user"
+    ]
+}
+{ 
+    "_id" : ObjectId("56bd52bb8b2d42938751aa5d"), 
+    "keyword" : "finished_guaranteed", 
+    "name" : "Terminado (garantizado)", 
+    "points" : 0.4, 
+    "possible_next_statuses" : [
+
+    ], 
+    "post_finished" : true, 
+    "requires_approval_by" : [
+        "user"
+    ], 
+    "roles" : [
+        "user", 
+        "servicesupplier"
+    ]
+}
+{ 
+    "_id" : ObjectId("59a5c897653b4a355c025b1d"), 
+    "keyword" : "finished_guarantee_claimed", 
+    "name" : "Terminado (necesita arreglos/reparacion)", 
+    "points" : -0.3, 
+    "possible_next_statuses" : [
+        ObjectId("56bd52bb8b2d42938751aa5d")
+    ], 
+    "post_finished" : true, 
+    "requires_approval_by" : [
+        "servicesupplier"
+    ], 
+    "roles" : [
+        "user"
+    ]
+}
+{ 
+    "_id" : ObjectId("59b8445c218e8b08fc2fccb9"), 
+    "keyword" : "incomplete", 
+    "name" : "Incompleto/Cancelado", 
+    "points" : -1.0, 
+    "possible_next_statuses" : [
+        ObjectId("59b842d7218e8b08fc2fccaf")
+    ], 
+    "requires_approval_by" : [
+        "user", 
+        "servicesupplier"
+    ], 
+    "roles" : [
+        "user", 
+        "servicesupplier"
+    ], 
+    "finished" : true, 
+    "requires_reason" : true, 
+    "initial" : true
+}
+{ 
+    "_id" : ObjectId("59b842d7218e8b08fc2fccaf"), 
+    "keyword" : "finished", 
+    "name" : "Terminado (entrega inicial)", 
+    "points" : 1.0, 
+    "possible_next_statuses" : [
+        ObjectId("59a5c897653b4a355c025b1d")
+    ], 
+    "requires_approval_by" : [
+        "user"
+    ], 
+    "roles" : [
+        "user", 
+        "servicesupplier"
+    ], 
+    "finished" : true, 
+    "initial" : true
+}
+{ 
+    "_id" : ObjectId("59b84536218e8b08fc2fccc0"), 
+    "keyword" : "active", 
+    "name" : "En Progreso", 
+    "points" : 0.0, 
+    "possible_next_statuses" : [
+        ObjectId("59b842d7218e8b08fc2fccaf"), 
+        ObjectId("59b8445c218e8b08fc2fccb9")
+    ], 
+    "requires_approval_by" : [
+        "user", 
+        "servicesupplier"
+    ], 
+    "roles" : [
+        "user", 
+        "servicesupplier"
+    ], 
+    "initial" : true
+}
