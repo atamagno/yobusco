@@ -1,6 +1,6 @@
 { 
     "_id" : ObjectId("57bdee69e16d218103905605"), 
-    "description" : "El trabajo esta a la espera de aprobación.", 
+    "description" : "El trabajo esta a la espera de aprobación.",
     "keyword" : "pending", 
     "name" : "Aprobacion pendiente"
 }

@@ -1,5 +1,5 @@
 { 
-    "_id" : ObjectId("5882654a7ed85f937795c8b2"), 
+    "_id" : ObjectId("5882654a7ed85f937795c8b2"),
     "description" : "Disponilidad del prestador", 
     "jobstatus" : ObjectId("58364df47ed82f4215dd3988"), 
     "keyword" : "supplier_avail", 

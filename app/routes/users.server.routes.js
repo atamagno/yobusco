@@ -38,7 +38,7 @@ module.exports = function(app) {
 
 	// Setting the facebook oauth routes
 	app.route('/api/auth/facebook').get(users.oauthCall('facebook', {
-		scope: ['email']
+		scope: ['email', 'user_location']
 	}));
 	app.route('/api/auth/facebook/callback').get(users.oauthCallback('facebook'));
 
@@ -50,7 +50,8 @@ module.exports = function(app) {
 	app.route('/api/auth/google').get(users.oauthCall('google', {
 		scope: [
 			'https://www.googleapis.com/auth/userinfo.profile',
-			'https://www.googleapis.com/auth/userinfo.email'
+			'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/plus.me'
 		]
 	}));
 	app.route('/api/auth/google/callback').get(users.oauthCallback('google'));

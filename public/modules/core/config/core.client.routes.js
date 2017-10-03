@@ -10,7 +10,13 @@ angular.module('core').config(
 		$stateProvider.
 		state('home', {
 			url: '/',
-			templateUrl: 'modules/search/views/search-servicesupplier.client.view.html'
+			templateUrl: 'modules/search/views/search-servicesupplier.client.view.html',
+			controller: 'SuppliersSearchController',
+			resolve: {
+				cities: function(Cities){
+					return Cities.query().$promise;
+				}
+			}
 			// TODO: add resolve object with service subcategories, client ip address, etc...
 		});
 	});

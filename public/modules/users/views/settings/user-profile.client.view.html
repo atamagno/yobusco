@@ -28,6 +28,10 @@
 				<label for="username">Nombre de usuario:</label>
 				<span id="username">&nbsp;{{user.username}}</span>
 			</div>
+			<div class="user-field" data-ng-show="user.city">
+				<label for="city">Ciudad:</label>
+				<span id="city">&nbsp;{{user.city.name}}</span>
+			</div>
 		</div>
 
 		<div class="user-field">

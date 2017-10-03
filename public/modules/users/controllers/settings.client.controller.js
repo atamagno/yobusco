@@ -1,8 +1,25 @@
 'use strict';
 
 angular.module('users').controller('SettingsController',
-	function($scope, $http, $state, $location, $uibModal, Users, Upload, Authentication, AmazonS3, Alerts, ServiceSuppliersDetails, ServiceSuppliers) {
+	function($scope, $http, $state, $location, $uibModal, Users, Upload, Authentication, AmazonS3, Alerts, ServiceSuppliersDetails, ServiceSuppliers, Cities, CitiesHelper) {
+
 		$scope.user = Authentication.user;
+        $scope.formerUser = angular.copy($scope.user);
+
+        Cities.query().$promise.then(function (cities) {
+            $scope.cities = cities;
+            if(!$scope.user.city){
+            	$scope.user.city = {name: '[Seleccione una ciudad]'}
+			}
+			else{
+                // populating city if user is going straight/refreshing settings/profile page
+                if($scope.user.city && !$scope.user.city.hasOwnProperty('name')) $scope.user.city = CitiesHelper.findById(cities,$scope.user.city)
+			}
+
+
+        });
+
+
 		$scope.alerts = Alerts;
 
 		// If user is not signed in then redirect back home
@@ -67,6 +84,10 @@ angular.module('users').controller('SettingsController',
 			$scope.success = $scope.error = null;
 			var user = new Users($scope.user);
 
+			if(!user.city._id){ // Removing city element if no selection has been made...
+				delete user.city;
+			}
+
 			var bucketFolder = 'profile_pictures/';
 			if ($scope.picFile) {
 
@@ -91,6 +112,11 @@ angular.module('users').controller('SettingsController',
 				updateUser(user);
 			}
 		};
+
+        $scope.cancelUpdateUser = function() {
+        	Authentication.user = $scope.formerUser;
+            $state.go('profile.user');
+        };
 
 		function updateUser(user) {
 			user.$update(function(response) {
@@ -153,6 +179,10 @@ angular.module('users').controller('SettingsController',
 				Alerts.show('danger',$scope.error);
 			});
 		};
+
+        $scope.changeLocation = function (city) {
+            $scope.user.city = city;
+        };
 	});
 
 angular.module('users').controller('UpdateProfileModalInstanceCtrl',

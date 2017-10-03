@@ -1,6 +1,6 @@
 { 
     "_id" : ObjectId("44269183477f11b662a6dd88"), 
-    "description" : "Quality of service description", 
+    "description" : "Quality of service description",
     "jobstatuses" : [
         ObjectId("56bd52bb8b2d42938751aa5d"), 
         ObjectId("59b8445c218e8b08fc2fccb9"), 

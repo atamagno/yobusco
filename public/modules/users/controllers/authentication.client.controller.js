@@ -1,10 +1,18 @@
 'use strict';
 
 angular.module('users').controller('AuthenticationController',
-	function($scope, $state, $rootScope, $http, $location, $window, Authentication, MessageSearch, Alerts, PasswordValidator) {
-		$scope.authentication = Authentication;
+	function($scope, $state, $rootScope, $http, $location, $window, Authentication, MessageSearch, Alerts, PasswordValidator, Cities, CitiesHelper) {
+
+	$scope.authentication = Authentication;
 		$scope.alerts = Alerts;
 		$scope.popoverMsg = PasswordValidator.getPopoverMsg();
+
+
+        Cities.query().$promise.then(function (cities) {
+            $scope.cities = cities;
+            $scope.defaultLocation = {name: '[Seleccione una ciudad]'};
+        });
+
 
 		// Get an eventual error defined in the URL query string:
 		$scope.error = $location.search().err;
@@ -24,6 +32,7 @@ angular.module('users').controller('AuthenticationController',
 			$http.post('/auth/signup', $scope.credentials).success(function(response) {
 				// If successful we assign the response to the global user model
 				$scope.authentication.user = response;
+				$scope.authentication.user.city = CitiesHelper.findById($scope.cities,$scope.authentication.user.city);
 
 				// And redirect to the index page
 				$location.path('/');
@@ -45,6 +54,7 @@ angular.module('users').controller('AuthenticationController',
 			$http.post('/auth/signin', $scope.credentials).success(function(response) {
 				// If successful we assign the response to the global user model
 				$scope.authentication.user = response;
+                $scope.authentication.user.city = CitiesHelper.findById($scope.cities,$scope.authentication.user.city);
 
 				MessageSearch.unreadMessages.query({
 					userId: $scope.authentication.user._id
@@ -74,4 +84,10 @@ angular.module('users').controller('AuthenticationController',
 			// Effectively call OAuth authentication route:
 			$window.location.href = url;
 		};
+
+        $scope.changeLocation = function (city) {
+            $scope.defaultLocation = city;
+            $scope.credentials.city = city._id;
+        };
+
 	});

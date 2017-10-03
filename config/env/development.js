@@ -5,7 +5,7 @@ module.exports = {
 	app: {
 		title: 'Yo Busco - Development Environment',
 		port: process.env.OPENSHIFT_NODEJS_PORT || 8002,
-		server: process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
+		server: process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0'
 	},
 
 	dbConnectionString : function()
@@ -25,18 +25,18 @@ module.exports = {
 	},
 
 	facebook: {
-		clientID: process.env.FACEBOOK_ID || '174758279535102',
-		clientSecret: process.env.FACEBOOK_SECRET || '3c8f18ba583b7ef8ed824294bf8f1fa6',
+		clientID: process.env.FACEBOOK_ID || '1408499079197694',
+		clientSecret: process.env.FACEBOOK_SECRET || 'ba2d4e0612712d16d0e98fe3be0d46f4',
 		callbackURL: '/api/auth/facebook/callback'
 	},
 	twitter: {
-		clientID: process.env.TWITTER_KEY || 'xTLBmuY3rXQ8mtAFa6gOKE25u',
-		clientSecret: process.env.TWITTER_SECRET || 'fooZUIveUSQd08WniKHyxX7hqljq45GQ8dSJQbxefCNIaMKdq7',
+		clientID: process.env.TWITTER_KEY || 'BkHX1j8UHZquzEnJm9fUkQq41',
+		clientSecret: process.env.TWITTER_SECRET || 'wqeauxdig0xVnMJudKRZaBi0bguIVZsgoWpbvxJPAG3XTnmzLR',
 		callbackURL: '/api/auth/twitter/callback'
 	},
 	google: {
-		clientID: process.env.GOOGLE_ID || '911740617183-b7dcaqpkg5dkcffr60pdrtm4nk78hlvj.apps.googleusercontent.com',
-		clientSecret: process.env.GOOGLE_SECRET || '7TKdgia0Xi3iNdt-jnww2-UV',
+		clientID: process.env.GOOGLE_ID || '780822628717-4ijcbdl0kgnt2n8q6r45t3kddh4tn7la.apps.googleusercontent.com',
+		clientSecret: process.env.GOOGLE_SECRET || 'WIW-Y6dV7VyZtmjtWMBW7OKm',
 		callbackURL: '/api/auth/google/callback'
 	}
 };

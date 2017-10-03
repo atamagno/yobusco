@@ -45,6 +45,7 @@
     "grunt-mongoimport": "~0.1.6"
   },
   "devDependencies": {
+    "@glimpse/glimpse": "^0.22.15",
     "grunt": "^0.4.1"
   },
   "bundleDependencies": [],

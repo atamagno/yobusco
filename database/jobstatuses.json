@@ -1,5 +1,5 @@
 { 
-    "_id" : ObjectId("57bdf9d8e16d21810390560a"), 
+    "_id" : ObjectId("57bdf9d8e16d21810390560a"),
     "keyword" : "created", 
     "name" : "Creado", 
     "possible_next_statuses" : [

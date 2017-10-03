@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('search').controller('SuppliersSearchController',
-    function($scope, $state, Authentication, ServiceSubcategoriesKeywords, ServiceCategories, ServiceSubcategoriesSearch, Cities) {
+    function($scope, $state, Authentication, ServiceSubcategoriesKeywords, ServiceCategories, ServiceSubcategoriesSearch, CitiesHelper, cities) {
 
         $scope.authentication = Authentication;
         $scope.serviceSubcategoriesKeywords = ServiceSubcategoriesKeywords;
@@ -13,10 +13,14 @@ angular.module('search').controller('SuppliersSearchController',
         $scope.currentPage = 1;
         $scope.itemsPerPage = 5;
 
-        Cities.query().$promise.then(function (cities) {
-            $scope.cities = cities;
-            $scope.defaultLocation = cities[0];
-        });
+        $scope.cities = cities;
+
+        // populating city if user is going straight to/refreshing home page
+        if($scope.authentication.user.city && !$scope.authentication.user.city.hasOwnProperty('name'))
+            $scope.authentication.user.city = CitiesHelper.findById(cities,$scope.authentication.user.city);
+
+        $scope.defaultLocation = $scope.authentication.user.city ? $scope.authentication.user.city : cities[0];
+        // TODO: update cities[0] to search for user's location (e.g.: html 5 location, geo ip public API, etc)
 
         $scope.changeLocation = function (city) {
             $scope.defaultLocation = city;

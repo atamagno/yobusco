@@ -37,8 +37,9 @@
 .profile-image {
 	height: 120px;
 	width: 120px;
-	border-radius: 6px;
-	box-shadow: 1px 1px 20px -3px rgba(0, 0, 0, .35)
+	border-radius: 50%;
+	box-shadow: 1px 1px 20px -3px rgba(0, 0, 0, .35);
+	background-size: cover;
 }
 
 .sms-checkbox {

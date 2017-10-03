@@ -1,3 +1,8 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('@glimpse/glimpse').init();
+}
+
+
 var init = require('./config/init')(),
     config = require('./config/config'),
     mongoose = require('mongoose');
@@ -20,6 +25,7 @@ require('./config/passport')();
 
 // start app ===============================================
 app.listen(config.app.port, config.app.server);
+
 
 // expose app
 exports = module.exports = app;

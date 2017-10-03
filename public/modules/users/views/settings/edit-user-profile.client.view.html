@@ -34,13 +34,27 @@
 				</div>
 
 				<div class="user-field">
+					<label class="control-label" for="city">Ciudad</label>
+					<div class="btn-group location-dropdown" uib-dropdown>
+						<button type="button" id="city" name="city" class="form-control btn btn-default" uib-dropdown-toggle required>
+							{{user.city.name}} <span class="caret"></span>
+						</button>
+						<ul class="uib-dropdown-menu" role="menu">
+							<li data-ng-repeat="city in cities">
+								<a class="dropdown-item" data-ng-click="changeLocation(city)">{{city.name}}</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="user-field">
 					<label class="control-label" for="username">Nombre de usuario</label>
 					<input type="text" id="username" name="username" class="form-control" data-ng-model="user.username" placeholder="Nombre de usuario">
 				</div>
 			</div>
 
 			<div class="text-center form-group">
-				<button ui-sref="profile.user()" class="btn btn-large btn-default">Cancelar</button>
+				<button data-ng-click="cancelUpdateUser()" class="btn btn-large btn-default">Cancelar</button>
 				<button type="submit" class="btn btn-large btn-primary">Guardar</button>
 			</div>
 		</form>

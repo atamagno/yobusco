@@ -55,6 +55,10 @@ var UserSchema = new Schema({
 		required: 'Por favor ingrese un nombre de usuario',
 		trim: true
 	},
+    city: {
+        type: Schema.ObjectId,
+        ref: 'City'
+    },
 	profile_picture: {
 		type: String,
 		default: 'modules/users/img/profile/default.png'
@@ -71,8 +75,7 @@ var UserSchema = new Schema({
 		type: String,
 		required: 'Provider es requerido'
 	},
-	providerData: {},
-	additionalProvidersData: {},
+	oauthProvidersData: [],
 	roles: {
 		type: [{
 			type: String,
@@ -93,6 +96,10 @@ var UserSchema = new Schema({
 	},
 	resetPasswordExpires: {
 		type: Date
+	},
+	isEmailValidated: {
+		type: Boolean,
+		default: false
 	}
 });
 
@@ -112,11 +119,11 @@ UserSchema.pre('save', function(next) {
  * Create instance method for hashing a password
  */
 UserSchema.methods.hashPassword = function(password) {
-	if (this.salt && password) {
-		return crypto.pbkdf2Sync(password, this.salt, 10000, 64).toString('base64');
-	} else {
-		return password;
-	}
+	//if (this.salt && password) {
+		return crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('base64');
+	//} else {
+	//	return password;
+	//}*/
 };
 
 /**
@@ -147,5 +154,6 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 		}
 	});
 };
+
 
 mongoose.model('User', UserSchema);

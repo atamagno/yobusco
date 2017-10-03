@@ -37,7 +37,7 @@ exports.forgot = function(req, res, next) {
 						});
 					} else if (user.provider !== 'local') {
 						return res.status(400).send({
-							message: 'Parece que te registraste usando la cuenta ' + user.provider
+							message: 'Parece que te registraste usando la cuenta de ' + user.provider
 						});
 					} else {
 						user.resetPasswordToken = token;
